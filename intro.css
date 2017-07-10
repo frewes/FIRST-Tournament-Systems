@@ -1,0 +1,138 @@
+/* Style the list */
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {background-color: #ddd;}
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {background-color: #ccc;}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+    -webkit-animation: fadeEffect 0.25s;
+    animation: fadeEffect 0.25s; /* Fading effect takes 1 second */
+}
+
+@-webkit-keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes fadeEffect {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+.session{
+    display:inline-table;
+    padding: 10px;
+}
+
+.session th{
+    padding:8px;
+}
+
+.session td{
+    padding: 8px;
+    text-align: center;
+}
+
+table.roundtable{
+     display: inline-block;
+}
+
+.roundtable td {
+    padding-right: 20px;
+}
+
+.timer {
+    text-align: center;
+    color:azure;
+    font-size: 5em;
+    display: inline;
+    align-items: center;
+}
+
+.timer-dark {
+    text-align: center;
+    font-size: 5em;
+    display: inline;
+    align-items: center;
+}
+
+.keystone {
+    background-color:magenta;
+}
+
+.defImage {
+    background-image: url(ftc.jpg);
+}
+
+.alliance {
+    display: inline-block;
+    color:azure;
+    font-size: 1.75em;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-top:2px;
+    padding-bottom:2px;
+    padding-left:10px;
+    padding-right:10px;
+    min-width: 160px;
+}
+
+.mode {
+    display: inline-block;
+    color:azure;
+    margin-left: -15%;
+    vertical-align:top;
+    font-size: 1.75em;
+    padding-top:30px;
+    padding-bottom:2px;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+.redalliance {
+    background: linear-gradient(#ed1c24, #8f0507); /* Standard syntax */
+}
+.bluealliance {
+    background: linear-gradient(#009cd7, #003974); /* Standard syntax */
+}
+
+button.control {
+    display:inline-block;
+}

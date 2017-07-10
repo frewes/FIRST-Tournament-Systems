@@ -1,0 +1,58 @@
+.timer {
+    text-align: center;
+    color:azure;
+    font-size: 5em;
+    display: inline;
+    align-items: center;
+}
+
+.keystone {
+    background-color:magenta;
+}
+
+.defImage {
+    background-image: url(ftc.jpg);
+}
+
+.alliance {
+    display: inline-block;
+    color:azure;
+    font-size: 1.75em;
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-top:2px;
+    padding-bottom:2px;
+    padding-left:10px;
+    padding-right:10px;
+    min-width: 160px;
+}
+
+.mode {
+    display: inline-block;
+    color:azure;
+    margin-left: -15%;
+    vertical-align:top;
+    font-size: 1.75em;
+    padding-top:30px;
+    padding-bottom:2px;
+    padding-left:10px;
+    padding-right:10px;
+    width:200px;
+}
+
+.redalliance {
+    background: linear-gradient(#ed1c24, #8f0507); /* Standard syntax */
+}
+.bluealliance {
+    background: linear-gradient(#009cd7, #003974); /* Standard syntax */
+}
+
+button.control {
+    display:inline-block;
+}
+
+.title {
+    text-align:center;
+    color:azure;
+    font-size: 4em;
+}

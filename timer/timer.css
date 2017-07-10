@@ -1,0 +1,32 @@
+
+
+body {
+  padding-top: 50px;
+}
+
+.text-main {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+
+button.control {
+    display:inline-block;
+}
+
+.clock {
+    text-align: center;
+    font-size: 5em;
+    display: inline;
+    align-items: center;
+}
+
+.title {
+    text-align:center;
+    font-size: 4em;
+    align-content: center;
+}
+
+.title input {
+    text-align: center;
+}
