@@ -18,6 +18,8 @@ function updateDisplay() {
     document.getElementById('b2').innerHTML = timer.teams[3];
     document.getElementById('timer').innerHTML = timer.time;
     document.getElementById('mode').innerHTML = timer.mode;
+    document.getElementById('rscore').innerHTML = timer.redScore;
+    document.getElementById('bscore').innerHTML = timer.blueScore;
 //    $("#title").text = T.title;
 }
 

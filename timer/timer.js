@@ -26,6 +26,8 @@ var timerObj = {
     dispWindow:"keystone",
     teams:new Array(),
     time: "02:30",
+    redScore: 0,
+    blueScore: 0,
     title:document.getElementById("title").innerHTML.toString(),
 }
 
@@ -133,6 +135,11 @@ function updateTeams() {
 //    display.document.getElementById('b1').innerHTML = document.getElementById('blue1').value;
 //    display.document.getElementById('r2').innerHTML = document.getElementById('red2').value;
 //    display.document.getElementById('b2').innerHTML = document.getElementById('blue2').value;
+}
+
+function updateScore() {
+    timerObj.redScore = document.getElementById('rscore').value;
+    timerObj.blueScore = document.getElementById('bscore').value;
 }
 
 function secsToTime(s) {

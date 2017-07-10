@@ -30,7 +30,7 @@
     
     <div class="container">
         <div class="text-main">
-            <div id="title" class="title">Australian Nationals 2016</div>
+            <div id="title" class="title">Asia Pacific Invitational 2017</div>
             <button onclick="changeTitle()" class="btn-link">Change</button>
             <h1>Match timer</h1>
             <table style="display:inline-block">
@@ -75,7 +75,18 @@
         </div>
     </div>
 
-    
+    <div id="scoring" class="container text-main">
+      <table style="display:inline-block">
+        <th style="text-align:center">Red</th>
+        <th style="text-align:center">Blue</th>
+        <tr>
+          <td><input style="text-align:center" type="text" id="rscore" value="0"></td>
+          <td><input style="text-align:center" type="text" id="bscore" value="0"></td>
+        </tr>
+      </table>
+      <br>
+      <button id="apply" onclick="updateScore()" class="control btn-lg btn-primary">Apply</button>
+    </div>
     
     <div class="container">
         <div class="starter-template" id="results"></div>

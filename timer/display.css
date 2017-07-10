@@ -27,6 +27,18 @@
     min-width: 160px;
 }
 
+.score {
+    display: inline-block;
+    color:azure;
+    font-size: 4.5em;
+    margin-left: 0%;
+    margin-right: 0%;
+    padding-top:2px;
+    padding-bottom:2px;
+    padding-left:10px;
+    padding-right:10px;
+    min-width: 160px;
+}
 .mode {
     display: inline-block;
     color:azure;
