@@ -114,8 +114,8 @@
 	      <td style="text-align:center">Robot 2 &nbsp</td>
 	    </tr><tr>
 	      <td style="text-align:right">Not parked &nbsp</td>
-	      <td><label><input type="radio" name="redAutoParked1" value="not" checked="checked"></label></td>
-	      <td><label><input type="radio" name="redAutoParked2" value="not" checked="checked"></label></td>
+	      <td><label><input type="radio" name="redAutoParked1" value="not" checked="checked" id="defParkr1"></label></td>
+	      <td><label><input type="radio" name="redAutoParked2" value="not" checked="checked" id="defParkr2"></label></td>
 	    </tr><tr>
 	      <td style="text-align:right">On center &nbsp</td>
 	      <td><label><input type="radio" name="redAutoParked1" value="center"></label></td>
@@ -145,10 +145,10 @@
 	      <td>Corner</td>
 	    </tr><tr>
 	      <td style="text-align:right"># beacons&nbsp</td>
-	      <td><input type="number" min="0" max="4" id="redTeleBeacons"></td>
+	      <td><input type="number" min="0" max="4" id="redTeleBeacons" value="0"></td>
 	      <td style="text-align:right"># particles&nbsp</td>
-	      <td><input type="number" min="0" max="99" id="redTeleCenterParticles"></td>
-	      <td><input type="number" min="0" max="99" id="redTeleCornerParticles"></td>
+	      <td><input type="number" min="0" max="99" id="redTeleCenterParticles" value="0"></td>
+	      <td><input type="number" min="0" max="99" id="redTeleCornerParticles" value="0"></td>
 	    </tr>
 	  </table>
 	  <br>
@@ -162,7 +162,7 @@
 	      <td>Capping</td>
 	    </tr><tr>
 	      <td>Cap ball</td>
-	      <td><label><input type="radio" name="redEnd" value="not"checked="checked"></label></td>
+	      <td><label><input type="radio" name="redEnd" value="not" checked="checked" id="defEndr"></label></td>
 	      <td><label><input type="radio" name="redEnd" value="low"></label></td>
 	      <td><label><input type="radio" name="redEnd" value="high"></label></td>
 	      <td><label><input type="radio" name="redEnd" value="cap"></label></td>
@@ -204,8 +204,8 @@
 	      <td style="text-align:center">Robot 2 &nbsp</td>
 	    </tr><tr>
 	      <td style="text-align:right">Not parked &nbsp</td>
-	      <td><label><input type="radio" name="blueAutoParked1" value="not" checked="checked"></label></td>
-	      <td><label><input type="radio" name="blueAutoParked2" value="not" checked="checked"></label></td>
+	      <td><label><input type="radio" name="blueAutoParked1" value="not" checked="checked" id="defParkb1"></label></td>
+	      <td><label><input type="radio" name="blueAutoParked2" value="not" checked="checked" id="defParkb2"></label></td>
 	    </tr><tr>
 	      <td style="text-align:right">On center &nbsp</td>
 	      <td><label><input type="radio" name="blueAutoParked1" value="center"></label></td>
@@ -235,10 +235,10 @@
 	      <td>Corner</td>
 	    </tr><tr>
 	      <td style="text-align:right"># beacons&nbsp</td>
-	      <td><input type="number" min="0" max="4" id="blueTeleBeacons"></td>
+	      <td><input type="number" min="0" max="4" id="blueTeleBeacons" value="0"></td>
 	      <td style="text-align:right"># particles&nbsp</td>
-	      <td><input type="number" min="0" max="99" id="blueTeleCenterParticles"></td>
-	      <td><input type="number" min="0" max="99" id="blueTeleCornerParticles"></td>
+	      <td><input type="number" min="0" max="99" id="blueTeleCenterParticles" value="0"></td>
+	      <td><input type="number" min="0" max="99" id="blueTeleCornerParticles" value="0"></td>
 	    </tr>
 	  </table>
 	  <br>
@@ -252,7 +252,7 @@
 	      <td>Capping</td>
 	    </tr><tr>
 	      <td>Cap ball</td>
-	      <td><label><input type="radio" name="blueEnd" value="not" checked="checked"></label></td>
+	      <td><label><input type="radio" name="blueEnd" value="not" checked="checked" id="defEndb"></label></td>
 	      <td><label><input type="radio" name="blueEnd" value="low"></label></td>
 	      <td><label><input type="radio" name="blueEnd" value="high"></label></td>
 	      <td><label><input type="radio" name="blueEnd" value="cap"></label></td>
@@ -271,6 +271,8 @@
 	  <br>
 	</div>
       </div>
+      <br>
+      <button id="scoreReset" onclick="resetScoresheet()" class="control btn-lg btn-warning">Reset Score</button>
     </div>
     <div class="container">
       <div class="starter-template" id="results"></div>
