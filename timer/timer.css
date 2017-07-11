@@ -30,3 +30,26 @@ button.control {
 .title input {
     text-align: center;
 }
+
+label{
+    display:block;
+    padding:5px 10px;
+    margin:0px 0;
+    &:hover {
+	background-color:gold;
+	cursor:pointer;
+    }
+}
+
+.isSelected {
+    background-color: lightgreen;
+}
+
+.red-scoresheet {
+    border-style: solid;
+    border-color: red;
+}
+.blue-scoresheet {
+    border-style: solid;
+    border-color: blue;
+}

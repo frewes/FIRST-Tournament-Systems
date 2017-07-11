@@ -137,6 +137,11 @@ function updateTeams() {
 //    display.document.getElementById('b2').innerHTML = document.getElementById('blue2').value;
 }
 
+function updateScoresheet() {
+    //Calculate red and blue score
+    //Store red and blue score in the timer obj
+}
+
 function updateScore() {
     timerObj.redScore = document.getElementById('rscore').value;
     timerObj.blueScore = document.getElementById('bscore').value;
