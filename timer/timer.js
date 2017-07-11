@@ -52,6 +52,41 @@ window.onload = function () {
     }, 50);
 }
 
+function registerPress(key) {
+//    alert(String.fromCharCode(key));
+    ch = String.fromCharCode(key);
+    if (ch == "f") {
+	// Red particles in corner
+	if (timerObj.mode == MODE_AUTO) $("#redAutoCorner").val(function(i,oldVal) {return ++oldVal;});
+	else  $("#redTeleCornerParticles").val(function(i,oldVal) {return ++oldVal;});
+    } else if (ch == "d") {
+	// Red particles in center
+	if (timerObj.mode == MODE_AUTO) $("#redAutoCenter").val(function(i,oldVal) {return ++oldVal;});
+	else  $("#redTeleCenterParticles").val(function(i,oldVal) {return ++oldVal;});
+    } else if (ch == "s") {
+	// Red minor penalty
+	$("#redPenMinor").val(function(i,oldVal) {return ++oldVal;});
+    } else if (ch == "a") {
+	// Red major penalty
+	$("#redPenMajor").val(function(i,oldVal) {return ++oldVal;});
+    } else if (ch == "j") {
+	// Blue particles in corner
+	if (timerObj.mode == MODE_AUTO) $("#blueAutoCorner").val(function(i,oldVal) {return ++oldVal;});
+	else  $("#blueTeleCornerParticles").val(function(i,oldVal) {return ++oldVal;});
+    } else if (ch == "k") {
+	// Blue particles in center
+	if (timerObj.mode == MODE_AUTO) $("#blueAutoCenter").val(function(i,oldVal) {return ++oldVal;});
+	else  $("#blueTeleCenterParticles").val(function(i,oldVal) {return ++oldVal;});
+    } else if (ch == "l") {
+	// Blue minor penalty
+	$("#bluePenMinor").val(function(i,oldVal) {return ++oldVal;});
+    } else if (ch == ";") {
+	// Blue major penalty
+	$("#bluePenMajor").val(function(i,oldVal) {return ++oldVal;});
+    }
+    updateScoresheet();
+}
+
 function openDisplay() {
     window.open("display.html");
 }

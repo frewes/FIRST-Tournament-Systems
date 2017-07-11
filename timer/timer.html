@@ -286,5 +286,11 @@
   $("input").on("click",function() {
     updateScoresheet();
   });
+  $(function() {
+  $(window).keypress(function(e) {
+  var key = e.which;
+  registerPress(key);
+  });
+  });
 </script>
 </html>
