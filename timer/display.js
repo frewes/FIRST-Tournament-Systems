@@ -20,6 +20,11 @@ function updateDisplay() {
     document.getElementById('mode').innerHTML = timer.mode;
     document.getElementById('rscore').innerHTML = timer.redScore;
     document.getElementById('bscore').innerHTML = timer.blueScore;
+    if (timer.flash) {
+	document.getElementById('timer').style.color = "yellow";
+    } else {
+	document.getElementById('timer').style.color = "white";
+    }
 //    $("#title").text = T.title;
 }
 

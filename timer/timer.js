@@ -21,6 +21,7 @@ const ABORT_SOUND = '../resources/fogblast.wav';
 var timerObj = {
     flag:false,
     timer:null,
+    flash:false,
     secs:FULL_TIME,
     mode:"NODATA",
     dispWindow:"keystone",
@@ -60,6 +61,7 @@ function startTimer() {
         return;
     document.getElementById("resetBtn").className = "btn-lg disabled";
     document.getElementById("resetBtn").setAttribute('disabled','disabled');
+    
     if (timerObj.secs == 0) resetTimer();
     timerObj.mode = (timerObj.secs == TELE_TIME) ? MODE_TELE : MODE_AUTO;
     if (timerObj.mode == MODE_TELE) {
@@ -85,6 +87,13 @@ function playSound(file) {
 
 function timerInterval() {
     document.getElementById("timer").innerHTML = secsToTime(--timerObj.secs);
+    if (timerObj.secs < 30 && timerObj.secs % 2 == 1) {
+	timerObj.flash = true;
+    } else if (timerObj.secs < 140 && timerObj.mode == MODE_AUTO && timerObj.secs % 2 == 1) {
+	timerObj.flash = true;
+    } else {
+	timerObj.flash = false;
+    }
     if (timerObj.secs == TELE_TIME) {
         playSound(ENDAUTO_SOUND);
         autoOver();
@@ -96,7 +105,7 @@ function timerInterval() {
     } else if (timerObj.secs <= 0) {
         playSound(ENDMATCH_SOUND);
         stopTimer(false);
-    }    
+    }
 }
 
 function autoOver() {
