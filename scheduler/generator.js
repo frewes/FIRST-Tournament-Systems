@@ -184,7 +184,7 @@ function printSchedule(scheduler) {
         resultElmt.style.color = "green";        
         resultElmt.innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets.";
         resultElmt.appendChild(document.createElement("BR"));
-//        $("#pdfBtn").get(0).style.display = "inline-block";
+        $("#pdfBtn").get(0).style.display = "inline-block";
         $("#pdfBtnD").get(0).style.display = "inline-block";
     }
     
