@@ -1,6 +1,6 @@
 function PdfDoc() {
     this.content = new Array();
-    this.background = function() {return [
+/*    this.background = function() {return [
         {image: 'header',
         width: 530,
         height: 20,
@@ -34,7 +34,7 @@ function PdfDoc() {
         height: 20,
         alignment: 'center'}
 
-    ];};
+    ];};*/
     this.header = {
         text: TITLE,
         style: 'header',

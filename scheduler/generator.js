@@ -184,7 +184,7 @@ function printSchedule(scheduler) {
         resultElmt.style.color = "green";        
         resultElmt.innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets.";
         resultElmt.appendChild(document.createElement("BR"));
-        $("#pdfBtn").get(0).style.display = "inline-block";
+//        $("#pdfBtn").get(0).style.display = "inline-block";
         $("#pdfBtnD").get(0).style.display = "inline-block";
     }
     
@@ -513,7 +513,7 @@ function highlightAll(team) {
 
 function makePDFs(download) {
     //Timeouts make it not download everything all at once
-    if (download) {
+    if (true) {
 	PDFifyJudging(SCHEDULE, TITLE,download);
 	setTimeout(function(){PDFifyMatches(SCHEDULE, TITLE,download);},1000);
 	setTimeout(function(){PDFifyAllTeams(SCHEDULE, TITLE,download);},2000);
