@@ -182,7 +182,7 @@ function printSchedule(scheduler) {
         $("#pdfBtnD").get(0).style.display = "none";
     } else {
         resultElmt.style.color = "green";        
-        resultElmt.innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets.";
+        resultElmt.innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed.";
         resultElmt.appendChild(document.createElement("BR"));
         $("#pdfBtn").get(0).style.display = "inline-block";
         $("#pdfBtnD").get(0).style.display = "inline-block";
