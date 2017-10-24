@@ -37,28 +37,61 @@
 <div id="Event" class="tabcontent">
     <table class="roundtable">
         <tr><td>Number of days:&nbsp;</td><td><input class="form-control" type=number id="nDays" value=1 min=1 max=5 onchange="updateDays()"></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadDayModal()" data-toggle="modal" data-target="#genericModal">Edit day names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#dayModal">Edit day names</button></td></tr>
     </table>
     <table class="roundtable">
         <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999></td></tr>
         <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadgenericModal()" data-toggle="modal" data-target="#genericModal">Edit team names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="openTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td></tr>
     </table>
 </div>
 
-<!-- Team names Modal -->
-<div id="genericModal" class="modal fade" role="dialog">
+<div id="locationModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Team Names</h4>
+                <h4 class="modal-title">Locations</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="loc-modal-body">
             </div>
             <div class="modal-footer">
-                <button type="button" onclick="closeModal()" class="btn btn-default" data-dismiss="modal">Save</button>
+                <button type="button" onclick="closeLocationModal()" class="btn btn-default" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="dayModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Day names</h4>
+            </div>
+            <div class="modal-body" id="day-modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeDayModal()" class="btn btn-default" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="teamModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Teams</h4>
+            </div>
+            <div class="modal-body" id="team-modal-content">
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeTeamModal()" class="btn btn-default" data-dismiss="modal">Save</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>

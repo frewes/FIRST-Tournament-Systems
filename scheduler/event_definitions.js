@@ -31,6 +31,19 @@ function EventParameters(name,nTeams,nDays,teamNumbers,teamNames,days) {
 	}
 }
 
+function updateDays() {
+	tournament.nDays = $("#nDays")[0].value;
+	while (tournament.days.length < tournament.nDays) {
+		tournament.days.push("Day "+ (tournament.days.length+1));
+	}
+	while (tournament.days.length > tournament.nDays) {
+		tournament.days.splice(tournament.days.length-1,1);
+	}
+	for (var i = 0; i < tournament.allSessions.length; i++) {
+		tournament.allSessions[i].updateDOM();
+	}
+}
+
 // session parameters
 function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	this.uid = UID_counter++;
@@ -85,7 +98,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		// var x = $("<tr><td># locations:</td><td><div></div></td></tr>");
 		$("div", x).append(this.doms.locsInput);
 		dom.append(x);
-		dom.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.uid+")\" data-toggle=\"modal\" data-target=\"#genericModal\">Edit location names</button>\
+		dom.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.uid+")\" data-toggle=\"modal\" data-target=\"#locationModal\">Edit location names</button>\
 			</td><td><button class=\"btn\" onclick=deleteParams("+this.uid+")>Delete</button></td></tr>"));
 		// Add change listeners
         var ins = $("input,select", dom);
@@ -228,27 +241,6 @@ function tdToMins(d,t) {
     return d*(60*24) + parseInt(res[0])*60 + parseInt(res[1]) - start_time_offset;
 }
 
-function openLocationModal(uid) {
-	session = getSession(uid);
-    $(".modal-body").empty();
-    $(".modal-title").get(0).textContent = "Locations";
-    $(".modal-body").append($("<input type=\"hidden\" value=\""+uid+"\">"));
-    for (var i = 0; i < session.locations.length; i++) {
-    	var input = $("<input type=\"text\" class=\"form-control\" value=\""+session.locations[i]+"\">");
-        $(".modal-body").append(input);
-        $(".modal-body").append(document.createElement("BR"));
-    }
-}
-
-function closeModal() {
-	var inputs = $(".modal-body>input");
-	uid = inputs[0].value;
-	session = getSession(uid);
-	for (var i = 1; i < inputs.length; i++) {
-		session.locations[i-1] = inputs[i].value;
-	}
-}
-
 function getSession(uid) {
 	for (var i = 0; i < tournament.allSessions.length; i++) {
 		if (tournament.allSessions[i].uid == uid) return tournament.allSessions[i];
@@ -272,4 +264,47 @@ function copyToAll(uid) {
 			session.update();
 		}
 	}
+}
+
+function openLocationModal(uid) {
+	session = getSession(uid);
+    $("#loc-modal-body").empty();
+    $("#loc-modal-body").append($("<input type=\"hidden\" value=\""+uid+"\">"));
+    for (var i = 0; i < session.locations.length; i++) {
+    	var input = $("<input type=\"text\" class=\"form-control\" value=\""+session.locations[i]+"\">");
+        $("#loc-modal-body").append(input);
+        $("#loc-modal-body").append(document.createElement("BR"));
+    }
+}
+
+function closeLocationModal() {
+	var inputs = $("#loc-modal-body>input");
+	uid = inputs[0].value;
+	session = getSession(uid);
+	for (var i = 1; i < inputs.length; i++)
+		session.locations[i-1] = inputs[i].value;
+}
+
+function openDayModal() {
+    $("#day-modal-body").empty();
+    for (var i = 0; i < tournament.nDays; i++) {
+    	var input = $("<input type=\"text\" class=\"form-control\" value=\""+tournament.days[i]+"\">");
+        $("#day-modal-body").append(input);
+        $("#day-modal-body").append(document.createElement("BR"));
+    }
+}
+
+function closeDayModal() {
+	var inputs = $("#day-modal-body>input");
+	for (var i = 0; i < inputs.length; i++)
+		tournament.days[i] = inputs[i].value;
+	updateDays();
+}
+
+function openTeamModal() {
+
+}
+
+function closeTeamModal() {
+
 }
