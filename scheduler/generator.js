@@ -44,7 +44,8 @@ var LOCATIONS = {
         else if (id == 6) arr = this.m3;
         arr[loc] = name;
     },
-    getLocation: function(id,loc,num=0) {
+    getLocation: function(id,loc,num) {
+	if (!num) num = 0;
         var arr,name;
         if (id == 1) arr = this.j1;
         else if (id == 2) arr = this.j2;
@@ -182,7 +183,7 @@ function printSchedule(scheduler) {
         $("#pdfBtnD").get(0).style.display = "none";
     } else {
         resultElmt.style.color = "green";        
-        resultElmt.innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed.";
+        resultElmt.innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed. <br>NB: PDFs are not currently supported in Internet Explorer, but you can still use the tables.";
         resultElmt.appendChild(document.createElement("BR"));
         $("#pdfBtn").get(0).style.display = "inline-block";
         $("#pdfBtnD").get(0).style.display = "inline-block";

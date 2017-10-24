@@ -36,7 +36,8 @@ function JudgeParams(startTime,endTime,nSims,length,buffer,name,id) {
     this.nErrors = 0;
 }
 
-function Scheduler(tp, breakList, judgeList, matchList, block=false) {
+function Scheduler(tp, breakList, judgeList, matchList, block) {
+    if (!block) block = false;
     this.block = block;
     this.tp = tp;
     this.breakList = breakList;
