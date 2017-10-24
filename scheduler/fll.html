@@ -1,0 +1,144 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Scheduler</title>
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="scheduler.css" rel="stylesheet">
+
+</head>
+
+<body>
+    
+<!-- Fixed navbar -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+    <ul class="tab">
+      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Teams')">Teams</a></li>
+      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Judging')" id="defaultOpen">Judging</a></li>
+      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Matches')">Matches</a></li>
+      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Breaks')">Breaks</a></li>
+      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Logos')">Logos</a></li>
+    </ul>
+      </div>
+    </div>
+</nav>
+
+<!-- Team parameters -->    
+<div id="Teams" class="tabcontent">
+    <table>
+        <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999></td></tr>
+        <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td></tr>
+    </table>
+</div>
+
+<!-- Team names Modal -->
+<div id="teamModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Team Names</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeModal()" class="btn btn-default" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<!-- Session parameters -->
+<div id="Judging" class="tabcontent">
+    <button class="btn" id="addJudgeBtn" onclick="addJudging()">Add!</button>
+</div>
+
+<div id="Matches" class="tabcontent">
+    <button class="btn" id="addRoundBtn" onclick="addRound()">Add!</button>
+</div>
+
+<div id="Breaks" class="tabcontent">
+    <table class='break'>
+        <tr>
+            <td style='padding:5px'><input class="form-control" id="breakname" type="text" value="Lunch">&nbsp;</td>
+            <td style='padding:5px'>Start time:&nbsp;</td>
+            <td style='padding:5px'><input class="form-control" id="breakStart" type=time value="12:00"></td>
+            <td style='padding:5px'>End time:&nbsp;</td>
+            <td style='padding:5px'><input class="form-control" id="breakEnd" type=time value="13:00"></td>
+        </tr>
+    </table>
+</div>
+<div id="Logos" class="tabcontent">
+    <table>
+        <tr>
+            <td style='padding:5px'><img id="majrimg" src="mqlogo.png" height="200" alt="Major sponsor">&nbsp;</td>
+        <td style='padding:5px'>
+	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input class="form-control" id="majrfile" type="file" onchange="majorLogo()" style="display:none"></label>&nbsp;</td>
+	</tr><tr>
+        <td style='padding:5px'><img id="gameimg" src="hdlogo.jpg" height="200" alt="Game logo">&nbsp;</td>
+
+        <td style='padding:5px'>
+	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input class="form-control" id="gamefile" type="file" onchange="gameLogo()" style="display:none"></label>&nbsp;</td>
+        </tr>
+    </table>
+</div>
+
+
+<div class="container">
+  <div class="starter-template">
+  <div id="title" class="title" onclick="changeTitle()">2017 FLL Tournament</div>
+    <button onclick="changeTitle()" class="btn-link">Change event name</button>
+
+    <h1>Schedule Generation</h1>
+      <div class="radio">
+          <label><input class="form-check-input" type="radio" value="random" name="method" checked>Random</label>
+      </div>
+      <div class="radio">
+          <label><input class="form-check-input" type="radio" value="block" name="method">Block</label>
+      </div>
+  <p>Block scheduling is generally more likely to succeed and more consistent, but is less random.</p>
+  <br>
+      <br>
+      <button id="genBtn" onclick="generate()">Generate</button>
+    <p class="lead" id="words">Press the above button to attempt to generate a schedule using the given parameters.</p>
+      <button id="pdfBtn" onclick="makePDFs(false)" class="btn btn-success" style="display:none">View PDFs</button>
+      <button id="pdfBtnD" onclick="makePDFs(true)" class="btn btn-success" style="display:none">Download PDFs</button>
+  </div>
+</div>
+
+<div class="container">
+    <div class="starter-template" id="results"></div>
+</div>
+    
+</body>
+    
+
+<script src="event_definitions.js" type="text/javascript"></script>
+<script src="tabs.js" type="text/javascript"></script>
+<script src="pdf.js" type="text/javascript"></script>
+<script src="generator.js" type="text/javascript"></script>
+<script src="scheduler.js" type="text/javascript"></script>
+<!-- JQUERY -->
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/pdfmake.min.js"></script>
+<script src="../js/vfs_fonts.js"></script>
+
+<script>
+    loadPresetFLL();
+</script>
+
+</html>
