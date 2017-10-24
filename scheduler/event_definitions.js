@@ -1,22 +1,38 @@
 
-const TYPE_JUDGING = new EventType("Judging", 8);
-const TYPE_ROUND = new EventType("Matches", 16);
+const TYPE_JUDGING = new sessionType("Judging", 8);
+const TYPE_ROUND = new sessionType("Matches", 16);
 
 var UID_counter = 1;
 var start_time_offset = 0; // Set to number of minutes to start if wanted
-var allEvents = [];
-
-var days = ["Thu", "Fri", "Sat"];
-// var days = ["Day 1"];
 
 
-function EventType(name, priority) {
+function sessionType(name,priority) {
 	this.name = name;
 	this.priority = priority;
 }
 
-// Event parameters
-function EventParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
+function EventParameters(name,nTeams,nDays,teamNumbers,teamNames,days) {
+	this.name = name || "2017 FLL Tournament";
+	this.nTeams = nTeams || 24;
+	this.nDays = nDays || 1;
+	this.allSessions = [];
+	this.teamNumbers = teamNumbers || [];
+	this.teamNames = teamNames || [];
+	this.days = days || [];
+	// this.days = ["Day 1"];
+	while (this.days.length < this.nDays) this.days.push("Day " + (this.days.length+1));
+	while (this.teamNumbers.length < this.nTeams) this.teamNumbers.push("" + (this.teamNumbers.length+1)); 
+	while (this.teamNames.length < this.nTeams) this.teamNames.push("Team " + (this.teamNames.length+1)); 
+	this.changeTitle = function() {
+	    var safe = this.name;
+	    this.name = prompt("Enter title here", $("#title").get(0).textContent);
+	    if (this.name == null) this.name = safe;
+	    document.getElementById("title").innerHTML = this.name;
+	}
+}
+
+// session parameters
+function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	this.uid = UID_counter++;
 	this.type = type || TYPE_JUDGING;
 	this.name = name || (this.type==TYPE_JUDGING?"Judging ":"Round ")+this.uid;
@@ -69,25 +85,25 @@ function EventParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		// var x = $("<tr><td># locations:</td><td><div></div></td></tr>");
 		$("div", x).append(this.doms.locsInput);
 		dom.append(x);
-		dom.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.uid+")\" data-toggle=\"modal\" data-target=\"#teamModal\">Edit location names</button>\
+		dom.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.uid+")\" data-toggle=\"modal\" data-target=\"#genericModal\">Edit location names</button>\
 			</td><td><button class=\"btn\" onclick=deleteParams("+this.uid+")>Delete</button></td></tr>"));
 		// Add change listeners
         var ins = $("input,select", dom);
         for (var i = 0; i < ins.length; i++) {
-        	$(ins[i]).attr('onchange','getEvent('+this.uid+').update();');
+        	$(ins[i]).attr('onchange','getSession('+this.uid+').update();');
 		}
      	return dom;
 	}
 	this.updateDOM = function() {
 		this.doms.startDateInput.empty();
 		this.doms.endDateInput.empty();
-		for (var i = 0; i < days.length; i++)
-			this.doms.startDateInput.append($("<option value=\""+i+"\">"+days[i]+"</option>"));
-		if (days.length <= 1) this.doms.startDateInput.hide();
+		for (var i = 0; i < tournament.nDays; i++)
+			this.doms.startDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
+		if (tournament.nDays <= 1) this.doms.startDateInput.hide();
 		else this.doms.startDateInput.show();
-		for (var i = 0; i < days.length; i++)
-			this.doms.endDateInput.append($("<option value=\""+i+"\">"+days[i]+"</option>"));
-		if (days.length <= 1) this.doms.endDateInput.hide();
+		for (var i = 0; i < tournament.nDays; i++)
+			this.doms.endDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
+		if (tournament.nDays <= 1) this.doms.endDateInput.hide();
 		else this.doms.endDateInput.show();
 
 		this.doms.title[0].value = this.name;
@@ -126,15 +142,15 @@ function EventParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 function DomCollection() {
 	this.title=$("<input class=\"form-control\" type=text value=\"Title\">");
 	this.startDateInput=$("<select class=\"form-control\"></select>");
-	for (var i = 0; i < days.length; i++)
-		this.startDateInput.append($("<option value=\""+i+"\">"+days[i]+"</option>"));
-	if (days.length <= 1) this.startDateInput.hide();
+	for (var i = 0; i < tournament.days.length; i++)
+		this.startDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
+	if (tournament.days.length <= 1) this.startDateInput.hide();
 	else this.startDateInput.show();
 	this.startTimeInput=$("<input class=\"form-control\" type=time value=\"09:00\" step=\"900\">");
 	this.endDateInput=$("<select class=\"form-control\"></select>");
-	for (var i = 0; i < days.length; i++)
-		this.endDateInput.append($("<option value=\""+i+"\">"+days[i]+"</option>"));
-	if (days.length <= 1) this.endDateInput.hide();
+	for (var i = 0; i < tournament.days.length; i++)
+		this.endDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
+	if (tournament.days.length <= 1) this.endDateInput.hide();
 	else this.endDateInput.show();
 	this.endTimeInput=$("<input class=\"form-control\" type=time value=\"14:00\" step=\"900\">");
 	this.lenInput=$("<input class=\"form-control\" type=number min=0 max=1000 value=10>")
@@ -161,28 +177,28 @@ function loadPresetFLL() {
 
 function addJudging(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
-	var p = new EventParameters(TYPE_JUDGING,name,start,end,nSims,nLocs,length,buffer,locs);
-	allEvents.push(p);
+	var p = new SessionParameters(TYPE_JUDGING,name,start,end,nSims,nLocs,length,buffer,locs);
+	tournament.allSessions.push(p);
 	p.ToForm().insertBefore("#addJudgeBtn")
 }
 
 function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
-	var p = new EventParameters(TYPE_ROUND,name,start,end,nSims,nLocs,length,buffer,locs);
-	allEvents.push(p);
+	var p = new SessionParameters(TYPE_ROUND,name,start,end,nSims,nLocs,length,buffer,locs);
+	tournament.allSessions.push(p);
 	p.ToForm().insertBefore("#addRoundBtn")
 }
 
 function updateParams(id) {
-	getEvent(id).update();
+	getSession(id).update();
 }
 
 function deleteParams(id) {
 	var toDelete = -1;
 
-	for (var i = 0; i < allEvents.length; i++) {
-		if (allEvents[i].uid == id) {
-			$(allEvents[i].docObj).remove();
+	for (var i = 0; i < tournament.allSessions.length; i++) {
+		if (tournament.allSessions[i].uid == id) {
+			$(tournament.allSessions[i].docObj).remove();
 			toDelete = i;
 			break;
 		}
@@ -191,7 +207,7 @@ function deleteParams(id) {
 		console.log("Delete failed....whattup?");
 		return;
 	}
-	allEvents.splice(toDelete,1);
+	tournament.allSessions.splice(toDelete,1);
 }
 
 function minsToDate(x) {
@@ -213,13 +229,12 @@ function tdToMins(d,t) {
 }
 
 function openLocationModal(uid) {
-	event = getEvent(uid);
-	console.log(event);
+	session = getSession(uid);
     $(".modal-body").empty();
     $(".modal-title").get(0).textContent = "Locations";
     $(".modal-body").append($("<input type=\"hidden\" value=\""+uid+"\">"));
-    for (var i = 0; i < event.locations.length; i++) {
-    	var input = $("<input type=\"text\" class=\"form-control\" value=\""+event.locations[i]+"\">");
+    for (var i = 0; i < session.locations.length; i++) {
+    	var input = $("<input type=\"text\" class=\"form-control\" value=\""+session.locations[i]+"\">");
         $(".modal-body").append(input);
         $(".modal-body").append(document.createElement("BR"));
     }
@@ -228,32 +243,33 @@ function openLocationModal(uid) {
 function closeModal() {
 	var inputs = $(".modal-body>input");
 	uid = inputs[0].value;
-	event = getEvent(uid);
+	session = getSession(uid);
 	for (var i = 1; i < inputs.length; i++) {
-		event.locations[i-1] = inputs[i].value;
+		session.locations[i-1] = inputs[i].value;
 	}
 }
 
-function getEvent(uid) {
-	for (var i = 0; i < allEvents.length; i++) {
-		if (allEvents[i].uid == uid) return allEvents[i];
+function getSession(uid) {
+	for (var i = 0; i < tournament.allSessions.length; i++) {
+		if (tournament.allSessions[i].uid == uid) return tournament.allSessions[i];
 	}
-	console.log("Failed to find event " + uid);
+	console.log("Failed to find session " + uid);
 	return null;
 }
 
 function copyToAll(uid) {
-	var baseEvent = getEvent(uid);
-	for (var i = 0; i < allEvents.length; i++) {
-		var event = allEvents[i];
-		if (event.uid != uid && event.type == baseEvent.type) {
-			event.start = baseEvent.start;
-			event.end = baseEvent.end;
-			event.length = baseEvent.length;
-			event.buffer = baseEvent.buffer;
-			event.nLocs = baseEvent.nLocs;
-			event.nSims = baseEvent.nSims;
-			event.updateDOM();
+	var baseSession = getSession(uid);
+	for (var i = 0; i < tournament.allSessions.length; i++) {
+		var session = tournament.allSessions[i];
+		if (session.uid != uid && session.type == baseSession.type) {
+			session.start = baseSession.start;
+			session.end = baseSession.end;
+			session.length = baseSession.length;
+			session.buffer = baseSession.buffer;
+			session.nLocs = baseSession.nLocs;
+			session.nSims = baseSession.nSims;
+			session.updateDOM();
+			session.update();
 		}
 	}
 }

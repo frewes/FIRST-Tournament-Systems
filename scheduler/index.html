@@ -39,12 +39,12 @@
     <table>
         <tr><td>Number of teams:&nbsp;</td><td><input type=number id="nTeams" value=24 min=1 max=999></td></tr>
         <tr><td>Min. travel (mins):</td><td><input type=number id="minTravel" value=10 min=1 max=999></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadgenericModal()" data-toggle="modal" data-target="#genericModal">Edit team names</button></td></tr>
     </table>
 </div>
 
 <!-- Team names Modal -->
-<div id="teamModal" class="modal fade" role="dialog">
+<div id="genericModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
@@ -82,7 +82,7 @@
         <tr><td>Judging length (min):</td><td><input id="j1Length" type=number min=0 max=1000 value=10></td></tr>
         <tr><td>Buffer time (min):</td><td><input id="j1Buffer" type=number min=0 max=1000 value=5></td></tr>
         <tr><td>Number of judges:</td><td><input id="n1Judges" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(1)" data-toggle="modal" data-target="#teamModal">Edit location names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(1)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
     </table>
     <table class=roundtable>
         <tr><td colspan=2><h3>Core Values</h3></td></tr>
@@ -91,7 +91,7 @@
         <tr><td>Judging length (min):</td><td><input id="j2Length" type=number min=0 max=1000 value=10></td></tr>
         <tr><td>Buffer time (min):</td><td><input id="j2Buffer" type=number min=0 max=1000 value=5></td></tr>
         <tr><td>Number of judges:</td><td><input id="n2Judges" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(2)" data-toggle="modal" data-target="#teamModal">Edit location names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(2)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
     </table>
     <table class=roundtable>
         <tr><td colspan=2><h3>Research Project</h3></td></tr>
@@ -100,7 +100,7 @@
         <tr><td>Judging length (min):</td><td><input id="j3Length" type=number min=0 max=1000 value=10></td></tr>
         <tr><td>Buffer time (min):</td><td><input id="j3Buffer" type=number min=0 max=1000 value=5></td></tr>
         <tr><td>Number of judges:</td><td><input id="n3Judges" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(3)" data-toggle="modal" data-target="#teamModal">Edit location names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(3)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
     </table>
 </div>
 
@@ -124,7 +124,7 @@
         <tr><td>Match buffer (min):</td><td><input id="m1Buffer" type=number min=0 max=1000 value=5></td></tr>
         <tr><td>Tables:</td><td><input id="n1Tables" type=number min=0 max=1000 value=4 step=2></td></tr>
         <tr><td>Sim. Teams:</td><td><input id="n1Sims" type=number min=0 max=1000 value=2 step=2></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(4)" data-toggle="modal" data-target="#teamModal">Edit location names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(4)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
     </table>
     <table class="roundTable">
         <tr><td colspan=2><h3>Round 2</h3></td></tr>
@@ -134,7 +134,7 @@
         <tr><td>Match buffer (min):</td><td><input id="m2Buffer" type=number min=0 max=1000 value=3></td></tr>
         <tr><td>Tables:</td><td><input id="n2Tables" type=number min=0 max=1000 value=4 step=2></td></tr>
         <tr><td>Sim. Teams:</td><td><input id="n2Sims" type=number min=0 max=1000 value=2 step=2></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(5)" data-toggle="modal" data-target="#teamModal">Edit location names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(5)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
     </table>
     <table class="roundTable">
         <tr><td colspan=2><h3>Round 3</h3></td></tr>
@@ -144,7 +144,7 @@
         <tr><td>Match buffer (min):</td><td><input id="m3Buffer" type=number min=0 max=1000 value=3></td></tr>
         <tr><td>Tables:</td><td><input id="n3Tables" type=number min=0 max=1000 value=4 step=2></td></tr>
         <tr><td>Sim. Teams:</td><td><input id="n3Sims" type=number min=0 max=1000 value=2 step=2></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(6)" data-toggle="modal" data-target="#teamModal">Edit location names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(6)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
     </table>
 
 </div>

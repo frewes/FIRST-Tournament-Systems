@@ -23,8 +23,8 @@
   <div class="container">
     <div class="navbar-header">
     <ul class="tab">
-      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Teams')">Teams</a></li>
-      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Judging')" id="defaultOpen">Judging</a></li>
+      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Event')" id="defaultOpen">Event</a></li>
+      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Judging')">Judging</a></li>
       <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Matches')">Matches</a></li>
       <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Breaks')">Breaks</a></li>
       <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Logos')">Logos</a></li>
@@ -34,16 +34,20 @@
 </nav>
 
 <!-- Team parameters -->    
-<div id="Teams" class="tabcontent">
-    <table>
+<div id="Event" class="tabcontent">
+    <table class="roundtable">
+        <tr><td>Number of days:&nbsp;</td><td><input class="form-control" type=number id="nDays" value=1 min=1 max=5 onchange="updateDays()"></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadDayModal()" data-toggle="modal" data-target="#genericModal">Edit day names</button></td></tr>
+    </table>
+    <table class="roundtable">
         <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999></td></tr>
         <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td></tr>
+        <tr><td colspan=2><button type="button" class="btn" onclick="loadgenericModal()" data-toggle="modal" data-target="#genericModal">Edit team names</button></td></tr>
     </table>
 </div>
 
 <!-- Team names Modal -->
-<div id="teamModal" class="modal fade" role="dialog">
+<div id="genericModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
@@ -99,8 +103,8 @@
 
 <div class="container">
   <div class="starter-template">
-  <div id="title" class="title" onclick="changeTitle()">2017 FLL Tournament</div>
-    <button onclick="changeTitle()" class="btn-link">Change event name</button>
+  <div id="title" class="title" onclick="tournament.changeTitle()">2017 FLL Tournament</div>
+    <button onclick="tournament.changeTitle()" class="btn-link">Change event name</button>
 
     <h1>Schedule Generation</h1>
       <div class="radio">
@@ -129,8 +133,8 @@
 <script src="event_definitions.js" type="text/javascript"></script>
 <script src="tabs.js" type="text/javascript"></script>
 <script src="pdf.js" type="text/javascript"></script>
-<script src="generator.js" type="text/javascript"></script>
-<script src="scheduler.js" type="text/javascript"></script>
+<!-- <script src="generator.js" type="text/javascript"></script> -->
+<!-- <script src="scheduler.js" type="text/javascript"></script> -->
 <!-- JQUERY -->
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
@@ -138,6 +142,7 @@
 <script src="../js/vfs_fonts.js"></script>
 
 <script>
+    var tournament = new EventParameters();
     loadPresetFLL();
 </script>
 
