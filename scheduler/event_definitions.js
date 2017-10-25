@@ -1,4 +1,3 @@
-
 const TYPE_JUDGING = new sessionType("Judging", 8);
 const TYPE_ROUND = new sessionType("Matches", 16);
 const TYPE_BREAK = new sessionType("Breaks", 0);

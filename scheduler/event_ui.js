@@ -1,5 +1,3 @@
-
-
 function EventPanel(params) {
 	this.params = params;
 	this.allPanels = [];
@@ -21,6 +19,18 @@ function EventPanel(params) {
 		while (this.params.teamNames.length > this.params.nTeams) 
 			this.params.teamNames.splice(this.params.teamNames.length,1); 
 	}
+}
+
+function save(filename) {
+	fullname = filename+".schedule";
+	alert("Saved " + fullname + "!");
+	alert("...Just kidding.  Not implemented yet");
+}
+
+function load(evt) {
+	console.log(evt.files[0]);
+	alert ("Loaded " + evt.files[0].name + "!");
+	alert("...Just kidding.  Not implemented yet");
 }
 
 function getPanel(uid) {
@@ -112,7 +122,7 @@ function sessionPanel(session) {
 		$("div", x).append(this.locsInput);
 		this.docObj.append(x);
 	}
-	this.docObj.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.uid+")\" data-toggle=\"modal\" data-target=\"#locationModal\">Edit location names</button>\
+	this.docObj.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#locationModal\">Edit location names</button>\
 		</td><td><button class=\"btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
 	// Add change listeners
     var ins = $("input,select", this.docObj);
@@ -292,3 +302,16 @@ function closeTeamModal() {
 	$("#nTeams")[0].value = tournament.nTeams;
 }
 
+
+function clickSave() {
+	save(prompt("Enter filename", tournament.name.replace(/ /g, '_')));
+}
+
+function clickLoad() {
+	if (window.File && window.FileReader && window.FileList && window.Blob) {
+	  // Great success! All the File APIs are supported.
+	  $("#loadFileInput").click();
+	} else {
+	  alert('The File APIs are not fully supported in this browser.');
+	}
+}
