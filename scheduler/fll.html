@@ -40,7 +40,7 @@
         <tr><td colspan=2><button type="button" class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#dayModal">Edit day names</button></td></tr>
     </table>
     <table class="roundtable">
-        <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999></td></tr>
+        <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tournament.changeNTeams()"></td></tr>
         <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
         <tr><td colspan=2><button type="button" class="btn" onclick="openTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td></tr>
     </table>
@@ -88,7 +88,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Teams</h4>
             </div>
-            <div class="modal-body" id="team-modal-content">
+            <div class="modal-body" id="team-modal-body">
             </div>
             <div class="modal-footer">
                 <button type="button" onclick="closeTeamModal()" class="btn btn-default" data-dismiss="modal">Save</button>

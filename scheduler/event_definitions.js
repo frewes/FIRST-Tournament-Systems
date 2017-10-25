@@ -23,11 +23,20 @@ function EventParameters(name,nTeams,nDays,teamNumbers,teamNames,days) {
 	while (this.days.length < this.nDays) this.days.push("Day " + (this.days.length+1));
 	while (this.teamNumbers.length < this.nTeams) this.teamNumbers.push("" + (this.teamNumbers.length+1)); 
 	while (this.teamNames.length < this.nTeams) this.teamNames.push("Team " + (this.teamNames.length+1)); 
+
 	this.changeTitle = function() {
 	    var safe = this.name;
 	    this.name = prompt("Enter title here", $("#title").get(0).textContent);
 	    if (this.name == null) this.name = safe;
 	    document.getElementById("title").innerHTML = this.name;
+	}
+	this.changeNTeams = function() {
+		this.nTeams = $("#nTeams")[0].value;
+		while (this.teamNumbers.length < this.nTeams) this.teamNumbers.push("" + (this.teamNumbers.length+1)); 
+		while (this.teamNames.length < this.nTeams) this.teamNames.push("Team " + (this.teamNames.length+1)); 
+		while (this.teamNumbers.length > this.nTeams) this.teamNumbers.splice(this.teamNumbers.length,1); 
+		while (this.teamNames.length > this.nTeams) this.teamNames.splice(this.teamNames.length,1); 
+
 	}
 }
 
@@ -302,9 +311,28 @@ function closeDayModal() {
 }
 
 function openTeamModal() {
-
+    $("#team-modal-body").empty();
+    $("#team-modal-body").append($("<p>One line per team.  Team numbers will automatically add\/delete to match the number of team names.</p>"))
+    var x = $("<textarea rows=\""+tournament.nTeams+"\" cols=\"5\"></textarea>");
+    for (var i = 0; i < tournament.teamNumbers.length; i++)
+    	x.append(tournament.teamNumbers[i]+"\n");
+    $("#team-modal-body").append(x);
+    var x = $("<textarea rows=\""+tournament.nTeams+"\" cols=\"60\"></textarea>");
+    for (var i = 0; i < tournament.teamNames.length; i++)
+    	x.append(tournament.teamNames[i]+"\n");
+    $("#team-modal-body").append(x);
 }
 
 function closeTeamModal() {
-
+	var inputs = $("#team-modal-body>textarea");
+	var nums = inputs[0].value.split("\n");
+	if (nums[nums.length-1] == "") nums.splice(nums.length-1,1);
+	var names = inputs[1].value.split("\n");
+	if (names[names.length-1] == "") names.splice(names.length-1,1);
+	while (nums.length < names.length) nums.push(""+(nums.length+1));
+	while (nums.length > names.length) nums.splice(nums.length-1,1);
+	tournament.teamNumbers = nums;
+	tournament.teamNames = names;
+	tournament.nTeams = names.length;
+	$("#nTeams")[0].value = tournament.nTeams;
 }
