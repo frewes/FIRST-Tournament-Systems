@@ -1,6 +1,7 @@
 
 const TYPE_JUDGING = new sessionType("Judging", 8);
 const TYPE_ROUND = new sessionType("Matches", 16);
+const TYPE_BREAK = new sessionType("Breaks", 0);
 
 var UID_counter = 1;
 var start_time_offset = 0; // Set to number of minutes to start if wanted
@@ -19,7 +20,6 @@ function EventParameters(name,nTeams,nDays,teamNumbers,teamNames,days) {
 	this.teamNumbers = teamNumbers || [];
 	this.teamNames = teamNames || [];
 	this.days = days || [];
-	// this.days = ["Day 1"];
 	while (this.days.length < this.nDays) this.days.push("Day " + (this.days.length+1));
 	while (this.teamNumbers.length < this.nTeams) this.teamNumbers.push("" + (this.teamNumbers.length+1)); 
 	while (this.teamNames.length < this.nTeams) this.teamNames.push("Team " + (this.teamNames.length+1)); 
@@ -36,7 +36,6 @@ function EventParameters(name,nTeams,nDays,teamNumbers,teamNames,days) {
 		while (this.teamNames.length < this.nTeams) this.teamNames.push("Team " + (this.teamNames.length+1)); 
 		while (this.teamNumbers.length > this.nTeams) this.teamNumbers.splice(this.teamNumbers.length,1); 
 		while (this.teamNames.length > this.nTeams) this.teamNames.splice(this.teamNames.length,1); 
-
 	}
 }
 
@@ -44,12 +43,22 @@ function updateDays() {
 	tournament.nDays = $("#nDays")[0].value;
 	while (tournament.days.length < tournament.nDays) {
 		tournament.days.push("Day "+ (tournament.days.length+1));
+		addBreak("Night "+(tournament.days.length-1),((tournament.days.length-1)*24*60-360),((tournament.days.length-1)*24*60+540));
 	}
 	while (tournament.days.length > tournament.nDays) {
 		tournament.days.splice(tournament.days.length-1,1);
 	}
+	var toDelete = [];
 	for (var i = 0; i < tournament.allSessions.length; i++) {
-		tournament.allSessions[i].updateDOM();
+		var session = tournament.allSessions[i];
+		if (session.type == TYPE_BREAK && session.end > tournament.nDays*(24*60))
+			toDelete.push(session.uid);
+		while (session.start > tournament.nDays*(24*60)) session.start -= (24*60);
+		while (session.end > tournament.nDays*(24*60)) session.end -= (24*60);
+		session.updateDOM();
+	}
+	for (var i = 0; i < toDelete.length; i++) {
+		deleteParams(toDelete[i]);
 	}
 }
 
@@ -57,27 +66,46 @@ function updateDays() {
 function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	this.uid = UID_counter++;
 	this.type = type || TYPE_JUDGING;
-	this.name = name || (this.type==TYPE_JUDGING?"Judging ":"Round ")+this.uid;
-	this.start = start || 120;
-	this.end = end || 300;
-	this.nSims = nSims || (this.type==TYPE_JUDGING)?4:2;
-	this.nLocs = nLocs || 4;
-	this.length = length || (this.type==TYPE_JUDGING)?10:4;
-	this.buffer = buffer || (this.type==TYPE_JUDGING)?5:4;
+	if (name) this.name = name;
+	else {
+		if (this.type == TYPE_JUDGING) this.name = "Judging " + this.uid;
+		if (this.type == TYPE_ROUND) this.name = "Round " + this.uid;
+		if (this.type == TYPE_BREAK) this.name = "Lunch";
+	}
+	if (start) this.start = start;
+	else this.start = (this.type==TYPE_BREAK)?(12*60):(10*60);
+	if (end) this.end = end;
+	else this.end = (this.type==TYPE_BREAK)?(13*60):(17*60);
+	if (nLocs) this.nLocs = nLocs;
+	else this.nLocs = (this.type==TYPE_BREAK)?1:4;
+	if (nSims) this.nSims = nSims;
+	else {
+		if (this.type == TYPE_JUDGING) this.nSims = nLocs;
+		if (this.type == TYPE_ROUND) this.nSims = 2;
+		if (this.type == TYPE_BREAK) this.nSims = tournament.nTeams;
+	}
+	if (length) this.length = length;
+	else {
+		if (this.type == TYPE_JUDGING) this.length = 10;
+		if (this.type == TYPE_ROUND) this.length = 4;
+		if (this.type == TYPE_BREAK) this.length = (this.end-this.start);
+	}
+	if (buffer) this.buffer = buffer;
+	else {
+		if (this.type == TYPE_JUDGING) this.buffer = 5;
+		if (this.type == TYPE_ROUND) this.buffer = 4;
+		if (this.type == TYPE_BREAK) this.buffer = 0;
+	}
 	this.locations = locs || [];
 	// Create elements of DOM input form
 	this.doms = new DomCollection();
 	this.docObj = $("<table class=roundtable>");
-	this.doms.title.attr('value',this.name);
-	this.doms.startTimeInput.attr('value',minsToTime(this.start));
-	this.doms.endTimeInput.attr('value',minsToTime(this.end));
-	this.doms.lenInput.attr('value',this.length);
-	this.doms.bufInput.attr('value',this.buffer);
-	this.doms.simInput.attr('value',this.nSims);
 	this.doms.locsInput.attr('value',this.nLocs);
 	this.ToForm = function() {
 		var dom = this.docObj;
-		var x = $("<tr><td><h3></h3></td><td><button class=\"btn\" onclick=\"copyToAll("+this.uid+")\">Copy to all</button></td></tr>");
+		if (this.type != TYPE_BREAK)
+			var x = $("<tr><td><h3></h3></td><td><button class=\"btn\" onclick=\"copyToAll("+this.uid+")\">Copy to all</button></td></tr>");
+		else var x = $("<tr><td colspan=\"2\"><h3></h3></td></tr>");
 		$("h3", x).append(this.doms.title);
 		dom.append(x);
 		var x = $("<tr><td>Start time:</td><td><div></div></td></tr>");
@@ -88,25 +116,31 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		$("div", x).append(this.doms.endDateInput);
 		$("div", x).append(this.doms.endTimeInput);
 		dom.append(x);
-		var x = $("<tr><td>Duration (min):</td><td><div></div></td></tr>");
-		$("div", x).append(this.doms.lenInput);
-		dom.append(x);
-		var x = $("<tr><td>Buffer/cleanup time (min):</td><td><div></div></td></tr>");
-		$("div", x).append(this.doms.bufInput);
-		dom.append(x);
-		var x = $("<tr><td># Simultaneous teams:</td><td><div></div></td></tr>");
-		if (this.type == TYPE_JUDGING) x = $("<tr hidden><td># Simultaneous teams:</td><td><div></div></td></tr>");
-		$("div", x).append(this.doms.simInput);
-		dom.append(x);
+		if (this.type != TYPE_BREAK) {
+			var x = $("<tr><td>Duration (min):</td><td><div></div></td></tr>");
+			$("div", x).append(this.doms.lenInput);
+			dom.append(x);
+			var x = $("<tr><td>Buffer/cleanup time (min):</td><td><div></div></td></tr>");
+			$("div", x).append(this.doms.bufInput);
+			dom.append(x);
+			var x = $("<tr><td># Simultaneous teams:</td><td><div></div></td></tr>");
+			if (this.type == TYPE_JUDGING) x = $("<tr hidden><td># Simultaneous teams:</td><td><div></div></td></tr>");
+			$("div", x).append(this.doms.simInput);
+			dom.append(x);
+		}
 		if (this.type == TYPE_JUDGING)
 			var x = $("<tr><td># judging panels:</td><td><div></div></td></tr>");
 		else if (this.type == TYPE_ROUND)
 			var x = $("<tr><td># tables:</td><td><div></div></td></tr>");
-		else
+		else if (this.type == TYPE_BREAK)
+			var x = null;
+		else 
 			var x = $("<tr><td># locations:</td><td><div></div></td></tr>");
 		// var x = $("<tr><td># locations:</td><td><div></div></td></tr>");
-		$("div", x).append(this.doms.locsInput);
-		dom.append(x);
+		if (x) {
+			$("div", x).append(this.doms.locsInput);
+			dom.append(x);
+		}
 		dom.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.uid+")\" data-toggle=\"modal\" data-target=\"#locationModal\">Edit location names</button>\
 			</td><td><button class=\"btn\" onclick=deleteParams("+this.uid+")>Delete</button></td></tr>"));
 		// Add change listeners
@@ -153,11 +187,13 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 				this.locations.push("Room "+ (this.locations.length+1));
 			else if (this.type == TYPE_ROUND)
 				this.locations.push("Table "+ (this.locations.length+1));				
+			else this.locations.push("Lunch area");
 		}
 		while (this.locations.length > this.nLocs) {
 			this.locations.splice(this.locations.length-1,1);
 		}
 	}
+	this.updateDOM();
 	this.update();
 }
 
@@ -181,13 +217,6 @@ function DomCollection() {
 	this.locsInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
 }
 
-function BreakParameters(name,start,end,nSims) {
-	this.name = name;
-	this.start = start;
-	this.end = end;
-	this.nSims = nSims;
-}
-
 function loadPresetFLL() {
 	addRound("Round 1",600,1020,2,4,5,5);
 	addRound("Round 2",600,1020,2,4,5,5);
@@ -195,6 +224,7 @@ function loadPresetFLL() {
 	addJudging("Robot Design Judging",600,1020,4,4,10,5);
 	addJudging("Core Values Judging",600,1020,4,4,10,5);
 	addJudging("Research Project Judging",600,1020,4,4,10,5);
+	addBreak("Lunch");
 }
 
 function addJudging(name,start,end,nSims,nLocs,length,buffer,locs) {
@@ -209,6 +239,13 @@ function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 	var p = new SessionParameters(TYPE_ROUND,name,start,end,nSims,nLocs,length,buffer,locs);
 	tournament.allSessions.push(p);
 	p.ToForm().insertBefore("#addRoundBtn")
+}
+
+function addBreak(name,start,end,locs) {
+	// alert("Hello");
+	var p = new SessionParameters(TYPE_BREAK,name,start,end,null,null,null,null,locs);
+	tournament.allSessions.push(p);
+	p.ToForm().insertBefore("#addBreakBtn")
 }
 
 function updateParams(id) {
