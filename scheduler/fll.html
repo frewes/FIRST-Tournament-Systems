@@ -31,9 +31,10 @@
       <li><a href="#break_tab" data-toggle="tab">Breaks</a></li>
       <li><a href="#logo_tab" data-toggle="tab">Logos</a></li>
     </ul>
-    <ul class="nav navbar-nav navbar-right">
+    <ul id="file-nav" class="nav navbar-nav navbar-right">
         <li><a href="javascript:void(0)" onclick="clickSave()">
             <span class="glyphicon glyphicon-save"></span>Save</a>
+            <a id="saveLink" style="display:none">Download</a>
         </li>
         <li><a href="javascript:void(0)" onclick="clickLoad()">
             <span class="glyphicon glyphicon-open"></span> Load</a>
@@ -179,13 +180,19 @@
 <script src="../js/pdfmake.min.js"></script>
 
 <script>
+    if (window.File && window.FileReader && window.Blob) {
+        console.log("File operations supported");
+    } else {
+        console.log("File operations not supported.");
+        $("#file-nav").hide();
+    }
+
     if (typeof(Storage) !== "undefined") console.log("Local storage supported");
     else console.log("Local storage not supported, autosave will not work....");
 
     if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
         var tournament = load(localStorage.getItem("schedule"));
         var tourn_ui = new EventPanel(tournament);
-        console.log(tournament);
     }
     if (!tournament) {
         var tournament = new EventParameters();

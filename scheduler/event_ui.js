@@ -30,14 +30,14 @@ function EventPanel(params) {
 	}
 	this.changeNTeams = function() {
 		this.params.nTeams = this.teamInput.value;
-		while (this.params.teamNumbers.length < this.params.nTeams) 
+		while (this.params.teamNumbers.length < this.params.nTeams)
 			this.params.teamNumbers.push("" + (this.params.teamNumbers.length+1)); 
-		while (this.params.teamNames.length < this.params.nTeams) 
+		while (this.params.teamNames.length < this.params.nTeams)
 			this.params.teamNames.push("Team " + (this.params.teamNames.length+1)); 
-		while (this.params.teamNumbers.length > this.params.nTeams) 
-			this.params.teamNumbers.splice(this.params.teamNumbers.length,1); 
-		while (this.params.teamNames.length > this.params.nTeams) 
-			this.params.teamNames.splice(this.params.teamNames.length,1); 
+		while (this.params.teamNumbers.length > this.params.nTeams)
+			this.params.teamNumbers.splice(this.params.teamNumbers.length-1,1); 
+		while (this.params.teamNames.length > this.params.nTeams)
+			this.params.teamNames.splice(this.params.teamNames.length-1,1); 
 		autosave();
 	}
 	this.changeMinTravel = function() {
@@ -67,19 +67,45 @@ function autosave() {
 	localStorage.setItem("schedule", json);
 }
 
+var saveFile = null;
 function saveToFile(filename) {
 	fullname = filename+".schedule";
-	console.log(save());
-	// alert("Saved " + fullname + "!");
-	// alert("...Just kidding.  Not implemented yet");
+	json = save();
+	var data = new Blob([json], {type: 'text/plain'});
+    if (saveFile !== null) {
+      window.URL.revokeObjectURL(saveFile); //Prevents memory leaks on multiple saves.
+    }
+    saveFile = window.URL.createObjectURL(data);
+    saveLink = $("#saveLink")[0];
+    saveLink.download = fullname;
+    saveLink.href = saveFile;
+    saveLink.click();
 }
 
 function loadFromFile(evt) {
-	console.log(evt.files[0]);
 	//https://www.html5rocks.com/en/tutorials/file/dndfiles/
 	// ^ Explains how to read files as binary, text, etc.
+    var reader = new FileReader();
+    reader.onload = function(e) {
+		console.log("Loaded: ");
+		console.log(e.target.result);
+		// Should probably check that this 'looks' like a schedule file.  check field names, number of fields, etc.
+		// Step 1: Delete everything in the UI.
+		var uids = [];
+		for (var i = 0; i < tourn_ui.allPanels.length; i++) {
+			uids.push(tourn_ui.allPanels[i].session.uid);
+		}
+		for (var i = 0; i < uids.length; i++) {
+			deleteParams(uids[i]);
+		}
+		//Step 2: Replace tournament and tourn_ui
+        tournament = load(e.target.result);
+        tourn_ui = new EventPanel(tournament);
+    }
+    if (evt.files[0]) {
+        reader.readAsText(evt.files[0]);
+    }
 	alert ("Loaded " + evt.files[0].name + "!");
-	alert("...Just kidding.  Not implemented yet");
 }
 
 function getPanel(uid) {
