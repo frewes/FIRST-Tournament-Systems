@@ -37,20 +37,20 @@
         </li>
         <li><a href="javascript:void(0)" onclick="clickLoad()">
             <span class="glyphicon glyphicon-open"></span> Load</a>
-            <input type="file" id="loadFileInput" class="hidden" onchange="load(this)" accept=".schedule"></li>
+            <input type="file" id="loadFileInput" class="hidden" onchange="loadFromFile(this)" accept=".schedule"></li>
         </ul>
     </div>
 </nav>
 
 <div class="tab-content">
     <!-- Team parameters -->    
-    <div id="event_tab" class="tabcontent tab-pane fade in active">
+    <div id="event_tab" class="tabcontent tab-pane in active">
         <table class="roundtable">
-            <tr><td>Number of days:&nbsp;</td><td><input class="form-control" type=number id="nDays" value=1 min=1 max=5 onchange="updateDays()"></td></tr>
+            <tr><td>Number of days:&nbsp;</td><td><input class="form-control" type=number id="nDays" value=1 min=1 max=5 onchange="tourn_ui.changeNDays()"></td></tr>
             <tr><td colspan=2><button type="button" class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#dayModal">Edit day names</button></td></tr>
         </table>
         <table class="roundtable">
-            <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tournament.changeNTeams()"></td></tr>
+            <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
             <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
             <tr><td colspan=2><button type="button" class="btn" onclick="openTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td></tr>
         </table>
@@ -139,8 +139,8 @@
 
 <div class="container">
   <div class="starter-template">
-  <div id="title" class="title" onclick="tournament.changeTitle()">2017 FLL Tournament</div>
-    <button onclick="tournament.changeTitle()" class="btn-link">Change event name</button>
+  <div id="title" class="title" onclick="tourn_ui.changeTitle()">2017 FLL Tournament</div>
+    <button onclick="tourn_ui.changeTitle()" class="btn-link">Change event name</button>
 
     <h1>Schedule Generation</h1>
       <div class="radio">
@@ -179,9 +179,19 @@
 <script src="../js/pdfmake.min.js"></script>
 
 <script>
-    var tournament = new EventParameters();
-    var tourn_ui = new EventPanel(tournament);
-    loadPresetFLL();
+    if (typeof(Storage) !== "undefined") console.log("Local storage supported");
+    else console.log("Local storage not supported, autosave will not work....");
+
+    if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
+        var tournament = load(localStorage.getItem("schedule"));
+        var tourn_ui = new EventPanel(tournament);
+        console.log(tournament);
+    }
+    if (!tournament) {
+        var tournament = new EventParameters();
+        var tourn_ui = new EventPanel(tournament);
+        loadPresetFLL();
+    }
 </script>
 
 </html>

@@ -10,10 +10,11 @@ function sessionType(name,priority) {
 	this.priority = priority;
 }
 
-function EventParameters(name,nTeams,nDays,teamNumbers,teamNames,days) {
+function EventParameters(name,nTeams,nDays,minTravel,teamNumbers,teamNames,days) {
 	this.name = name || "2017 FLL Tournament";
 	this.nTeams = nTeams || 24;
 	this.nDays = nDays || 1;
+	this.minTravel = minTravel || 10;
 	this.allSessions = [];
 	this.teamNumbers = teamNumbers || [];
 	this.teamNames = teamNames || [];
@@ -21,15 +22,16 @@ function EventParameters(name,nTeams,nDays,teamNumbers,teamNames,days) {
 	while (this.days.length < this.nDays) this.days.push("Day " + (this.days.length+1));
 	while (this.teamNumbers.length < this.nTeams) this.teamNumbers.push("" + (this.teamNumbers.length+1)); 
 	while (this.teamNames.length < this.nTeams) this.teamNames.push("Team " + (this.teamNames.length+1)); 
-	this.updateDays = function(num_days) {
-		this.nDays = num_days;
-		while (this.days.length < this.nDays) {
-			this.days.push("Day "+ (this.days.length+1));
-			addBreak("Night "+(this.days.length-1),((this.days.length-1)*24*60-360),((this.days.length-1)*24*60+540));
-		}
-		while (this.days.length > this.nDays) {
-			this.days.splice(this.days.length-1,1);
-		}
+}
+
+function updateTournDays(event, num_days) {
+	event.nDays = num_days;
+	while (event.days.length < event.nDays) {
+		event.days.push("Day "+ (event.days.length+1));
+		addBreak("Night "+(event.days.length-1),((event.days.length-1)*24*60-360),((event.days.length-1)*24*60+540));
+	}
+	while (event.days.length > event.nDays) {
+		event.days.splice(event.days.length-1,1);
 	}
 }
 
@@ -80,10 +82,6 @@ function loadPresetFLL() {
 	addBreak("Lunch");
 }
 
-function updateParams(id) {
-	getSession(id).update();
-}
-
 function deleteParams(id) {
 	var toDelete = -1;
 
@@ -109,6 +107,23 @@ function getSession(uid) {
 	}
 	console.log("Failed to find session " + uid);
 	return null;
+}
+
+// Returns a single string JSON of all the stuffs.
+function save() {
+	return JSON.stringify(tournament);
+}
+
+// Reads given json string, makes parameters match.
+function load(json) {
+	var evt = JSON.parse(json);
+	for (var i = 0; i < evt.allSessions.length; i++) {
+		var s = evt.allSessions[i];
+		if (s.type.name == TYPE_JUDGING.name) s.type = TYPE_JUDGING;
+		if (s.type.name == TYPE_BREAK.name) s.type = TYPE_BREAK;
+		if (s.type.name == TYPE_ROUND.name) s.type = TYPE_ROUND;
+	}
+	return evt;
 }
 
 

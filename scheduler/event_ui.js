@@ -1,15 +1,35 @@
 function EventPanel(params) {
+	console.log(params);
 	this.params = params;
 	this.allPanels = [];
+	this.teamInput = $("#nTeams")[0];
+	this.daysInput = $("#nDays")[0];
+	this.minsInput = $("#minTravel")[0];
+	this.titleInput = $("#title")[0];
+	this.teamInput.value = this.params.nTeams;
+	this.daysInput.value = this.params.nDays;
+	this.minsInput.value = this.params.minTravel;
+	this.titleInput.innerHTML = this.params.name;
+	for (var i = 0; i < params.allSessions.length; i++) {
+		var p = new sessionPanel(params.allSessions[i]);
+		this.allPanels.push(p);
 
+		if (p.session.type == TYPE_JUDGING)
+			p.docObj.insertBefore("#addJudgeBtn");
+		else if (p.session.type == TYPE_ROUND)
+			p.docObj.insertBefore("#addRoundBtn");
+		else if (p.session.type == TYPE_BREAK)
+			p.docObj.insertBefore("#addBreakBtn");
+	}
 	this.changeTitle = function() {
 	    var safe = this.params.name;
-	    this.params.name = prompt("Enter title here", $("#title").get(0).textContent);
+	    this.params.name = prompt("Enter title here", this.titleInput.textContent);
 	    if (this.params.name == null) this.params.name = safe;
-	    document.getElementById("title").innerHTML = this.params.name;
+	    this.titleInput.innerHTML = this.params.name;
+		autosave();
 	}
 	this.changeNTeams = function() {
-		this.params.nTeams = $("#nTeams")[0].value;
+		this.params.nTeams = this.teamInput.value;
 		while (this.params.teamNumbers.length < this.params.nTeams) 
 			this.params.teamNumbers.push("" + (this.params.teamNumbers.length+1)); 
 		while (this.params.teamNames.length < this.params.nTeams) 
@@ -18,17 +38,46 @@ function EventPanel(params) {
 			this.params.teamNumbers.splice(this.params.teamNumbers.length,1); 
 		while (this.params.teamNames.length > this.params.nTeams) 
 			this.params.teamNames.splice(this.params.teamNames.length,1); 
+		autosave();
+	}
+	this.changeMinTravel = function() {
+		this.params.minTravel = this.minsInput.value;		
+		autosave();
+	}
+	this.changeNDays = function() {
+		updateTournDays(this.params, this.daysInput.value);
+		var toDelete = [];
+		for (var i = 0; i < this.allPanels.length; i++) {
+			var panel = this.allPanels[i];
+			if (panel.session.type == TYPE_BREAK && panel.session.end > this.params.nDays*(24*60))
+				toDelete.push(panel.session.uid);
+			while (panel.session.start > this.params.nDays*(24*60)) panel.session.start -= (24*60);
+			while (panel.session.end > this.params.nDays*(24*60)) panel.session.end -= (24*60);
+			panel.updateDOM();
+		}
+		for (var i = 0; i < toDelete.length; i++) {
+			deleteParams(toDelete[i]);
+		}
+		autosave();
 	}
 }
 
-function save(filename) {
-	fullname = filename+".schedule";
-	alert("Saved " + fullname + "!");
-	alert("...Just kidding.  Not implemented yet");
+function autosave() {
+	var json = save();
+	localStorage.setItem("schedule", json);
 }
 
-function load(evt) {
+function saveToFile(filename) {
+	fullname = filename+".schedule";
+	console.log(save());
+	// alert("Saved " + fullname + "!");
+	// alert("...Just kidding.  Not implemented yet");
+}
+
+function loadFromFile(evt) {
 	console.log(evt.files[0]);
+	//https://www.html5rocks.com/en/tutorials/file/dndfiles/
+	// ^ Explains how to read files as binary, text, etc.
 	alert ("Loaded " + evt.files[0].name + "!");
 	alert("...Just kidding.  Not implemented yet");
 }
@@ -42,21 +91,6 @@ function getPanel(uid) {
 }
 
 
-function updateDays() {
-	tournament.updateDays($("#nDays")[0].value);
-	var toDelete = [];
-	for (var i = 0; i < tourn_ui.allPanels.length; i++) {
-		var panel = tourn_ui.allPanels[i];
-		if (panel.session.type == TYPE_BREAK && panel.session.end > tournament.nDays*(24*60))
-			toDelete.push(panel.session.uid);
-		while (panel.session.start > tournament.nDays*(24*60)) panel.session.start -= (24*60);
-		while (panel.session.end > tournament.nDays*(24*60)) panel.session.end -= (24*60);
-		panel.updateDOM();
-	}
-	for (var i = 0; i < toDelete.length; i++) {
-		deleteParams(toDelete[i]);
-	}
-}
 
 function sessionPanel(session) {
 	this.session = session;
@@ -151,6 +185,7 @@ function sessionPanel(session) {
 		this.bufInput[0].value = this.session.buffer;
 		this.locsInput[0].value = this.session.nLocs;
 		this.simInput[0].value = this.session.nSims;
+		autosave();
 	}
 	this.update = function() {
 		this.session.name = this.title[0].value;
@@ -172,6 +207,7 @@ function sessionPanel(session) {
 		while (this.session.locations.length > this.session.nLocs) {
 			this.session.locations.splice(this.session.locations.length-1,1);
 		}
+		autosave();
 	}
 	this.updateDOM();
 	this.update();
@@ -272,7 +308,7 @@ function closeDayModal() {
 	var inputs = $("#day-modal-body>input");
 	for (var i = 0; i < inputs.length; i++)
 		tournament.days[i] = inputs[i].value;
-	updateDays();
+	tourn_ui.changeNDays();
 }
 
 function openTeamModal() {
@@ -304,7 +340,7 @@ function closeTeamModal() {
 
 
 function clickSave() {
-	save(prompt("Enter filename", tournament.name.replace(/ /g, '_')));
+	saveToFile(prompt("Enter filename", tournament.name.replace(/ /g, '_')));
 }
 
 function clickLoad() {
