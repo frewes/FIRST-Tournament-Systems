@@ -2,9 +2,6 @@ const TYPE_JUDGING = new SessionType("Judging", 8);
 const TYPE_ROUND = new SessionType("Matches", 16);
 const TYPE_BREAK = new SessionType("Breaks", 0);
 
-var UID_counter = 1;
-var teamnum_counter = 1;
-var start_time_offset = 0; // Set to number of minutes to start if wanted
 
 function SessionType(name,priority) {
 	this.name = name;
@@ -12,6 +9,10 @@ function SessionType(name,priority) {
 }
 
 function EventParameters(name,nTeams,nDays,minTravel) {
+	this.UID_counter = 1;
+	this.teamnum_counter = 1;
+	this.start_time_offset = 0; // Set to number of minutes to start if wanted
+
 	this.name = (name)?name:"2017 FLL Tournament";
 	if (!nTeams) var nTeams=24;
 	this.nDays = (nDays)?nDays:1;
@@ -30,6 +31,7 @@ function updateTournDays(event, num_days) {
 	while (event.days.length < event.nDays) {
 		event.days.push("Day "+ (event.days.length+1));
 		addBreak("Night "+(event.days.length-1),((event.days.length-1)*24*60-360),((event.days.length-1)*24*60+540));
+		tournament.allSessions[tournament.allSessions.length-1].locations = [""];
 	}
 	while (event.days.length > event.nDays) {
 		event.days.splice(event.days.length-1,1);
@@ -38,7 +40,7 @@ function updateTournDays(event, num_days) {
 
 // session parameters
 function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
-	this.uid = UID_counter++;
+	this.uid = tournament.UID_counter++;
 	this.type = type || TYPE_JUDGING;
 	if (name) this.name = name;
 	else {
@@ -74,7 +76,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 }
 
 function TeamParameters(number,name) {
-	this.number = (number)?number:(teamnum_counter++);
+	this.number = (number)?number:(tournament.teamnum_counter++);
 	this.name = (name)?name:("Team " +this.number);
 	this.special = false;
 	this.times = [];

@@ -48,14 +48,14 @@
     <div id="event_tab" class="tabcontent tab-pane in active">
         <table class="roundtable">
             <tr><td>Number of days:&nbsp;</td><td><input class="form-control" type=number id="nDays" value=1 min=1 max=5 onchange="tourn_ui.changeNDays()"></td></tr>
-            <tr><td colspan=2><button type="button" class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#dayModal">Edit day names</button></td></tr>
+            <tr><td colspan=2><button type="button" class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#smallModal">Edit day names</button></td></tr>
         </table>
         <table class="roundtable">
             <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
             <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
             <tr>
-                <td><button type="button" class="btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#teamModal">Edit names/numbers</button></td>
-                <td><button type="button" class="btn" disabled onclick="openTeamEditModal()" data-toggle="modal" data-target="#teamModal" >Advanced...</button></td>
+                <td><button type="button" class="btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#largeModal">Edit names/numbers</button></td>
+                <td><button type="button" class="btn" disabled onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Advanced...</button></td>
             </tr>
         </table>
     </div>
@@ -88,56 +88,36 @@
     </div>
 </div>
 
-<div id="locationModal" class="modal fade" role="dialog">
+<div id="smallModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="sm-modal-title"></h4>
+            </div>
+            <div class="modal-body" id="sm-modal-body">
+            </div>
+            <div class="modal-footer" id="sm-modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="largeModal" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Locations</h4>
+                <h4 class="modal-title" id="lg-modal-title"></h4>
             </div>
-            <div class="modal-body" id="loc-modal-body">
+            <div class="modal-body" id="lg-modal-body">
             </div>
-            <div class="modal-footer">
-                <button type="button" onclick="closeLocationModal()" class="btn btn-default" data-dismiss="modal">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <div class="modal-footer" id="lg-modal-footer">
             </div>
         </div>
     </div>
 </div>
-<div id="dayModal" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Day names</h4>
-            </div>
-            <div class="modal-body" id="day-modal-body">
-            </div>
-            <div class="modal-footer">
-                <button type="button" onclick="closeDayModal()" class="btn btn-default" data-dismiss="modal">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="teamModal" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Teams</h4>
-            </div>
-            <div class="modal-body" id="team-modal-body">
-            </div>
-            <div class="modal-footer" id="team-modal-footer">
-            </div>
-        </div>
-    </div>
-</div>
-
 
 <div class="container">
   <div class="starter-template">

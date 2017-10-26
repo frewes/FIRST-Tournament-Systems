@@ -86,8 +86,8 @@ function EventPanel(params) {
 	    }
 	}
 	this.sequenceTeams = function() {
-	    var x = $("#team-modal-body>textarea")[0];
-	    var names = $("#team-modal-body>textarea")[1].value.split('\n');
+	    var x = $("#lg-modal-body>textarea")[0];
+	    var names = $("#lg-modal-body>textarea")[1].value.split('\n');
 	    nameLen = names.length;
 	    if (names[names.length-1] == "") nameLen--;
 	    x.value = "";
@@ -217,7 +217,7 @@ function SessionPanel(session) {
 		$("div", x).append(this.locsInput);
 		this.docObj.append(x);
 	}
-	this.docObj.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#locationModal\">Edit location names</button>\
+	this.docObj.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
 		</td><td><button class=\"btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
 	// Add change listeners
     var ins = $("input,select", this.docObj);
@@ -326,7 +326,7 @@ function minsToDate(x) {
 
 function minsToTime(x) {
 	if (x == null) return null;
-	x = (x%(24*60)) + start_time_offset;
+	x = (x%(24*60)) + tournament.start_time_offset;
 	var h = Math.floor(x/60);
 	var m = (x%60);
 	var zh = (h < 10) ? "0" : "";
@@ -337,22 +337,25 @@ function minsToTime(x) {
 function dtToMins(d,t) {
 	if (t == "") return null;
     var res = t.split(":");
-    return d*(60*24) + parseInt(res[0])*60 + parseInt(res[1]) - start_time_offset;
+    return d*(60*24) + parseInt(res[0])*60 + parseInt(res[1]) - tournament.start_time_offset;
 }
 
 function openLocationModal(uid) {
 	panel = getPanel(uid);
-    $("#loc-modal-body").empty();
-    $("#loc-modal-body").append($("<input type=\"hidden\" value=\""+uid+"\">"));
+    $("#sm-modal-body").empty();
+    $("#sm-modal-footer").empty();
+    $("#sm-modal-body").append($("<input type=\"hidden\" value=\""+uid+"\">"));
     for (var i = 0; i < panel.session.locations.length; i++) {
     	var input = $("<input type=\"text\" class=\"form-control\" value=\""+panel.session.locations[i]+"\">");
-        $("#loc-modal-body").append(input);
-        $("#loc-modal-body").append(document.createElement("BR"));
+        $("#sm-modal-body").append(input);
+        $("#sm-modal-body").append(document.createElement("BR"));
     }
+    $("#sm-modal-footer").append($("<button type=\"button\" onclick=\"closeLocationModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#sm-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }
 
 function closeLocationModal() {
-	var inputs = $("#loc-modal-body>input");
+	var inputs = $("#sm-modal-body>input");
 	uid = inputs[0].value;
 	panel = getPanel(uid);
 	for (var i = 1; i < inputs.length; i++)
@@ -361,40 +364,44 @@ function closeLocationModal() {
 }
 
 function openDayModal() {
-    $("#day-modal-body").empty();
+    $("#sm-modal-body").empty();
+    $("#sm-modal-footer").empty();
+    $("#sm-modal-title")[0].innerHTML = "Days";
     for (var i = 0; i < tournament.nDays; i++) {
     	var input = $("<input type=\"text\" class=\"form-control\" value=\""+tournament.days[i]+"\">");
-        $("#day-modal-body").append(input);
-        $("#day-modal-body").append(document.createElement("BR"));
-    }
+	    $("#sm-modal-body").append(input);
+	    $("#sm-modal-body").append(document.createElement("BR"));
+	}
+    $("#sm-modal-footer").append($("<button type=\"button\" onclick=\"closeDayModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#sm-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }
 
 function closeDayModal() {
-	var inputs = $("#day-modal-body>input");
+	var inputs = $("#sm-modal-body>input");
 	for (var i = 0; i < inputs.length; i++)
 		tournament.days[i] = inputs[i].value;
 	tourn_ui.changeNDays();
 }
 
 function openTeamImportModal() {
-    $("#team-modal-body").empty();
-    $("#team-modal-footer").empty();
-    $("#team-modal-body").append($("<p>One line per team.  Team numbers will automatically add\/delete to match the number of team names.</p>"))
-    $("#team-modal-body").append($("<p><button type=\"button\" class=\"btn\" onclick=\"tourn_ui.sequenceTeams()\">Number sequentially</button></p>"));
+    $("#lg-modal-body").empty();
+    $("#lg-modal-footer").empty();
+    $("#lg-modal-body").append($("<p>One line per team.  Team numbers will automatically add\/delete to match the number of team names.</p>"))
+    $("#lg-modal-body").append($("<p><button type=\"button\" class=\"btn\" onclick=\"tourn_ui.sequenceTeams()\">Number sequentially</button></p>"));
     var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"5\"></textarea>");
     for (var i = 0; i < tournament.teams.length; i++)
     	x.append(tournament.teams[i].number+"\n");
-    $("#team-modal-body").append(x);
+    $("#lg-modal-body").append(x);
     var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"60\"></textarea>");
     for (var i = 0; i < tournament.teams.length; i++)
     	x.append(tournament.teams[i].name+"\n");
-    $("#team-modal-body").append(x);
-    $("#team-modal-footer").append($("<button type=\"button\" onclick=\"closeTeamImportModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
-    $("#team-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+    $("#lg-modal-body").append(x);
+    $("#lg-modal-footer").append($("<button type=\"button\" onclick=\"closeTeamImportModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#lg-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }
 
 function closeTeamImportModal() {
-	var inputs = $("#team-modal-body>textarea");
+	var inputs = $("#lg-modal-body>textarea");
 	var nums = inputs[0].value.split("\n");
 	if (nums[nums.length-1] == "") nums.splice(nums.length-1,1);
 	var names = inputs[1].value.split("\n");
@@ -412,11 +419,11 @@ function closeTeamImportModal() {
 }
 
 function openTeamEditModal() {
-    $("#team-modal-body").empty();
-    $("#team-modal-footer").empty();
-    $("#team-modal-body").append($("<table class=\"table\">"));
-    $("#team-modal-body>table").append($("<thead><tr><th>Team</th><th>Needs extra time?</th><th>Arrival time</th><th>Departure time</th></tr></thead>"));
-    $("#team-modal-body>table").append($("<tbody>"));
+    $("#lg-modal-body").empty();
+    $("#lg-modal-footer").empty();
+    $("#lg-modal-body").append($("<table class=\"table\">"));
+    $("#lg-modal-body>table").append($("<thead><tr><th>Team</th><th>Needs extra time?</th><th>Arrival time</th><th>Departure time</th></tr></thead>"));
+    $("#lg-modal-body>table").append($("<tbody>"));
    	for (var i = 0; i < tourn_ui.params.teams.length; i++) {
    		var team = tourn_ui.params.teams[i];
    		var x = $("<tr>");
@@ -445,15 +452,15 @@ function openTeamEditModal() {
 	   		$(dateInput2).append($("<input class=\"form-control\" type=\"time\" step=\"900\">"));
 		else 
 	   		$(dateInput2).append($("<input class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.end)+"\">"));
-		$("#team-modal-body>table").append(x);
+		$("#lg-modal-body>table").append(x);
    	}
-   	console.log($("#team-modal-body"));
-    $("#team-modal-footer").append($("<button type=\"button\" onclick=\"closeTeamEditModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
-    $("#team-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+   	console.log($("#lg-modal-body"));
+    $("#lg-modal-footer").append($("<button type=\"button\" onclick=\"closeTeamEditModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#lg-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }
 
 function closeTeamEditModal() {
-	var modal = $("#team-modal-body");
+	var modal = $("#lg-modal-body");
 	var rows = $("tr", modal);
 	for (var i = 1; i < rows.length; i++) {
 		var inputs = $("input,select",rows[i]);
