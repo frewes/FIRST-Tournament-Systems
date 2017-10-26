@@ -19,6 +19,8 @@ function EventParameters(name,nTeams,nDays,minTravel,teamNumbers,teamNames,days)
 	this.teamNumbers = teamNumbers || [];
 	this.teamNames = teamNames || [];
 	this.days = days || [];
+	this.majorLogo = "mqlogo.png";
+	this.gameLogo = "hdlogo.jpg"
 	while (this.days.length < this.nDays) this.days.push("Day " + (this.days.length+1));
 	while (this.teamNumbers.length < this.nTeams) this.teamNumbers.push("" + (this.teamNumbers.length+1)); 
 	while (this.teamNames.length < this.nTeams) this.teamNames.push("Team " + (this.teamNames.length+1)); 

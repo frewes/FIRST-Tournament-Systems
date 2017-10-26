@@ -6,10 +6,16 @@ function EventPanel(params) {
 	this.daysInput = $("#nDays")[0];
 	this.minsInput = $("#minTravel")[0];
 	this.titleInput = $("#title")[0];
+	this.majorLogoInput = $("#majrimg")[0];
+	this.gameLogoInput = $("#gameimg")[0];
+	this.majorFileInput = $("#majrfile")[0];
+	this.gameFileInput = $("#gamefile")[0];
 	this.teamInput.value = this.params.nTeams;
 	this.daysInput.value = this.params.nDays;
 	this.minsInput.value = this.params.minTravel;
 	this.titleInput.innerHTML = this.params.name;
+	this.majorLogoInput.src = this.params.majorLogo;
+	this.gameLogoInput.src = this.params.gameLogo;
 	for (var i = 0; i < params.allSessions.length; i++) {
 		var p = new sessionPanel(params.allSessions[i]);
 		this.allPanels.push(p);
@@ -60,7 +66,33 @@ function EventPanel(params) {
 		}
 		autosave();
 	}
+	this.changeMajorLogo = function() {
+	    var file = this.majorFileInput.files[0];
+	    var reader = new FileReader();
+	    reader.onloadend = function() {
+	    	tourn_ui.params.majorLogo = this.result;
+			tourn_ui.majorLogoInput.src = tourn_ui.params.majorLogo;
+		    autosave();
+	    }
+	    if (file) {
+			reader.readAsDataURL(file);
+	    }
+	}
+	this.changeGameLogo = function() {
+	    var file = this.gameFileInput.files[0];
+	    var reader = new FileReader();
+	    reader.onloadend = function() {
+	    	tourn_ui.params.gameLogo = this.result;
+			tourn_ui.gameLogoInput.src = tourn_ui.params.gameLogo;
+		    autosave();
+	    }
+	    if (file) {
+			reader.readAsDataURL(file);
+	    }
+	}
 }
+
+
 
 function autosave() {
 	var json = save();
