@@ -87,8 +87,11 @@ function EventPanel(params) {
 	}
 	this.sequenceTeams = function() {
 	    var x = $("#team-modal-body>textarea")[0];
+	    var names = $("#team-modal-body>textarea")[1].value.split('\n');
+	    nameLen = names.length;
+	    if (names[names.length-1] == "") nameLen--;
 	    x.value = "";
-	    for (var i = 0; i < tournament.teams.length; i++)
+	    for (var i = 0; i < nameLen; i++)
 	    	x.value = x.value + ((i+1)+"\n");
 	}
 }
