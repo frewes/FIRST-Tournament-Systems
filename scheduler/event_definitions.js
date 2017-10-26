@@ -1,29 +1,28 @@
-const TYPE_JUDGING = new sessionType("Judging", 8);
-const TYPE_ROUND = new sessionType("Matches", 16);
-const TYPE_BREAK = new sessionType("Breaks", 0);
+const TYPE_JUDGING = new SessionType("Judging", 8);
+const TYPE_ROUND = new SessionType("Matches", 16);
+const TYPE_BREAK = new SessionType("Breaks", 0);
 
 var UID_counter = 1;
+var teamnum_counter = 1;
 var start_time_offset = 0; // Set to number of minutes to start if wanted
 
-function sessionType(name,priority) {
+function SessionType(name,priority) {
 	this.name = name;
 	this.priority = priority;
 }
 
-function EventParameters(name,nTeams,nDays,minTravel,teamNumbers,teamNames,days) {
-	this.name = name || "2017 FLL Tournament";
-	this.nTeams = nTeams || 24;
-	this.nDays = nDays || 1;
-	this.minTravel = minTravel || 10;
+function EventParameters(name,nTeams,nDays,minTravel) {
+	this.name = (name)?name:"2017 FLL Tournament";
+	if (!nTeams) var nTeams=24;
+	this.nDays = (nDays)?nDays:1;
+	this.minTravel = (minTravel)?minTravel:10;
 	this.allSessions = [];
-	this.teamNumbers = teamNumbers || [];
-	this.teamNames = teamNames || [];
-	this.days = days || [];
+	this.teams = [];
+	this.days = [];
 	this.majorLogo = "mqlogo.png";
 	this.gameLogo = "hdlogo.jpg"
 	while (this.days.length < this.nDays) this.days.push("Day " + (this.days.length+1));
-	while (this.teamNumbers.length < this.nTeams) this.teamNumbers.push("" + (this.teamNumbers.length+1)); 
-	while (this.teamNames.length < this.nTeams) this.teamNames.push("Team " + (this.teamNames.length+1)); 
+	while (this.teams.length < nTeams) this.teams.push(new TeamParameters(this.teams.length+1)); 
 }
 
 function updateTournDays(event, num_days) {
@@ -57,7 +56,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	else {
 		if (this.type == TYPE_JUDGING) this.nSims = nLocs;
 		if (this.type == TYPE_ROUND) this.nSims = 2;
-		if (this.type == TYPE_BREAK) this.nSims = tournament.nTeams;
+		if (this.type == TYPE_BREAK) this.nSims = tournament.teams.length;
 	}
 	if (length) this.length = length;
 	else {
@@ -72,6 +71,16 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		if (this.type == TYPE_BREAK) this.buffer = 0;
 	}
 	this.locations = locs || [];
+}
+
+function TeamParameters(number,name) {
+	this.number = (number)?number:(teamnum_counter++);
+	this.name = (name)?name:("Team " +this.number);
+	this.special = false;
+	this.times = [];
+	this.start = null; // Can be used to define when the team must arrive.
+	this.end = null; // Can be used to define when the team must leave.
+	// For the above two parameters, will probably need to conduct a check before scheduling; if they physically can't fit anything, don't try.
 }
 
 function loadPresetFLL() {

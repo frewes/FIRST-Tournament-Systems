@@ -10,16 +10,15 @@ function EventPanel(params) {
 	this.gameLogoInput = $("#gameimg")[0];
 	this.majorFileInput = $("#majrfile")[0];
 	this.gameFileInput = $("#gamefile")[0];
-	this.teamInput.value = this.params.nTeams;
+	this.teamInput.value = this.params.teams.length;
 	this.daysInput.value = this.params.nDays;
 	this.minsInput.value = this.params.minTravel;
 	this.titleInput.innerHTML = this.params.name;
 	this.majorLogoInput.src = this.params.majorLogo;
 	this.gameLogoInput.src = this.params.gameLogo;
 	for (var i = 0; i < params.allSessions.length; i++) {
-		var p = new sessionPanel(params.allSessions[i]);
+		var p = new SessionPanel(params.allSessions[i]);
 		this.allPanels.push(p);
-
 		if (p.session.type == TYPE_JUDGING)
 			p.docObj.insertBefore("#addJudgeBtn");
 		else if (p.session.type == TYPE_ROUND)
@@ -35,15 +34,11 @@ function EventPanel(params) {
 		autosave();
 	}
 	this.changeNTeams = function() {
-		this.params.nTeams = this.teamInput.value;
-		while (this.params.teamNumbers.length < this.params.nTeams)
-			this.params.teamNumbers.push("" + (this.params.teamNumbers.length+1)); 
-		while (this.params.teamNames.length < this.params.nTeams)
-			this.params.teamNames.push("Team " + (this.params.teamNames.length+1)); 
-		while (this.params.teamNumbers.length > this.params.nTeams)
-			this.params.teamNumbers.splice(this.params.teamNumbers.length-1,1); 
-		while (this.params.teamNames.length > this.params.nTeams)
-			this.params.teamNames.splice(this.params.teamNames.length-1,1); 
+		var nTeams = this.teamInput.value;
+		while (this.params.teams.length < nTeams)
+			this.params.teams.push(new TeamParameters(this.params.teams.length+1)); 
+		while (this.params.teams.length > nTeams)
+			this.params.teams.splice(this.params.teams.length-1,1); 
 		autosave();
 	}
 	this.changeMinTravel = function() {
@@ -89,6 +84,11 @@ function EventPanel(params) {
 	    if (file) {
 			reader.readAsDataURL(file);
 	    }
+	}
+	this.sequenceTeams = function() {
+		for (var i = 0 ; i < this.params.teams.length; i++) {
+			this.params.teams[i].number = (i+1);
+		}
 	}
 }
 
@@ -150,7 +150,7 @@ function getPanel(uid) {
 
 
 
-function sessionPanel(session) {
+function SessionPanel(session) {
 	this.session = session;
 
 	// Create elements of DOM input form
@@ -209,7 +209,6 @@ function sessionPanel(session) {
 		var x = null;
 	else 
 		var x = $("<tr><td># locations:</td><td><div></div></td></tr>");
-	// var x = $("<tr><td># locations:</td><td><div></div></td></tr>");
 	if (x) {
 		$("div", x).append(this.locsInput);
 		this.docObj.append(x);
@@ -293,7 +292,7 @@ function addJudging(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
 	var s = new SessionParameters(TYPE_JUDGING,name,start,end,nSims,nLocs,length,buffer,locs);
 	tournament.allSessions.push(s);
-	var p = new sessionPanel(s);
+	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addJudgeBtn")
 }
@@ -302,7 +301,7 @@ function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
 	var s = new SessionParameters(TYPE_ROUND,name,start,end,nSims,nLocs,length,buffer,locs);
 	tournament.allSessions.push(s);
-	var p = new sessionPanel(s);
+	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addRoundBtn")
 }
@@ -311,7 +310,7 @@ function addBreak(name,start,end,locs) {
 	// alert("Hello");
 	var s = new SessionParameters(TYPE_BREAK,name,start,end,null,null,null,null,locs);
 	tournament.allSessions.push(s);
-	var p = new sessionPanel(s);
+	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addBreakBtn")
 }
@@ -351,6 +350,7 @@ function closeLocationModal() {
 	panel = getPanel(uid);
 	for (var i = 1; i < inputs.length; i++)
 		panel.session.locations[i-1] = inputs[i].value;
+	autosave();
 }
 
 function openDayModal() {
@@ -372,13 +372,14 @@ function closeDayModal() {
 function openTeamModal() {
     $("#team-modal-body").empty();
     $("#team-modal-body").append($("<p>One line per team.  Team numbers will automatically add\/delete to match the number of team names.</p>"))
-    var x = $("<textarea rows=\""+tournament.nTeams+"\" cols=\"5\"></textarea>");
-    for (var i = 0; i < tournament.teamNumbers.length; i++)
-    	x.append(tournament.teamNumbers[i]+"\n");
+    // $("#team-modal.body").append($("<div id=\"team-modal-nums\">"));
+    var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"5\"></textarea>");
+    for (var i = 0; i < tournament.teams.length; i++)
+    	x.append(tournament.teams[i].number+"\n");
     $("#team-modal-body").append(x);
-    var x = $("<textarea rows=\""+tournament.nTeams+"\" cols=\"60\"></textarea>");
-    for (var i = 0; i < tournament.teamNames.length; i++)
-    	x.append(tournament.teamNames[i]+"\n");
+    var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"60\"></textarea>");
+    for (var i = 0; i < tournament.teams.length; i++)
+    	x.append(tournament.teams[i].name+"\n");
     $("#team-modal-body").append(x);
 }
 
@@ -390,10 +391,14 @@ function closeTeamModal() {
 	if (names[names.length-1] == "") names.splice(names.length-1,1);
 	while (nums.length < names.length) nums.push(""+(nums.length+1));
 	while (nums.length > names.length) nums.splice(nums.length-1,1);
-	tournament.teamNumbers = nums;
-	tournament.teamNames = names;
-	tournament.nTeams = names.length;
-	$("#nTeams")[0].value = tournament.nTeams;
+	while (tournament.teams.length < nums.length) tournament.teams.push(new TeamParameters(0));
+	while (tournament.teams.length > nums.length) tournament.teams.splice(tournament.teams.length-1,1);
+	for (var i = 0; i < nums.length; i++) {
+		tournament.teams[i].number = nums[i];
+		tournament.teams[i].name = names[i];
+	}
+	tourn_ui.teamInput.value = tournament.teams.length;
+	autosave();
 }
 
 

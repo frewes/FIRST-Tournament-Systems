@@ -53,7 +53,10 @@
         <table class="roundtable">
             <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
             <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
-            <tr><td colspan=2><button type="button" class="btn" onclick="openTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td></tr>
+            <tr>
+                <td><button type="button" class="btn" onclick="openTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td>
+                <td><button type="button" class="btn" onclick="tourn_ui.sequenceTeams()">Number sequentially</button></td>
+            </tr>
         </table>
     </div>
         
