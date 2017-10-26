@@ -54,8 +54,8 @@
             <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
             <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
             <tr>
-                <td><button type="button" class="btn" onclick="openTeamModal()" data-toggle="modal" data-target="#teamModal">Edit team names</button></td>
-                <td><button type="button" class="btn" onclick="tourn_ui.sequenceTeams()">Number sequentially</button></td>
+                <td><button type="button" class="btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#teamModal">Edit names/numbers</button></td>
+                <td><button type="button" class="btn" disabled onclick="openTeamEditModal()" data-toggle="modal" data-target="#teamModal" >Advanced...</button></td>
             </tr>
         </table>
     </div>
@@ -89,7 +89,7 @@
 </div>
 
 <div id="locationModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -106,7 +106,7 @@
     </div>
 </div>
 <div id="dayModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -123,7 +123,7 @@
     </div>
 </div>
 <div id="teamModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -132,9 +132,7 @@
             </div>
             <div class="modal-body" id="team-modal-body">
             </div>
-            <div class="modal-footer">
-                <button type="button" onclick="closeTeamModal()" class="btn btn-default" data-dismiss="modal">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <div class="modal-footer" id="team-modal-footer">
             </div>
         </div>
     </div>
