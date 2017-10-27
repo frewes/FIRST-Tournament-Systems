@@ -32,10 +32,12 @@ function generateTable(session) {
 
 		for (var t = 0; t < instance.teams.length; t++) {
 			diff--;
+			var deets="event,"+session.uid+","+i+","+t;
 			if (instance.teams[t] == NOT_YET_ADDED)
-				row.append("<td class=\"unfilled\">--</td>");
-			else
-				row.append("<td>"+instance.teams[t].number+"</td>");
+				row.append($("<td draggable=\"true\" class=\"unfilled\" ondrop=\"drop("+deets+")\" ondragstart=\"drag("+deets+")\" ondragover=\"allowDrop("+deets+")\">--</td>"));
+			else 
+				row.append($("<td draggable=\"true\" ondrop=\"drop("+deets+")\" ondragover=\"allowDrop("+deets+")\" ondragstart=\"drag("+deets+")\">"+instance.teams[t].number+"</td>"));
+			console.log
 		}
 		while (diff-- >= 0) row.append($("<td>"));
 		tbody.append(row);
@@ -43,4 +45,25 @@ function generateTable(session) {
 	table.append(tbody);
 	result.append(table);
 	return result;
+}
+
+function drop(evt,uid,i,t) {
+	evt.preventDefault();
+    var from_uid = parseInt(evt.dataTransfer.getData("uid"));
+    var from_i = parseInt(evt.dataTransfer.getData("instance"));
+    var from_t = parseInt(evt.dataTransfer.getData("team"));
+	var from_instance = getSession(from_uid).schedule[from_i];
+    console.log(from_instance);
+    var to_instance = getSession(uid).schedule[i];
+    console.log(to_instance);
+}
+
+function allowDrop(evt,uid,i,t) {
+	evt.preventDefault();
+}
+
+function drag(evt,uid,i,t) {
+    evt.dataTransfer.setData("uid", uid);
+    evt.dataTransfer.setData("instance", i);
+    evt.dataTransfer.setData("team", t);
 }
