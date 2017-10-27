@@ -32,6 +32,11 @@
       <li><a href="#logo_tab" data-toggle="tab">Logos</a></li>
     </ul>
     <ul id="file-nav" class="nav navbar-nav navbar-right">
+        <li><a><label for="adv-toggle">Advanced: </label></a></li>
+        <li><a><label class="switch">
+            <input id="adv-toggle" type="checkbox" onchange="toggleAdvMode()">
+            <span class="slider round"></span></a>
+        </li>
         <li><a href="javascript:void(0)" onclick="clickSave()">
             <span class="glyphicon glyphicon-save"></span>Save</a>
             <a id="saveLink" style="display:none">Download</a>
@@ -45,32 +50,32 @@
 
 <div class="tab-content">
     <!-- Team parameters -->    
-    <div id="event_tab" class="tabcontent tab-pane in active">
+    <div id="event_tab" class="tabcontent tab-pane fade in active">
         <table class="roundtable">
             <tr><td>Number of days:&nbsp;</td><td><input class="form-control" type=number id="nDays" value=1 min=1 max=5 onchange="tourn_ui.changeNDays()"></td></tr>
-            <tr><td colspan=2><button type="button" class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#smallModal">Edit day names</button></td></tr>
+            <tr><td colspan=2><button class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#smallModal">Edit day names</button></td></tr>
         </table>
         <table class="roundtable">
             <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
             <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
             <tr>
-                <td><button type="button" class="btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#largeModal">Edit names/numbers</button></td>
-                <td><button type="button" class="btn" disabled onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Advanced...</button></td>
+                <td><button class="btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#largeModal">Edit names/numbers</button></td>
+                <td><button class="advanced btn" disabled onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Adv. Team details</button></td>
             </tr>
         </table>
     </div>
         
     <!-- Session parameters -->
     <div id="judge_tab" class="tabcontent tab-pane fade">
-        <button class="btn" id="addJudgeBtn" onclick="addJudging()">Add!</button>
+        <button class="advanced btn" id="addJudgeBtn" onclick="addJudging()">Add!</button>
     </div>
 
     <div id="match_tab" class="tabcontent tab-pane fade">
-        <button class="btn" id="addRoundBtn" onclick="addRound()">Add!</button>
+        <button class="advanced btn" id="addRoundBtn" onclick="addRound()">Add!</button>
     </div>
 
     <div id="break_tab" class="tabcontent tab-pane fade">
-        <button class="btn" id="addBreakBtn" onclick="addBreak()">Add!</button>
+        <button class="advanced btn" id="addBreakBtn" onclick="addBreak()">Add!</button>
     </div>
     <div id="logo_tab" class="tabcontent tab-pane fade">
         <table>
@@ -93,7 +98,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title" id="sm-modal-title"></h4>
             </div>
             <div class="modal-body" id="sm-modal-body">
@@ -108,7 +113,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title" id="lg-modal-title"></h4>
             </div>
             <div class="modal-body" id="lg-modal-body">
@@ -134,7 +139,7 @@
   <p>Block scheduling is generally more likely to succeed and more consistent, but is less random.</p>
   <br>
       <br>
-      <button id="genBtn" onclick="generate()">Generate</button>
+      <button id="genBtn" class="btn btn-lg btn-info" onclick="generate()">Generate</button>
     <p class="lead" id="words">Press the above button to attempt to generate a schedule using the given parameters.</p>
       <button id="pdfBtn" onclick="makePDFs(false)" class="btn btn-success" style="display:none">View PDFs</button>
       <button id="pdfBtnD" onclick="makePDFs(true)" class="btn btn-success" style="display:none">Download PDFs</button>

@@ -99,6 +99,7 @@ function loadPresetFLL() {
 	addJudging("Core Values Judging",600,1020,4,4,10,5);
 	addJudging("Research Project Judging",600,1020,4,4,10,5);
 	addBreak("Lunch");
+	toggleAdvMode();
 }
 
 function deleteParams(id) {

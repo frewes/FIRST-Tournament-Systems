@@ -156,16 +156,24 @@ function getPanel(uid) {
 	return null;
 }
 
-
+function toggleAdvMode() {
+	if ($("#adv-toggle")[0].checked) {
+		$(".advanced").show();
+		$(".adv-title").attr('readonly',false);
+	} else {
+		$(".advanced").hide();
+		$(".adv-title").attr('readonly',true);
+	}
+}
 
 function SessionPanel(session) {
 	this.session = session;
 
 	// Create elements of DOM input form
-	this.docObj = $("<table class=roundtable>");
+	this.docObj = $("<table class=\"roundtable\">");
 
 	// DOM objects
-	this.title=$("<input class=\"form-control\" type=text value=\"Title\">");
+	this.title=$("<input class=\"adv-title form-control\" type=text value=\"Title\">");
 	this.startDateInput=$("<select class=\"form-control\"></select>");
 	for (var i = 0; i < tournament.days.length; i++)
 		this.startDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
@@ -228,7 +236,7 @@ function SessionPanel(session) {
 		this.docObj.append(x);
 	}
 	this.docObj.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
-		</td><td><button class=\"btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
+		</td><td><button class=\"advanced btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
 	// Add change listeners
     var ins = $("input,select", this.docObj);
     for (var i = 0; i < ins.length; i++) {
@@ -371,8 +379,8 @@ function openLocationModal(uid) {
         $("#sm-modal-body").append(input);
         $("#sm-modal-body").append(document.createElement("BR"));
     }
-    $("#sm-modal-footer").append($("<button type=\"button\" onclick=\"closeLocationModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
-    $("#sm-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+    $("#sm-modal-footer").append($("<button onclick=\"closeLocationModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#sm-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }
 
 function closeLocationModal() {
@@ -393,8 +401,8 @@ function openDayModal() {
 	    $("#sm-modal-body").append(input);
 	    $("#sm-modal-body").append(document.createElement("BR"));
 	}
-    $("#sm-modal-footer").append($("<button type=\"button\" onclick=\"closeDayModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
-    $("#sm-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+    $("#sm-modal-footer").append($("<button onclick=\"closeDayModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#sm-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }
 
 function closeDayModal() {
@@ -408,7 +416,7 @@ function openTeamImportModal() {
     $("#lg-modal-body").empty();
     $("#lg-modal-footer").empty();
     $("#lg-modal-body").append($("<p>One line per team.  Team numbers will automatically add\/delete to match the number of team names.</p>"))
-    $("#lg-modal-body").append($("<p><button type=\"button\" class=\"btn\" onclick=\"tourn_ui.sequenceTeams()\">Number sequentially</button></p>"));
+    $("#lg-modal-body").append($("<p><button class=\"btn\" onclick=\"tourn_ui.sequenceTeams()\">Number sequentially</button></p>"));
     var x = $("<textarea rows=\""+tourn_ui.params.teams.length+"\" cols=\"5\"></textarea>");
     for (var i = 0; i < tourn_ui.params.teams.length; i++)
     	x.append(tourn_ui.params.teams[i].number+"\n");
@@ -417,8 +425,8 @@ function openTeamImportModal() {
     for (var i = 0; i < tourn_ui.params.teams.length; i++)
     	x.append(tourn_ui.params.teams[i].name+"\n");
     $("#lg-modal-body").append(x);
-    $("#lg-modal-footer").append($("<button type=\"button\" onclick=\"closeTeamImportModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
-    $("#lg-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+    $("#lg-modal-footer").append($("<button onclick=\"closeTeamImportModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#lg-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }
 
 function closeTeamImportModal() {
@@ -476,8 +484,8 @@ function openTeamEditModal() {
 		$("#lg-modal-body>table").append(x);
    	}
    	console.log($("#lg-modal-body"));
-    $("#lg-modal-footer").append($("<button type=\"button\" onclick=\"closeTeamEditModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
-    $("#lg-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+    $("#lg-modal-footer").append($("<button onclick=\"closeTeamEditModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#lg-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }
 
 function closeTeamEditModal() {

@@ -10,7 +10,7 @@ function printToDom(event) {
 function generateTable(session) {
 	var result = $("<div class=\"container-fluid session\">");
 	result.append($("<h4>"+session.name+"</h4>"));
-	var table = $("<table class=\"table resultTable\">");
+	var table = $("<table class=\"table resultTable table-responsive\">");
 	var header = "<thead><tr><th>#</th><th>Time</th>";
 	for (var i = 0; i < session.locations.length; i++) 
 		header += "<th>"+session.locations[i]+"</th>";
@@ -24,7 +24,7 @@ function generateTable(session) {
 		row.append("<td>"+instance.num+"</td>");
 		row.append("<td>"+minsToDT(instance.time)+"</td>");
 
-        var diff = instance.loc+instance.teams.length;
+        var diff = instance.loc+instance.teams.length+1;
         for (var dummy = 0; dummy < instance.loc; dummy++) {
         	diff--;
             row.append($("<td>"));
