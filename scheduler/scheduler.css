@@ -124,6 +124,10 @@ table.roundtable{
     color:blue;
 }
 
+.extra-time {
+    color:red;
+}
+
 
 input[readonly].form-control{
   background-color:transparent;

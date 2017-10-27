@@ -529,11 +529,10 @@ function closeTeamEditModal() {
 		var inputs = $("input,select",rows[i]);
 		var team = tourn_ui.params.teams[i-1];
 		team.special = inputs[0].checked;
-		console.log(inputs);
-		console.log("inputs");
 		team.start = dtToMins(inputs[1].value,inputs[2].value);
 		team.end = dtToMins(inputs[3].value,inputs[4].value);
 	}
+	autosave();
 }
 
 function clickSave() {

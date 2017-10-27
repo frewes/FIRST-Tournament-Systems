@@ -21,8 +21,13 @@ function generateTable(session) {
 	for (var i = 0; i < session.schedule.length; i++) {
 		var instance = session.schedule[i];
 		var row = $("<tr>");
-		row.append("<td>"+instance.num+"</td>");
-		row.append("<td>"+minsToDT(instance.time)+"</td>");
+		if (instance.extra) {
+			row.append("<td class=\"extra-time\">"+instance.num+"</td>");
+			row.append("<td class=\"extra-time\">"+minsToDT(instance.time)+"</td>");
+		} else {
+			row.append("<td>"+instance.num+"</td>");
+			row.append("<td>"+minsToDT(instance.time)+"</td>");
+		}
 
         var diff = instance.loc+instance.teams.length+1;
         for (var dummy = 0; dummy < instance.loc; dummy++) {
