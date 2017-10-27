@@ -57,11 +57,14 @@
         </table>
         <table class="roundtable">
             <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
-            <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999></td></tr>
             <tr>
                 <td><button class="btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#largeModal">Edit names/numbers</button></td>
-                <td><button class="advanced btn" disabled onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Adv. Team details</button></td>
+                <td><button class="advanced btn" onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Adv. Team details</button></td>
             </tr>
+        </table>
+        <table class="roundtable">
+            <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999 onchange="tourn_ui.changeMinTravel()"></td></tr>
+            <tr class="advanced"><td>Extra time (mins):</td><td><input class="form-control" type=number id="extraTime" value=5 min=1 max=120 onchange="tourn_ui.changeExtraTime()"></td></tr>
         </table>
     </div>
         
@@ -174,10 +177,10 @@
     if (typeof(Storage) !== "undefined") console.log("Local storage supported");
     else console.log("Local storage not supported, autosave will not work....");
 
-    // if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
-    //     var tournament = load(localStorage.getItem("schedule"));
-    //     var tourn_ui = new EventPanel(tournament);
-    // }
+    if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
+        var tournament = load(localStorage.getItem("schedule"));
+        var tourn_ui = new EventPanel(tournament);
+    }
     if (!tournament) {
         var tournament = new EventParameters();
         var tourn_ui = new EventPanel(tournament);

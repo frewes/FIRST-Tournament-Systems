@@ -5,6 +5,7 @@ function EventPanel(params) {
 	this.teamInput = $("#nTeams")[0];
 	this.daysInput = $("#nDays")[0];
 	this.minsInput = $("#minTravel")[0];
+	this.extraTimeInput = $("#extraTime")[0];
 	this.titleInput = $("#title")[0];
 	this.majorLogoInput = $("#majrimg")[0];
 	this.gameLogoInput = $("#gameimg")[0];
@@ -13,6 +14,7 @@ function EventPanel(params) {
 	this.teamInput.value = this.params.teams.length;
 	this.daysInput.value = this.params.days.length;
 	this.minsInput.value = this.params.minTravel;
+	this.extraTimeInput.value = this.params.extraTime;
 	this.titleInput.innerHTML = this.params.name;
 	this.majorLogoInput.src = this.params.majorLogo;
 	this.gameLogoInput.src = this.params.gameLogo;
@@ -43,6 +45,10 @@ function EventPanel(params) {
 	}
 	this.changeMinTravel = function() {
 		this.params.minTravel = this.minsInput.value;		
+		autosave();
+	}
+	this.changeExtraTime = function() {
+		this.params.extraTime = this.extraTimeInput.value;
 		autosave();
 	}
 	this.changeNDays = function() {
@@ -161,7 +167,7 @@ function toggleAdvMode() {
 		$(".advanced").show();
 		$(".adv-title").attr('readonly',false);
 	} else {
-		$(".advanced").hide();
+		$(".advanced").hide();	
 		$(".adv-title").attr('readonly',true);
 	}
 }
@@ -191,6 +197,14 @@ function SessionPanel(session) {
 	this.simInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
 	this.instanceInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
 	this.locsInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
+	this.firstExtraInput=$("<input class=\"form-control\" type=\"checkbox\">");
+	this.nExtraInput=$("<input class=\"form-control\" type=number min=0 max=99>");
+	this.policyInput=$("<select class=\"form-control\"></select>");
+	for (var i = 0 ; i < POLICIES.length; i++ )
+		this.policyInput.append($("<option value=\""+i+"\">"+POLICIES[i]+"</option>"));
+	// this.extraTimeFirst = false; // Should the first round be a little longer?
+	// this.extraTimeEvery = null; // Extra time every N rounds
+	// this.fillerPolicy = LEAVE_BLANKS; // How to fill in empty spots in non-round-number instances.
 
 	// Build docObj
 	if (this.session.type != TYPE_BREAK)
@@ -235,6 +249,17 @@ function SessionPanel(session) {
 		$("div", x).append(this.locsInput);
 		this.docObj.append(x);
 	}
+	if (this.session.type != TYPE_BREAK) {
+		var x = $("<tr class=\"advanced\"><td>Extra time in first instance</td><td><div></div></td></tr>");
+		$("div", x).append(this.firstExtraInput);
+		this.docObj.append(x);
+		var x = $("<tr class=\"advanced\"><td>Extra time every N instances</td><td><div></div></td></tr>");
+		$("div", x).append(this.nExtraInput);	
+		this.docObj.append(x);
+		var x = $("<tr class=\"advanced\"><td>Fill-in policy</td><td><div></div></td></tr>");
+		$("div", x).append(this.policyInput);
+		this.docObj.append(x);
+	}
 	this.docObj.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
 		</td><td><button class=\"advanced btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
 	// Add change listeners
@@ -265,6 +290,9 @@ function SessionPanel(session) {
 		this.locsInput[0].value = this.session.nLocs;
 		this.simInput[0].value = this.session.nSims;
 		this.instanceInput[0].value = this.session.instances;
+		this.firstExtraInput[0].checked = this.session.extraTimeFirst;
+		this.nExtraInput[0].value = this.session.extraTimeEvery;
+		this.policyInput[0].value = this.session.fillerPolicy;
 		autosave();
 	}
 	this.update = function() {
@@ -288,6 +316,9 @@ function SessionPanel(session) {
 		while (this.session.locations.length > this.session.nLocs) {
 			this.session.locations.splice(this.session.locations.length-1,1);
 		}
+		this.session.extraTimeFirst = this.firstExtraInput[0].checked;
+		this.session.extraTimeEvery = parseInt(this.nExtraInput[0].value);
+		this.session.fillerPolicy = this.policyInput[0].value;
 		autosave();
 	}
 	this.updateDOM();
@@ -307,6 +338,9 @@ function copyToAll(uid) {
 			panel.session.nLocs = basePanel.session.nLocs;
 			panel.session.nSims = basePanel.session.nSims;
 			panel.session.nInstances = basePanel.session.nInstances;
+			panel.session.extraTimeFirst = basePanel.session.extraTimeFirst;
+			panel.session.extraTimeEvery = basePanel.session.extraTimeEvery;
+			panel.session.fillerPolicy = basePanel.session.fillerPolicy;
 			panel.updateDOM();
 			panel.update();
 		}
@@ -461,26 +495,26 @@ function openTeamEditModal() {
 	   		$(x).append($("<td><input type=\"checkbox\" class=\"form-control\" checked></td>"));
    		else 
    			$(x).append($("<td><input type=\"checkbox\" class=\"form-control\"></td>"));
-		var dateInput1=$("<td><select class=\"form-control\" value=\""+minsToDate(team.start)+"\"></select></td>");
+		var dateInput1=$("<td><select disabled class=\"form-control\" value=\""+minsToDate(team.start)+"\"></select></td>");
 		for (var j = 0; j < tourn_ui.params.days.length; j++)
 			$("select", dateInput1).append($("<option value=\""+j+"\">"+tourn_ui.params.days[j]+"</option>"));
 		if (tourn_ui.params.days.length <= 1) $("select",dateInput1).hide();
 		else $("select",dateInput1).show();
 		$(x).append(dateInput1);
 		if (team.start == null) 
-	   		$(dateInput1).append($("<input class=\"form-control\" type=\"time\" step=\"900\">"));
+	   		$(dateInput1).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\">"));
 		else 
-	   		$(dateInput1).append($("<input class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.start)+"\">"));
-		var dateInput2=$("<td><select class=\"form-control\" value=\""+minsToDate(team.end)+"\"></select></td>");
+	   		$(dateInput1).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.start)+"\">"));
+		var dateInput2=$("<td><select disabled class=\"form-control\" value=\""+minsToDate(team.end)+"\"></select></td>");
 		for (var j = 0; j < tourn_ui.params.days.length; j++)
 			$("select", dateInput2).append($("<option value=\""+j+"\">"+tourn_ui.params.days[j]+"</option>"));
 		if (tourn_ui.params.days.length <= 1) $("select",dateInput2).hide();
 		else $("select",dateInput2).show();
 		$(x).append(dateInput2);
 		if (team.end == null) 
-	   		$(dateInput2).append($("<input class=\"form-control\" type=\"time\" step=\"900\">"));
+	   		$(dateInput2).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\">"));
 		else 
-	   		$(dateInput2).append($("<input class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.end)+"\">"));
+	   		$(dateInput2).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.end)+"\">"));
 		$("#lg-modal-body>table").append(x);
    	}
    	console.log($("#lg-modal-body"));

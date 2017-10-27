@@ -6,19 +6,24 @@ const TYPE_BREAK = new SessionType("Breaks", 0);
 const METHOD_BLOCK = 0;
 const METHOD_RANDOM = 1;
 
+const LEAVE_BLANKS = 0;
+const USE_SURROGATES = 1;
+const USE_STANDINS = 2;
+const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
 
 function SessionType(name,priority) {
 	this.name = name;
 	this.priority = priority;
 }
 
-function EventParameters(name,nTeams,nDays,minTravel) {
+function EventParameters(name,nTeams,nDays,minTravel,extraTime) {
 	this.UID_counter = 1;
 	this.teamnum_counter = 1;
 	this.start_time_offset = 0; // Set to number of minutes to start if wanted
 	this.name = (name)?name:"2017 FLL Tournament";
 	if (!nTeams) var nTeams=24;
 	this.minTravel = (minTravel)?minTravel:10;
+	this.extraTime = (extraTime)?extraTime:5;
 	this.allSessions = [];
 	this.teams = [];
 	this.days = [];
@@ -77,8 +82,16 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		if (this.type == TYPE_BREAK) this.buffer = 0;
 	}
 	this.locations = locs || [];
-	this.instances = 1; // Can be changed in later versions, specifically for TYPE_MATCH_FILLER.
 	this.schedule = null; // To be filled in later
+
+	// As yet unimplemented:
+	this.instances = 1; // Can be changed in later versions, specifically for TYPE_MATCH_FILLER.
+	this.extraTimeFirst = false; // Should the first round be a little longer?
+	this.extraTimeEvery = null; // Extra time every N rounds
+	if (this.type == TYPE_MATCH_ROUND) this.fillerPolicy = USE_STANDINS;
+	else if (this.type == TYPE_MATCH_FILLER) this.fillerPolicy = USE_SURROGATES;
+	else this.fillerPolicy = LEAVE_BLANKS; // How to fill in empty spots in non-round-number instances.
+
 }
 
 function TeamParameters(number,name) {
@@ -143,6 +156,7 @@ function load(json) {
 		if (s.type.name == TYPE_BREAK.name) s.type = TYPE_BREAK;
 		if (s.type.name == TYPE_MATCH_ROUND.name) s.type = TYPE_MATCH_ROUND;
 	}
+	toggleAdvMode();
 	return evt;
 }
 
