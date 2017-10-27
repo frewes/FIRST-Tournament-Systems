@@ -1,5 +1,3 @@
-
-
 function printToDom(event) {
 	var results=$("#results");
 	results.empty();

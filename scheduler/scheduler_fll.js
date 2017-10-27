@@ -33,6 +33,18 @@ EventParameters:
 		schedule
 **/
 
+const NOT_YET_ADDED = -64;
+
+function Schedule(event) {
+	event.allSessions.sort(function(a,b) {
+		return a.type.priority - b.type.priority;
+	});
+	for (var i = 0; i < event.allSessions.length; i++) {
+		tableSession(event,event.allSessions[i]);
+	}
+	console.log(event);
+}
+
 /**
 	num: Count of instance 
 	time: Time (mins) of instance
@@ -45,16 +57,6 @@ function Instance(num, time, teams, loc) {
 	this.teams = teams;
 	this.loc = loc;
 }
-const NOT_YET_ADDED = -64;
-
-function Schedule(event) {
-	for (var i = 0; i < event.allSessions.length; i++) {
-		tableSession(event,event.allSessions[i]);
-	}
-	console.log(event);
-}
-
-
 /**
     Sets up all the timeslots for the given session.
     @return Returns the time the schedule is finished (i.e. the end
@@ -63,17 +65,23 @@ function Schedule(event) {
 function tableSession(event, session) {
     var now = session.start;
     var L = Math.ceil(event.teams.length/session.nSims);
+    var lastNTeams = (event.teams.length % session.nSims);
+    lastNTeams = (lastNTeams==0) ? session.nSims : lastNTeams;
     session.schedule = new Array(L);
     for (var i = 0; i < L; i++) {
         var d = Math.floor(session.nLocs/session.nSims);
         var locOffset = (i%d)*session.nSims;
-        session.schedule[i] = new Instance(i+1,now,new Array(session.nSims),locOffset);
-        now = timeInc(event,now,session.length+session.buffer);
-        for (var t = 0; t < session.nSims; t++) {
+        if (i < L-1) { 
+	        session.schedule[i] = new Instance(i+1,now,new Array(session.nSims),locOffset);
+	        now = timeInc(event,now,session.length+session.buffer);
+	    } else {
+	    	session.schedule[i] = new Instance(i+1,now,new Array(lastNTeams),locOffset);
+	    }
+        for (var t = 0; t < session.schedule[i].teams.length; t++) {
             session.schedule[i].teams[t] = NOT_YET_ADDED;
         }
     }
-    return timeInc(event,now,session.length+session.buffer);
+    return now + session.length + session.buffer;
 }
 
 /** 
