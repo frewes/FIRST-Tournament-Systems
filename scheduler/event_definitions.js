@@ -2,6 +2,9 @@ const TYPE_JUDGING = new SessionType("Judging", 8);
 const TYPE_ROUND = new SessionType("Matches", 16);
 const TYPE_BREAK = new SessionType("Breaks", 0);
 
+const METHOD_BLOCK = 0;
+const METHOD_RANDOM = 1;
+
 
 function SessionType(name,priority) {
 	this.name = name;
@@ -18,12 +21,12 @@ function EventParameters(name,nTeams,nDays,minTravel) {
 	this.allSessions = [];
 	this.teams = [];
 	this.days = [];
+	this.method=METHOD_RANDOM;
 	this.majorLogo = "mqlogo.png";
 	this.gameLogo = "hdlogo.jpg"
 	if (!nDays) var nDays = 1
 	while (this.days.length < nDays) this.days.push("Day " + (this.days.length+1));
 	while (this.teams.length < nTeams) this.teams.push(new TeamParameters(this.teams.length+1)); 
-	this.schedule = null;
 }
 
 function updateTournDays(event, num_days) {
@@ -73,15 +76,16 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		if (this.type == TYPE_BREAK) this.buffer = 0;
 	}
 	this.locations = locs || [];
+	this.schedule = null;
 }
 
 function TeamParameters(number,name) {
 	this.number = (number)?number:(tournament.teamnum_counter++);
 	this.name = (name)?name:("Team " +this.number);
 	this.special = false;
-	this.times = [];
 	this.start = null; // Can be used to define when the team must arrive.
 	this.end = null; // Can be used to define when the team must leave.
+	this.schedule = null;
 	// For the above two parameters, will probably need to conduct a check before scheduling; if they physically can't fit anything, don't try.
 }
 

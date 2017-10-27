@@ -97,9 +97,10 @@ function EventPanel(params) {
 }
 
 function generate() {
-	alert ("TODO");
+	// validate(tournament); * Not yet implemented *
+	Schedule(tournament); 
+	printToDom(tournament);
 }
-
 
 function autosave() {
 	var json = save();
@@ -255,11 +256,11 @@ function SessionPanel(session) {
 		this.session.name = this.title[0].value;
 		this.session.start = dtToMins(this.startDateInput[0].value,this.startTimeInput[0].value);
 		this.session.end = dtToMins(this.endDateInput[0].value,this.endTimeInput[0].value);
-		this.session.length = this.lenInput[0].value;
-		this.session.buffer = this.bufInput[0].value;
-		this.session.nLocs = this.locsInput[0].value;
-		if (this.session.type != TYPE_JUDGING) this.session.nSims = this.simInput[0].value;
-		else this.session.nSims = this.session.nLocs;
+		this.session.length = parseInt(this.lenInput[0].value);
+		this.session.buffer = parseInt(this.bufInput[0].value);
+		this.session.nLocs = parseInt(this.locsInput[0].value);
+		if (this.session.type != TYPE_JUDGING) this.session.nSims = parseInt(this.simInput[0].value);
+		else this.session.nSims = parseInt(this.session.nLocs);
 
 		while (this.session.locations.length < this.session.nLocs) {
 			if (this.session.type == TYPE_JUDGING)
