@@ -1,5 +1,6 @@
 const TYPE_JUDGING = new SessionType("Judging", 8);
-const TYPE_ROUND = new SessionType("Matches", 16);
+const TYPE_MATCH_ROUND = new SessionType("Rounds", 16);
+const TYPE_MATCH_FILLER = new SessionType("Matches", 32);
 const TYPE_BREAK = new SessionType("Breaks", 0);
 
 const METHOD_BLOCK = 0;
@@ -48,7 +49,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	if (name) this.name = name;
 	else {
 		if (this.type == TYPE_JUDGING) this.name = "Judging " + this.uid;
-		if (this.type == TYPE_ROUND) this.name = "Round " + this.uid;
+		if (this.type == TYPE_MATCH_ROUND) this.name = "Round " + this.uid;
 		if (this.type == TYPE_BREAK) this.name = "Lunch";
 	}
 	if (start) this.start = start;
@@ -60,23 +61,24 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	if (nSims) this.nSims = nSims;
 	else {
 		if (this.type == TYPE_JUDGING) this.nSims = nLocs;
-		if (this.type == TYPE_ROUND) this.nSims = 2;
+		if (this.type == TYPE_MATCH_ROUND) this.nSims = 2;
 		if (this.type == TYPE_BREAK) this.nSims = tournament.teams.length;
 	}
 	if (length) this.length = length;
 	else {
 		if (this.type == TYPE_JUDGING) this.length = 10;
-		if (this.type == TYPE_ROUND) this.length = 4;
+		if (this.type == TYPE_MATCH_ROUND) this.length = 4;
 		if (this.type == TYPE_BREAK) this.length = (this.end-this.start);
 	}
 	if (buffer) this.buffer = buffer;
 	else {
 		if (this.type == TYPE_JUDGING) this.buffer = 5;
-		if (this.type == TYPE_ROUND) this.buffer = 4;
+		if (this.type == TYPE_MATCH_ROUND) this.buffer = 4;
 		if (this.type == TYPE_BREAK) this.buffer = 0;
 	}
 	this.locations = locs || [];
-	this.schedule = null;
+	this.instances = 1; // Can be changed in later versions, specifically for TYPE_MATCH_FILLER.
+	this.schedule = null; // To be filled in later
 }
 
 function TeamParameters(number,name) {
@@ -138,7 +140,7 @@ function load(json) {
 		var s = evt.allSessions[i];
 		if (s.type.name == TYPE_JUDGING.name) s.type = TYPE_JUDGING;
 		if (s.type.name == TYPE_BREAK.name) s.type = TYPE_BREAK;
-		if (s.type.name == TYPE_ROUND.name) s.type = TYPE_ROUND;
+		if (s.type.name == TYPE_MATCH_ROUND.name) s.type = TYPE_MATCH_ROUND;
 	}
 	return evt;
 }

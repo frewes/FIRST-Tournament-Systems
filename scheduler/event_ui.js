@@ -21,7 +21,7 @@ function EventPanel(params) {
 		this.allPanels.push(p);
 		if (p.session.type == TYPE_JUDGING)
 			p.docObj.insertBefore("#addJudgeBtn");
-		else if (p.session.type == TYPE_ROUND)
+		else if (p.session.type == TYPE_MATCH_ROUND)
 			p.docObj.insertBefore("#addRoundBtn");
 		else if (p.session.type == TYPE_BREAK)
 			p.docObj.insertBefore("#addBreakBtn");
@@ -181,6 +181,7 @@ function SessionPanel(session) {
 	this.lenInput=$("<input class=\"form-control\" type=number min=0 max=1000 value=10>")
 	this.bufInput=$("<input class=\"form-control\" type=number min=0 max=1000 value=10>")
 	this.simInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
+	this.instanceInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
 	this.locsInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
 
 	// Build docObj
@@ -209,9 +210,14 @@ function SessionPanel(session) {
 		$("div", x).append(this.simInput);
 		this.docObj.append(x);
 	}
+	if (this.session.type == TYPE_MATCH_FILLER) {
+		var x = $("<tr><td>Instances per team:</td><td><div></div></td></tr>");
+		$("div", x).append(this.instanceInput);
+		this.docObj.append(x);
+	}
 	if (this.session.type == TYPE_JUDGING)
 		var x = $("<tr><td># judging panels:</td><td><div></div></td></tr>");
-	else if (this.session.type == TYPE_ROUND)
+	else if (this.session.type == TYPE_MATCH_ROUND)
 		var x = $("<tr><td># tables:</td><td><div></div></td></tr>");
 	else if (this.session.type == TYPE_BREAK)
 		var x = null;
@@ -250,6 +256,7 @@ function SessionPanel(session) {
 		this.bufInput[0].value = this.session.buffer;
 		this.locsInput[0].value = this.session.nLocs;
 		this.simInput[0].value = this.session.nSims;
+		this.instanceInput[0].value = this.session.instances;
 		autosave();
 	}
 	this.update = function() {
@@ -258,6 +265,7 @@ function SessionPanel(session) {
 		this.session.end = dtToMins(this.endDateInput[0].value,this.endTimeInput[0].value);
 		this.session.length = parseInt(this.lenInput[0].value);
 		this.session.buffer = parseInt(this.bufInput[0].value);
+		this.session.instances = parseInt(this.instanceInput[0].value);
 		this.session.nLocs = parseInt(this.locsInput[0].value);
 		if (this.session.type != TYPE_JUDGING) this.session.nSims = parseInt(this.simInput[0].value);
 		else this.session.nSims = parseInt(this.session.nLocs);
@@ -265,7 +273,7 @@ function SessionPanel(session) {
 		while (this.session.locations.length < this.session.nLocs) {
 			if (this.session.type == TYPE_JUDGING)
 				this.session.locations.push("Room "+ (this.session.locations.length+1));
-			else if (this.session.type == TYPE_ROUND)
+			else if (this.session.type == TYPE_MATCH_ROUND)
 				this.session.locations.push("Table "+ (this.session.locations.length+1));				
 			else this.session.locations.push("Lunch area");
 		}
@@ -290,6 +298,7 @@ function copyToAll(uid) {
 			panel.session.buffer = basePanel.session.buffer;
 			panel.session.nLocs = basePanel.session.nLocs;
 			panel.session.nSims = basePanel.session.nSims;
+			panel.session.nInstances = basePanel.session.nInstances;
 			panel.updateDOM();
 			panel.update();
 		}
@@ -307,7 +316,7 @@ function addJudging(name,start,end,nSims,nLocs,length,buffer,locs) {
 
 function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
-	var s = new SessionParameters(TYPE_ROUND,name,start,end,nSims,nLocs,length,buffer,locs);
+	var s = new SessionParameters(TYPE_MATCH_ROUND,name,start,end,nSims,nLocs,length,buffer,locs);
 	tourn_ui.params.allSessions.push(s);
 	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);

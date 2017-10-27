@@ -1,7 +1,7 @@
 /**
 SessionType [name, priority]:
 	TYPE_JUDGING
-	TYPE_ROUND
+	TYPE_MATCH_ROUND
 	TYPE_BREAK
 
 Methods:
@@ -37,10 +37,20 @@ const NOT_YET_ADDED = -64;
 
 function Schedule(event) {
 	event.allSessions.sort(function(a,b) {
+		if (a.type.priority == b.type.priority) return a.start - b.start;
 		return a.type.priority - b.type.priority;
 	});
 	for (var i = 0; i < event.allSessions.length; i++) {
-		tableSession(event,event.allSessions[i]);
+		if (event.allSessions[i].type == TYPE_MATCH_ROUND) continue;
+		var end = tableSession(event,event.allSessions[i]);
+		if (end > event.allSessions[i].end) alert (event.allSessions[i].name + " will finish late! Consider revising");
+	}
+	var end = -Infinity;
+	for (var i = 0; i < event.allSessions.length; i++) {
+		if (event.allSessions[i].type != TYPE_MATCH_ROUND) continue;
+		if (event.allSessions[i].start < end) event.allSessions[i].start = end;
+		end = tableSession(event,event.allSessions[i]);
+		if (end > event.allSessions[i].end) alert (event.allSessions[i].name + " will finish late! Consider revising");
 	}
 	console.log(event);
 }
@@ -64,8 +74,8 @@ function Instance(num, time, teams, loc) {
 */
 function tableSession(event, session) {
     var now = session.start;
-    var L = Math.ceil(event.teams.length/session.nSims);
-    var lastNTeams = (event.teams.length % session.nSims);
+    var L = Math.ceil((event.teams.length*session.instances) / session.nSims);
+    var lastNTeams = ((event.teams.length*session.instances) % session.nSims);
     lastNTeams = (lastNTeams==0) ? session.nSims : lastNTeams;
     session.schedule = new Array(L);
     for (var i = 0; i < L; i++) {
