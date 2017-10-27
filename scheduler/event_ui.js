@@ -11,7 +11,7 @@ function EventPanel(params) {
 	this.majorFileInput = $("#majrfile")[0];
 	this.gameFileInput = $("#gamefile")[0];
 	this.teamInput.value = this.params.teams.length;
-	this.daysInput.value = this.params.nDays;
+	this.daysInput.value = this.params.days.length;
 	this.minsInput.value = this.params.minTravel;
 	this.titleInput.innerHTML = this.params.name;
 	this.majorLogoInput.src = this.params.majorLogo;
@@ -46,14 +46,14 @@ function EventPanel(params) {
 		autosave();
 	}
 	this.changeNDays = function() {
-		updateTournDays(this.params, this.daysInput.value);
+		this.params.updateNDays(this.daysInput.value);
 		var toDelete = [];
 		for (var i = 0; i < this.allPanels.length; i++) {
 			var panel = this.allPanels[i];
-			if (panel.session.type == TYPE_BREAK && panel.session.end > this.params.nDays*(24*60))
+			if (panel.session.type == TYPE_BREAK && panel.session.end > this.params.days.length*(24*60))
 				toDelete.push(panel.session.uid);
-			while (panel.session.start > this.params.nDays*(24*60)) panel.session.start -= (24*60);
-			while (panel.session.end > this.params.nDays*(24*60)) panel.session.end -= (24*60);
+			while (panel.session.start > this.params.days.length*(24*60)) panel.session.start -= (24*60);
+			while (panel.session.end > this.params.days.length*(24*60)) panel.session.end -= (24*60);
 			panel.updateDOM();
 		}
 		for (var i = 0; i < toDelete.length; i++) {
@@ -96,6 +96,9 @@ function EventPanel(params) {
 	}
 }
 
+function generate() {
+	alert ("TODO");
+}
 
 
 function autosave() {
@@ -134,9 +137,9 @@ function loadFromFile(evt) {
 		for (var i = 0; i < uids.length; i++) {
 			deleteParams(uids[i]);
 		}
-		//Step 2: Replace tournament and tourn_ui
-        tournament = load(e.target.result);
-        tourn_ui = new EventPanel(tournament);
+		//Step 2: Replace tourn_ui.params and tourn_ui
+        tourn_ui.params = load(e.target.result);
+        tourn_ui = new EventPanel(tourn_ui.params);
     }
     if (evt.files[0]) {
         reader.readAsText(evt.files[0]);
@@ -228,13 +231,13 @@ function SessionPanel(session) {
 	this.updateDOM = function() {
 		this.startDateInput.empty();
 		this.endDateInput.empty();
-		for (var i = 0; i < tournament.nDays; i++)
+		for (var i = 0; i < tournament.days.length; i++)
 			this.startDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
-		if (tournament.nDays <= 1) this.startDateInput.hide();
+		if (tournament.days.length <= 1) this.startDateInput.hide();
 		else this.startDateInput.show();
-		for (var i = 0; i < tournament.nDays; i++)
+		for (var i = 0; i < tournament.days.length; i++)
 			this.endDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
-		if (tournament.nDays <= 1) this.endDateInput.hide();
+		if (tournament.days.length <= 1) this.endDateInput.hide();
 		else this.endDateInput.show();
 
 		this.title[0].value = this.session.name;
@@ -295,7 +298,7 @@ function copyToAll(uid) {
 function addJudging(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
 	var s = new SessionParameters(TYPE_JUDGING,name,start,end,nSims,nLocs,length,buffer,locs);
-	tournament.allSessions.push(s);
+	tourn_ui.params.allSessions.push(s);
 	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addJudgeBtn")
@@ -304,7 +307,7 @@ function addJudging(name,start,end,nSims,nLocs,length,buffer,locs) {
 function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
 	var s = new SessionParameters(TYPE_ROUND,name,start,end,nSims,nLocs,length,buffer,locs);
-	tournament.allSessions.push(s);
+	tourn_ui.params.allSessions.push(s);
 	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addRoundBtn")
@@ -313,7 +316,7 @@ function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 function addBreak(name,start,end,locs) {
 	// alert("Hello");
 	var s = new SessionParameters(TYPE_BREAK,name,start,end,null,null,null,null,locs);
-	tournament.allSessions.push(s);
+	tourn_ui.params.allSessions.push(s);
 	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addBreakBtn")
@@ -367,8 +370,8 @@ function openDayModal() {
     $("#sm-modal-body").empty();
     $("#sm-modal-footer").empty();
     $("#sm-modal-title")[0].innerHTML = "Days";
-    for (var i = 0; i < tournament.nDays; i++) {
-    	var input = $("<input type=\"text\" class=\"form-control\" value=\""+tournament.days[i]+"\">");
+    for (var i = 0; i < tourn_ui.params.days.length; i++) {
+    	var input = $("<input type=\"text\" class=\"form-control\" value=\""+tourn_ui.params.days[i]+"\">");
 	    $("#sm-modal-body").append(input);
 	    $("#sm-modal-body").append(document.createElement("BR"));
 	}
@@ -379,7 +382,7 @@ function openDayModal() {
 function closeDayModal() {
 	var inputs = $("#sm-modal-body>input");
 	for (var i = 0; i < inputs.length; i++)
-		tournament.days[i] = inputs[i].value;
+		tourn_ui.params.days[i] = inputs[i].value;
 	tourn_ui.changeNDays();
 }
 
@@ -388,13 +391,13 @@ function openTeamImportModal() {
     $("#lg-modal-footer").empty();
     $("#lg-modal-body").append($("<p>One line per team.  Team numbers will automatically add\/delete to match the number of team names.</p>"))
     $("#lg-modal-body").append($("<p><button type=\"button\" class=\"btn\" onclick=\"tourn_ui.sequenceTeams()\">Number sequentially</button></p>"));
-    var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"5\"></textarea>");
-    for (var i = 0; i < tournament.teams.length; i++)
-    	x.append(tournament.teams[i].number+"\n");
+    var x = $("<textarea rows=\""+tourn_ui.params.teams.length+"\" cols=\"5\"></textarea>");
+    for (var i = 0; i < tourn_ui.params.teams.length; i++)
+    	x.append(tourn_ui.params.teams[i].number+"\n");
     $("#lg-modal-body").append(x);
-    var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"60\"></textarea>");
-    for (var i = 0; i < tournament.teams.length; i++)
-    	x.append(tournament.teams[i].name+"\n");
+    var x = $("<textarea rows=\""+tourn_ui.params.teams.length+"\" cols=\"60\"></textarea>");
+    for (var i = 0; i < tourn_ui.params.teams.length; i++)
+    	x.append(tourn_ui.params.teams[i].name+"\n");
     $("#lg-modal-body").append(x);
     $("#lg-modal-footer").append($("<button type=\"button\" onclick=\"closeTeamImportModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
     $("#lg-modal-footer").append($("<button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
@@ -408,11 +411,11 @@ function closeTeamImportModal() {
 	if (names[names.length-1] == "") names.splice(names.length-1,1);
 	while (nums.length < names.length) nums.push(""+(nums.length+1));
 	while (nums.length > names.length) nums.splice(nums.length-1,1);
-	while (tournament.teams.length < nums.length) tournament.teams.push(new TeamParameters(0));
-	while (tournament.teams.length > nums.length) tournament.teams.splice(tournament.teams.length-1,1);
+	while (tourn_ui.params.teams.length < nums.length) tourn_ui.params.teams.push(new TeamParameters(0));
+	while (tourn_ui.params.teams.length > nums.length) tourn_ui.params.teams.splice(tourn_ui.params.teams.length-1,1);
 	for (var i = 0; i < nums.length; i++) {
-		tournament.teams[i].number = nums[i];
-		tournament.teams[i].name = names[i];
+		tourn_ui.params.teams[i].number = nums[i];
+		tourn_ui.params.teams[i].name = names[i];
 	}
 	tourn_ui.teamInput.value = tourn_ui.params.teams.length;
 	autosave();
@@ -433,9 +436,9 @@ function openTeamEditModal() {
    		else 
    			$(x).append($("<td><input type=\"checkbox\" class=\"form-control\"></td>"));
 		var dateInput1=$("<td><select class=\"form-control\" value=\""+minsToDate(team.start)+"\"></select></td>");
-		for (var j = 0; j < tournament.days.length; j++)
-			$("select", dateInput1).append($("<option value=\""+j+"\">"+tournament.days[j]+"</option>"));
-		if (tournament.days.length <= 1) $("select",dateInput1).hide();
+		for (var j = 0; j < tourn_ui.params.days.length; j++)
+			$("select", dateInput1).append($("<option value=\""+j+"\">"+tourn_ui.params.days[j]+"</option>"));
+		if (tourn_ui.params.days.length <= 1) $("select",dateInput1).hide();
 		else $("select",dateInput1).show();
 		$(x).append(dateInput1);
 		if (team.start == null) 
@@ -443,9 +446,9 @@ function openTeamEditModal() {
 		else 
 	   		$(dateInput1).append($("<input class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.start)+"\">"));
 		var dateInput2=$("<td><select class=\"form-control\" value=\""+minsToDate(team.end)+"\"></select></td>");
-		for (var j = 0; j < tournament.days.length; j++)
-			$("select", dateInput2).append($("<option value=\""+j+"\">"+tournament.days[j]+"</option>"));
-		if (tournament.days.length <= 1) $("select",dateInput2).hide();
+		for (var j = 0; j < tourn_ui.params.days.length; j++)
+			$("select", dateInput2).append($("<option value=\""+j+"\">"+tourn_ui.params.days[j]+"</option>"));
+		if (tourn_ui.params.days.length <= 1) $("select",dateInput2).hide();
 		else $("select",dateInput2).show();
 		$(x).append(dateInput2);
 		if (team.end == null) 
@@ -474,7 +477,7 @@ function closeTeamEditModal() {
 }
 
 function clickSave() {
-	saveToFile(prompt("Enter filename", tournament.name.replace(/ /g, '_')));
+	saveToFile(prompt("Enter filename", tourn_ui.params.name.replace(/ /g, '_')));
 }
 
 function clickLoad() {

@@ -12,28 +12,28 @@ function EventParameters(name,nTeams,nDays,minTravel) {
 	this.UID_counter = 1;
 	this.teamnum_counter = 1;
 	this.start_time_offset = 0; // Set to number of minutes to start if wanted
-
 	this.name = (name)?name:"2017 FLL Tournament";
 	if (!nTeams) var nTeams=24;
-	this.nDays = (nDays)?nDays:1;
 	this.minTravel = (minTravel)?minTravel:10;
 	this.allSessions = [];
 	this.teams = [];
 	this.days = [];
 	this.majorLogo = "mqlogo.png";
 	this.gameLogo = "hdlogo.jpg"
-	while (this.days.length < this.nDays) this.days.push("Day " + (this.days.length+1));
+	if (!nDays) var nDays = 1
+	while (this.days.length < nDays) this.days.push("Day " + (this.days.length+1));
 	while (this.teams.length < nTeams) this.teams.push(new TeamParameters(this.teams.length+1)); 
+	this.schedule = null;
 }
 
 function updateTournDays(event, num_days) {
-	event.nDays = num_days;
-	while (event.days.length < event.nDays) {
+	// event.nDays = num_days;
+	while (event.days.length < num_days) {
 		event.days.push("Day "+ (event.days.length+1));
 		addBreak("Night "+(event.days.length-1),((event.days.length-1)*24*60-360),((event.days.length-1)*24*60+540));
 		tournament.allSessions[tournament.allSessions.length-1].locations = [""];
 	}
-	while (event.days.length > event.nDays) {
+	while (event.days.length > num_days) {
 		event.days.splice(event.days.length-1,1);
 	}
 }
