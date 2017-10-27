@@ -33,6 +33,18 @@ EventParameters:
 		schedule
 **/
 
+/**
+	num: Count of instance 
+	time: Time (mins) of instance
+	teams: List of teams in instance
+	loc: Location offset (i.e. for staggered sessions, location index of where the teams begin)
+*/
+function Instance(num, time, teams, loc) {
+	this.num = num;
+	this.time = time;
+	this.teams = teams;
+	this.loc = loc;
+}
 const NOT_YET_ADDED = -64;
 
 function Schedule(event) {
@@ -53,7 +65,9 @@ function tableSession(event, session) {
     var L = Math.ceil(event.teams.length/session.nSims);
     session.schedule = new Array(L);
     for (var i = 0; i < L; i++) {
-        session.schedule[i] = {num:(i+1),time:now,teams:new Array(session.nSims)};
+        var d = Math.floor(session.nLocs/session.nSims);
+        var locOffset = (i%d)*session.nSims;
+        session.schedule[i] = new Instance(i+1,now,new Array(session.nSims),locOffset);
         now = timeInc(event,now,session.length+session.buffer);
         for (var t = 0; t < session.nSims; t++) {
             session.schedule[i].teams[t] = NOT_YET_ADDED;

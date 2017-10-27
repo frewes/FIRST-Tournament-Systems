@@ -173,10 +173,10 @@
     if (typeof(Storage) !== "undefined") console.log("Local storage supported");
     else console.log("Local storage not supported, autosave will not work....");
 
-    if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
-        var tournament = load(localStorage.getItem("schedule"));
-        var tourn_ui = new EventPanel(tournament);
-    }
+    // if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
+    //     var tournament = load(localStorage.getItem("schedule"));
+    //     var tourn_ui = new EventPanel(tournament);
+    // }
     if (!tournament) {
         var tournament = new EventParameters();
         var tourn_ui = new EventPanel(tournament);

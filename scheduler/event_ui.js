@@ -46,7 +46,7 @@ function EventPanel(params) {
 		autosave();
 	}
 	this.changeNDays = function() {
-		this.params.updateNDays(this.daysInput.value);
+		updateTournDays(this.params, this.daysInput.value);
 		var toDelete = [];
 		for (var i = 0; i < this.allPanels.length; i++) {
 			var panel = this.allPanels[i];
@@ -336,6 +336,14 @@ function minsToTime(x) {
 	var zh = (h < 10) ? "0" : "";
 	var zm = (m < 10) ? "0" : "";
 	return zh+h+":"+zm+m;
+}
+
+function minsToDT(x) {
+	var date = tournament.days[minsToDate(x)];
+	var time = minsToTime(x);
+	if (tournament.days.length > 1) var result = date + " " + time;
+	else var result = time;
+	return result;
 }
 
 function dtToMins(d,t) {

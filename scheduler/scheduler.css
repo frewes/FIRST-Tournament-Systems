@@ -119,3 +119,7 @@ table.roundtable{
 .title input {
     text-align: center;
 }
+
+.unfilled {
+    color:blue;
+}
