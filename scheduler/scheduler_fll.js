@@ -87,19 +87,15 @@ function tableSession(event, session) {
     for (var i = 0; i < event.teams.length; i++) {
     	if (event.teams[i].special) specialTeams++;
     }
-    console.log(session.name);
-    console.log("special teams: "+specialTeams);
     var extraRoundsNeeded = Math.ceil(specialTeams/session.nSims);
-    console.log("Extra rounds needed: "+extraRoundsNeeded);
     var everyNRounds = ((session.extraTimeFirst)?1:0) +((session.extraTimeEvery)?L/everyN:0);
-    console.log("Extra rounds gotten:" + everyNRounds);
     if (everyNRounds < extraRoundsNeeded) {
     	everyN = (L+1)/(extraRoundsNeeded+1);
     }
-    console.log("EveryN: "+everyN);
 
     var roundsSinceExtra = 0;
     var extraRounds = 0;
+    if (session.type == TYPE_BREAK) everyN = Infinity;
     for (var i = 0; i < L; i++) {
         var d = Math.floor(session.nLocs/session.nSims);
         var locOffset = (i%d)*session.nSims;
@@ -136,11 +132,11 @@ function tableSession(event, session) {
 */
 function timeInc(event,time,len) {
     var newTime = time + len;
-    for (var i = 0; i < event.allSessions; i++) {
+    for (var i = 0; i < event.allSessions.length; i++) {
     	var session = event.allSessions[i];
     	if (session.type != TYPE_BREAK) continue;
     	if ((time+len) >= session.start && time < session.end)
-    		newTime = time;
+    		newTime = session.end;
     }
     return newTime;
 }
