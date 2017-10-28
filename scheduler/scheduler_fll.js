@@ -196,9 +196,15 @@ function canDo(event, team, instance) {
 	// Check if team already has something in their schedule
 	for (var i = 0; i < team.schedule.length; i++) {
 		var startA = team.schedule[i].time;
-		var endA = startA + getSession(team.schedule[i].session_uid).length + event.minTravel;
+		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK)
+			var endA = startA + getSession(team.schedule[i].session_uid).length;
+		else 
+			var endA = startA + getSession(team.schedule[i].session_uid).length + event.minTravel;
 		var startB = instance.time;
-		var endB = startB + getSession(instance.session_uid).length + event.minTravel;
+		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK)
+			var endB = startB + getSession(instance.session_uid).length;
+		else
+			var endB = startB + getSession(instance.session_uid).length + event.minTravel;
 		if (startA == startB) return false;
 		if (startA < startB && endA > startB) return false;
 		if (startA > startB && startA < endB) return false;
