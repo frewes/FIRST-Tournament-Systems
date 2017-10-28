@@ -145,10 +145,15 @@ function tableSession(event, session, numOffset) {
 
 function initialFill(event) {
 	var oneSetOfTeams = event.teams.slice();
+	shuffle(oneSetOfTeams);
 	for (var i = 0; i < event.allSessions.length; i++) {
 		var teams = [];
 		for (var j = 0; j < event.allSessions[i].instances; j++) 
 			teams = teams.concat(oneSetOfTeams.slice());
+        if (event.method == "block") {
+            for (var j = 0; j < event.allSessions[i].nSims*2; j++)
+                teams.push(teams.shift());
+        } else shuffle(teams);
 		fillSession(event,event.allSessions[i],teams);
 	}
 }
@@ -211,3 +216,18 @@ function canDo(event, team, instance) {
 	}
 	return true;
 }
+
+/**
+ * Shuffles array in place.
+ * @param {Array} a items The array containing the items.
+ */
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+}
+
