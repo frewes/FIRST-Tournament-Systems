@@ -100,6 +100,10 @@ function EventPanel(params) {
 	    for (var i = 0; i < nameLen; i++)
 	    	x.value = x.value + ((i+1)+"\n");
 	}
+	this.updateMethod = function() {
+        this.params.method = ($("input[name='method']:checked").val());
+        autosave();
+	}
 }
 
 function generate() {

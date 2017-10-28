@@ -32,10 +32,33 @@ EventParameters:
 		locations
 		schedule
 **/
+function Schedule(event) {
+	buildAllTables(event);
+
+	initialFill(event);
+
+	console.log(event);
+}
+
+/**
+	num: Count of instance 
+	time: Time (mins) of instance
+	teams: List of teams in instance
+	loc: Location offset (i.e. for staggered sessions, location index of where the teams begin)
+	extra: true/false if extra time is allocated
+*/
+function Instance(uid, num, time, teams, loc) {
+	this.session_uid = uid;
+	this.num = num;
+	this.time = time;
+	this.teams = teams;
+	this.loc = loc;
+	this.extra = false;
+}
 
 const NOT_YET_ADDED = -64;
 
-function Schedule(event) {
+function buildAllTables(event) {
 	event.allSessions.sort(function(a,b) {
 		if (a.type.priority == b.type.priority) return a.start - b.start;
 		return a.type.priority - b.type.priority;
@@ -54,23 +77,8 @@ function Schedule(event) {
 		offset += event.allSessions[i].schedule.length;
 		if (end > event.allSessions[i].end) alert (event.allSessions[i].name + " will finish late! Consider revising");
 	}
-	console.log(event);
 }
 
-/**
-	num: Count of instance 
-	time: Time (mins) of instance
-	teams: List of teams in instance
-	loc: Location offset (i.e. for staggered sessions, location index of where the teams begin)
-	extra: true/false if extra time is allocated
-*/
-function Instance(num, time, teams, loc) {
-	this.num = num;
-	this.time = time;
-	this.teams = teams;
-	this.loc = loc;
-	this.extra = false;
-}
 /**
     Sets up all the timeslots for the given session.
     numOffset: offset at which to start counting (facilitates round numbering)
@@ -104,7 +112,7 @@ function tableSession(event, session, numOffset) {
         var d = Math.floor(session.nLocs/session.nSims);
         var locOffset = (i%d)*session.nSims;
         if (i < L-1) { 
-	        session.schedule[i] = new Instance(i+1+numOffset,now,new Array(session.nSims),locOffset);
+	        session.schedule[i] = new Instance(session.uid,i+1+numOffset,now,new Array(session.nSims),locOffset);
 	        now = timeInc(event,now,session.length+session.buffer);
 	        roundsSinceExtra++;
             if (((i == 0 && session.extraTimeFirst) || (roundsSinceExtra >= everyN)) && extraRounds < extraRoundsNeeded) {
@@ -114,7 +122,7 @@ function tableSession(event, session, numOffset) {
 	        	extraRounds++;
 	        }
 	    } else {
-	    	session.schedule[i] = new Instance(i+1+numOffset,now,new Array(lastNTeams),locOffset);
+	    	session.schedule[i] = new Instance(session.uid,i+1+numOffset,now,new Array(lastNTeams),locOffset);
 	    	now = now + session.length + session.buffer;
 	        roundsSinceExtra++;
             if (roundsSinceExtra >= everyN) {
@@ -130,6 +138,30 @@ function tableSession(event, session, numOffset) {
     return now;
 }
 
+function initialFill(event) {
+	var oneSetOfTeams = event.teams.slice();
+	for (var i = 0; i < event.allSessions.length; i++) {
+		var teams = [];
+		for (var j = 0; j < event.allSessions[i].instances; j++) 
+			teams = teams.concat(oneSetOfTeams.slice());
+		fillSession(event,event.allSessions[i],teams);
+	}
+}
+
+function fillSession(event, session, teams) {
+	for (var i = 0; i < session.schedule.length; i++) {
+		var instance = session.schedule[i];
+		for (var t = 0; t < instance.teams.length; t++) {
+			var team = teams.splice(0,1)[0];
+			instance.teams[t] = team.uid;
+			team.schedule.push(instance);
+		}
+	}
+}
+
+
+/** ========================== UTILITIES ========================== **/
+
 /** 
 	Increments given time, skipping breaks.
 	@return Returns the incremented time.
@@ -144,4 +176,3 @@ function timeInc(event,time,len) {
     }
     return newTime;
 }
-

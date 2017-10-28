@@ -78,13 +78,14 @@ body {
 
 .indiv th{
     padding:4px;
-    border: solid #CCCCCC 1px;
+    text-align: center;
+    /*border: solid #CCCCCC 1px;*/
 }
 
 .indiv td{
     padding: 2px;
     text-align: center;
-    border: solid #CCCCCC 1px;
+    /*border: solid #CCCCCC 1px;*/
     
 }
 
@@ -99,8 +100,6 @@ body {
 tr:hover td {
     background-color: #c5c5c5 !important
 }
-
-
 
 table.roundtable{
      display: inline-block;

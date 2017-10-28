@@ -3,13 +3,12 @@ const TYPE_MATCH_ROUND = new SessionType("Rounds", 16);
 const TYPE_MATCH_FILLER = new SessionType("Matches", 32);
 const TYPE_BREAK = new SessionType("Breaks", 0);
 
-const METHOD_BLOCK = 0;
-const METHOD_RANDOM = 1;
-
 const LEAVE_BLANKS = 0;
 const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
+
+var TEAM_UID_COUNTER = 0;
 
 function SessionType(name,priority) {
 	this.name = name;
@@ -27,7 +26,7 @@ function EventParameters(name,nTeams,nDays,minTravel,extraTime) {
 	this.allSessions = [];
 	this.teams = [];
 	this.days = [];
-	this.method=METHOD_RANDOM;
+	this.method="random";
 	this.majorLogo = "mqlogo.png";
 	this.gameLogo = "hdlogo.jpg"
 	if (!nDays) var nDays = 1
@@ -83,8 +82,8 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	}
 	this.locations = locs || [];
 	this.schedule = null; // To be filled in later
+	this.nErrors = 0;
 
-	// As yet unimplemented:
 	this.instances = 1; // Can be changed in later versions, specifically for TYPE_MATCH_FILLER.
 	this.extraTimeFirst = false; // Should the first round be a little longer?
 	this.extraTimeEvery = null; // Extra time every N rounds
@@ -95,12 +94,13 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 }
 
 function TeamParameters(number,name) {
+	this.uid = TEAM_UID_COUNTER++;
 	this.number = (number)?number:(tournament.teamnum_counter++);
 	this.name = (name)?name:("Team " +this.number);
 	this.special = false;
 	this.start = null; // Can be used to define when the team must arrive.
 	this.end = null; // Can be used to define when the team must leave.
-	this.schedule = null;
+	this.schedule = [];
 	// For the above two parameters, will probably need to conduct a check before scheduling; if they physically can't fit anything, don't try.
 }
 
@@ -139,6 +139,14 @@ function getSession(uid) {
 		if (tournament.allSessions[i].uid == uid) return tournament.allSessions[i];
 	}
 	console.log("Failed to find session " + uid);
+	return null;
+}
+
+function getTeam(uid) {
+	for (var i = 0; i < tournament.teams.length; i++) {
+		if (tournament.teams[i].uid == uid) return tournament.teams[i];
+	}
+	console.log("Failed to find team " + uid);
 	return null;
 }
 
