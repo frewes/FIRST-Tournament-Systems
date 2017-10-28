@@ -97,7 +97,10 @@ body {
 .session td:nth-child(2) {background-color: #f2f2f2}
 .session th {background-color: #f2f2f2}
 
-tr:hover td {
+.indiv tr:hover td {
+    background-color: #c5c5c5 !important
+}
+.session tr:hover td {
     background-color: #c5c5c5 !important
 }
 

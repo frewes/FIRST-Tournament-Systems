@@ -108,8 +108,22 @@ function EventPanel(params) {
 
 function generate() {
 	// validate(tournament); * Not yet implemented *
-	emptySchedule(tournament);
-	schedule(tournament); 
+	var attempts = $("#attempts")[0].value;
+	while(attempts-- > 0) {
+		emptySchedule(tournament);
+		schedule(tournament); 
+		var errors = evaluate(tournament);
+	    var resultElmt = document.getElementById('words');
+	    if (errors > 0) {
+	        $("#words")[0].style.color = "red";
+	        var str = (errors == 1) ? " error" : " errors";
+	        $("#words")[0].innerHTML = errors + str + ".  Try again, or adjust your parameters.";
+	    } else {
+	        $("#words")[0].style.color = "green";        
+	        $("#words")[0].innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed. <br>NB: PDFs are not currently supported in Internet Explorer, but you can still use the tables.";
+	        break;
+	    }
+	}
 	printToDom(tournament);
 }
 
@@ -412,6 +426,7 @@ function openLocationModal(uid) {
 	panel = getPanel(uid);
     $("#sm-modal-body").empty();
     $("#sm-modal-footer").empty();
+    $("#sm-modal-title")[0].innerHTML = panel.session.name + " locations";
     $("#sm-modal-body").append($("<input type=\"hidden\" value=\""+uid+"\">"));
     for (var i = 0; i < panel.session.locations.length; i++) {
     	var input = $("<input type=\"text\" class=\"form-control\" value=\""+panel.session.locations[i]+"\">");
@@ -454,6 +469,7 @@ function closeDayModal() {
 function openTeamImportModal() {
     $("#lg-modal-body").empty();
     $("#lg-modal-footer").empty();
+    $("#lg-modal-title")[0].innerHTML = "Team names/numbers";
     $("#lg-modal-body").append($("<p>One line per team.  Team numbers will automatically add\/delete to match the number of team names.</p>"))
     $("#lg-modal-body").append($("<p><button class=\"btn\" onclick=\"tourn_ui.sequenceTeams()\">Number sequentially</button></p>"));
     var x = $("<textarea rows=\""+tourn_ui.params.teams.length+"\" cols=\"5\"></textarea>");
@@ -489,6 +505,7 @@ function closeTeamImportModal() {
 function openTeamEditModal() {
     $("#lg-modal-body").empty();
     $("#lg-modal-footer").empty();
+    $("#lg-modal-title")[0].innerHTML = "Team features";
     $("#lg-modal-body").append($("<table class=\"table\">"));
     $("#lg-modal-body>table").append($("<thead><tr><th>Team</th><th>Needs extra time?</th><th>Arrival time</th><th>Departure time</th></tr></thead>"));
     $("#lg-modal-body>table").append($("<tbody>"));
