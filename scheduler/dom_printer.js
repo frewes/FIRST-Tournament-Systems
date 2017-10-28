@@ -85,7 +85,7 @@ function generateIndivTable(event) {
 			row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
 			row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].loc]+"</td>"));
 		}
-		row.append($("<td>"+event.minTravel+"</td>"));
+		row.append($("<td>"+minTravelTime(team)+"</td>"));
 		tbody.append(row);
 	}
 	table.append(tbody);

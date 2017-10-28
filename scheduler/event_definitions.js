@@ -168,5 +168,22 @@ function load(json) {
 	return evt;
 }
 
-
-
+function minTravelTime(team) {
+	var time = Infinity;
+	for (var i = 0; i < team.schedule.length; i++) {
+		for (var j = 0; j < team.schedule.length; j++) {
+			if (i == j) continue;
+			var inst1 = team.schedule[i];
+			var start1 = inst1.time; 
+			var end1 = start1 + getSession(inst1.session_uid).length + ((inst1.extra)?tournament.extraTime:0);
+			var inst2 = team.schedule[j];
+			var start2 = inst2.time; 
+			var end2 = start2 + getSession(inst2.session_uid).length + ((inst2.extra)?tournament.extraTime:0);
+			var dt12 = end1 - start2;
+			var dt21 = end2 - start1; 
+			var currMin = Math.min(Math.abs(dt12),Math.abs(dt21));
+			time = Math.min(currMin,time);
+		}
+	}
+	return time;
+}
