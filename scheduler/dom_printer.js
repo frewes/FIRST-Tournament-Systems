@@ -1,4 +1,14 @@
 function printToDom(event) {
+	if (event.allSessions[0].schedule == null) return;
+    if (event.errors > 0) {
+        $("#words")[0].style.color = "red";
+        var str = (event.errors == 1) ? " error" : " errors";
+        $("#words")[0].innerHTML = event.errors + str + ".  Try again, or adjust your parameters.";
+    } else {
+        $("#words")[0].style.color = "green";        
+        $("#words")[0].innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed. <br>NB: PDFs are not currently supported in Internet Explorer, but you can still use the tables.";
+    }
+
 	var results=$("#results");
 	results.empty();
 	for (var i = 0; i < event.allSessions.length; i++) {

@@ -112,18 +112,12 @@ function generate() {
 	while(attempts-- > 0) {
 		emptySchedule(tournament);
 		schedule(tournament); 
-		var errors = evaluate(tournament);
+		evaluate(tournament);
 	    var resultElmt = document.getElementById('words');
-	    if (errors > 0) {
-	        $("#words")[0].style.color = "red";
-	        var str = (errors == 1) ? " error" : " errors";
-	        $("#words")[0].innerHTML = errors + str + ".  Try again, or adjust your parameters.";
-	    } else {
-	        $("#words")[0].style.color = "green";        
-	        $("#words")[0].innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed. <br>NB: PDFs are not currently supported in Internet Explorer, but you can still use the tables.";
-	        break;
-	    }
+	    if (tournament.errors == 0) break;
 	}
+	console.log(event);
+	autosave();
 	printToDom(tournament);
 }
 
@@ -170,7 +164,9 @@ function loadFromFile(evt) {
     if (evt.files[0]) {
         reader.readAsText(evt.files[0]);
     }
+	printToDom(tournament);
 	alert ("Loaded " + evt.files[0].name + "!");
+
 }
 
 function getPanel(uid) {

@@ -36,8 +36,6 @@ function schedule(event) {
 	buildAllTables(event);
 
 	initialFill(event);
-
-	console.log(event);
 }
 
 function emptySchedule(event) {
@@ -181,14 +179,13 @@ function fillSession(event, session, teams) {
 
 
 function evaluate(event) {
-	var errors = 0;
+	event.errors = 0;
 	for (var i = 0; i < event.allSessions.length; i++) {
 		var session = event.allSessions[i];
 		for (var j = 0; j < session.schedule.length; j++)
 			for (var k = 0; k < session.schedule[j].teams.length; k++) 
-				if (session.schedule[j].teams[k] == NOT_YET_ADDED) errors++;
+				if (session.schedule[j].teams[k] == NOT_YET_ADDED) event.errors++;
 	}
-	return errors;
 }
 
 
