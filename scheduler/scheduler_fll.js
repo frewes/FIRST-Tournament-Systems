@@ -42,14 +42,16 @@ function Schedule(event) {
 	});
 	for (var i = 0; i < event.allSessions.length; i++) {
 		if (event.allSessions[i].type == TYPE_MATCH_ROUND) continue;
-		var end = tableSession(event,event.allSessions[i]);
+		var end = tableSession(event,event.allSessions[i],0);
 		if (end > event.allSessions[i].end) alert (event.allSessions[i].name + " will finish late! Consider revising");
 	}
 	var end = -Infinity;
+	var offset = 0;
 	for (var i = 0; i < event.allSessions.length; i++) {
 		if (event.allSessions[i].type != TYPE_MATCH_ROUND) continue;
 		if (event.allSessions[i].start < end) event.allSessions[i].start = end;
-		end = tableSession(event,event.allSessions[i]);
+		end = tableSession(event,event.allSessions[i],offset);
+		offset += event.allSessions[i].schedule.length;
 		if (end > event.allSessions[i].end) alert (event.allSessions[i].name + " will finish late! Consider revising");
 	}
 	console.log(event);
@@ -71,10 +73,12 @@ function Instance(num, time, teams, loc) {
 }
 /**
     Sets up all the timeslots for the given session.
+    numOffset: offset at which to start counting (facilitates round numbering)
     @return Returns the time the schedule is finished (i.e. the end
     time of the last event)
 */
-function tableSession(event, session) {
+function tableSession(event, session, numOffset) {
+	if (!numOffset) numOffset = 0;
     var now = session.start;
     var L = Math.ceil((event.teams.length*session.instances) / session.nSims);
     var lastNTeams = ((event.teams.length*session.instances) % session.nSims);
@@ -100,7 +104,7 @@ function tableSession(event, session) {
         var d = Math.floor(session.nLocs/session.nSims);
         var locOffset = (i%d)*session.nSims;
         if (i < L-1) { 
-	        session.schedule[i] = new Instance(i+1,now,new Array(session.nSims),locOffset);
+	        session.schedule[i] = new Instance(i+1+numOffset,now,new Array(session.nSims),locOffset);
 	        now = timeInc(event,now,session.length+session.buffer);
 	        roundsSinceExtra++;
             if (((i == 0 && session.extraTimeFirst) || (roundsSinceExtra >= everyN)) && extraRounds < extraRoundsNeeded) {
@@ -110,7 +114,7 @@ function tableSession(event, session) {
 	        	extraRounds++;
 	        }
 	    } else {
-	    	session.schedule[i] = new Instance(i+1,now,new Array(lastNTeams),locOffset);
+	    	session.schedule[i] = new Instance(i+1+numOffset,now,new Array(lastNTeams),locOffset);
 	    	now = now + session.length + session.buffer;
 	        roundsSinceExtra++;
             if (roundsSinceExtra >= everyN) {
