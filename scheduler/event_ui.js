@@ -108,7 +108,8 @@ function EventPanel(params) {
 
 function generate() {
 	// validate(tournament); * Not yet implemented *
-	Schedule(tournament); 
+	emptySchedule(tournament);
+	schedule(tournament); 
 	printToDom(tournament);
 }
 

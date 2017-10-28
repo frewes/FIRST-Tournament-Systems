@@ -32,12 +32,17 @@ EventParameters:
 		locations
 		schedule
 **/
-function Schedule(event) {
+function schedule(event) {
 	buildAllTables(event);
 
 	initialFill(event);
 
 	console.log(event);
+}
+
+function emptySchedule(event) {
+	for (var i = 0; i < event.allSessions.length; i++) event.allSessions.schedule = [];
+	for (var i = 0; i < event.teams.length; i++) event.teams[i].schedule = [];
 }
 
 /**
@@ -152,11 +157,21 @@ function fillSession(event, session, teams) {
 	for (var i = 0; i < session.schedule.length; i++) {
 		var instance = session.schedule[i];
 		for (var t = 0; t < instance.teams.length; t++) {
-			var team = teams.splice(0,1)[0];
-			instance.teams[t] = team.uid;
-			team.schedule.push(instance);
+			var team = -1;
+			for (var k = 0; k < teams.length; k++) {
+				if (canDo(event,teams[k],instance)) {
+					team = k;
+					break;
+				}
+			}
+			if (team != -1) {
+				var team = teams.splice(team,1)[0];
+				instance.teams[t] = team.uid;
+				team.schedule.push(instance);
+			} else continue;
 		}
 	}
+	for (var i = 0; i < teams.length; i++) teams[i].schedule.push(new Instance(session.uid, -1,null,null,-1));
 }
 
 
@@ -175,4 +190,18 @@ function timeInc(event,time,len) {
     		newTime = session.end;
     }
     return newTime;
+}
+
+function canDo(event, team, instance) {
+	// Check if team already has something in their schedule
+	for (var i = 0; i < team.schedule.length; i++) {
+		var startA = team.schedule[i].time;
+		var endA = startA + getSession(team.schedule[i].session_uid).length + event.minTravel;
+		var startB = instance.time;
+		var endB = startB + getSession(instance.session_uid).length + event.minTravel;
+		if (startA == startB) return false;
+		if (startA < startB && endA > startB) return false;
+		if (startA > startB && startA < endB) return false;
+	}
+	return true;
 }

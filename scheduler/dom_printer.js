@@ -56,7 +56,7 @@ function generateTable(session) {
 function generateIndivTable(event) {
 	var result = $("<div class=\"container-fluid indiv\">");
 	result.append($("<h4>Individual Schedules</h4>"));
-	var table = $("<table class=\"table resultTable table-responsive\">");
+	var table = $("<table class=\"table resultTable table-condensed table-responsive\">");
 	var header = "<thead><tr><th colspan=2>Team</th>";
 	for (var i = 0; i < event.allSessions.length; i++) { 
 		if (event.allSessions[i].type == TYPE_BREAK) continue;
@@ -83,7 +83,10 @@ function generateIndivTable(event) {
 			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
 			row.append($("<td>"+team.schedule[j].num+"</td>"));
 			row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
-			row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].loc]+"</td>"));
+			if (team.schedule[j].loc == -1)
+				row.append($("<td>--</td>"));
+			else
+				row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].loc]+"</td>"));
 		}
 		row.append($("<td>"+minTravelTime(team)+"</td>"));
 		tbody.append(row);
