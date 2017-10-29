@@ -1,3 +1,5 @@
+var usesSurrogates = false;
+
 function printToDom(event) {
 	if (event.allSessions[0].schedule == null) return;
     if (event.errors > 0) {
@@ -23,7 +25,7 @@ function generateTable(session) {
 	result.append($("<h4>"+session.name+"</h4>"));
 	var table = $("<table class=\"table resultTable table-responsive\">");
 	var header = "<thead><tr><th>#</th><th>Time</th>";
-	for (var i = 0; i < session.locations.length; i++) 
+	for (var i = 0; i < session.locations.length; i++)
 		header += "<th>"+session.locations[i]+"</th>";
 	header += "</tr></thead>";
 	table.append($(header));
@@ -49,10 +51,13 @@ function generateTable(session) {
 		for (var t = 0; t < instance.teams.length; t++) {
 			diff--;
 			var deets="event,"+session.uid+","+i+","+t;
+			var surrogate = "";
+			if ((instance.teams.length - t) <= instance.surrogates) surrogate = "*";
+			if ((instance.teams.length - t) <= instance.surrogates) usesSurrogates = true;
 			if (instance.teams[t] == NOT_YET_ADDED)
-				row.append($("<td draggable=\"true\" class=\"unfilled\" ondrop=\"drop("+deets+")\" ondragstart=\"drag("+deets+")\" ondragover=\"allowDrop("+deets+")\">--</td>"));
+				row.append($("<td draggable=\"true\" class=\"unfilled\" ondrop=\"drop("+deets+")\" ondragstart=\"drag("+deets+")\" ondragover=\"allowDrop("+deets+")\">--"+surrogate+"</td>"));
 			else 
-				row.append($("<td draggable=\"true\" ondrop=\"drop("+deets+")\" ondragover=\"allowDrop("+deets+")\" ondragstart=\"drag("+deets+")\">"+getTeam(instance.teams[t]).number+"</td>"));
+				row.append($("<td draggable=\"true\" ondrop=\"drop("+deets+")\" ondragover=\"allowDrop("+deets+")\" ondragstart=\"drag("+deets+")\">"+getTeam(instance.teams[t]).number+surrogate+"</td>"));
 			console.log
 		}
 		while (diff-- >= 0) row.append($("<td>"));
@@ -72,7 +77,9 @@ function generateIndivTable(event) {
 		if (event.allSessions[i].type == TYPE_BREAK) continue;
 		header += "<th colspan=3>"+event.allSessions[i].name+"</th>";
 	}
-	header += "<th rowspan=2>Min. Travel time</td></tr></thead>";
+	header += "<th>Min. Travel time</th>";
+	if (usesSurrogates) header += "<th colspan=3>Surrogate</th>";
+	header += "</tr></thead>";
 	table.append($(header));
 	var header = "<thead><tr><th>#</th><th>Time</th>";
 	for (var i = 0; i < event.allSessions.length; i++) { 
@@ -80,6 +87,12 @@ function generateIndivTable(event) {
 		header += "<th>#</th>";
 		header += "<th>Time</th>";
 		header += "<th>Loc</th>";
+	}
+	header += "<th></th>";
+	if (usesSurrogates) {
+		header += "<th>#</th>";
+		header += "<th>Time</th>";
+		header += "<th>Loc</th>";		
 	}
 	header += "</tr></thead>";
 	table.append($(header));

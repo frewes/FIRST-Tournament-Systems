@@ -88,7 +88,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	this.instances = 1; // Can be changed in later versions, specifically for TYPE_MATCH_FILLER.
 	this.extraTimeFirst = false; // Should the first round be a little longer?
 	this.extraTimeEvery = null; // Extra time every N rounds
-	if (this.type == TYPE_MATCH_ROUND) this.fillerPolicy = USE_STANDINS;
+	if (this.type == TYPE_MATCH_ROUND) this.fillerPolicy = USE_SURROGATES;
 	else if (this.type == TYPE_MATCH_FILLER) this.fillerPolicy = USE_SURROGATES;
 	else this.fillerPolicy = LEAVE_BLANKS; // How to fill in empty spots in non-round-number instances.
 

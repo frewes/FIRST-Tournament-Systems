@@ -65,6 +65,7 @@ function EventPanel(params) {
 		for (var i = 0; i < toDelete.length; i++) {
 			deleteParams(toDelete[i]);
 		}
+		toggleAdvMode();
 		autosave();
 	}
 	this.changeMajorLogo = function() {

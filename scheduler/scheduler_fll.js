@@ -98,6 +98,10 @@ function tableSession(event, session, numOffset) {
     var L = Math.ceil((event.teams.length*session.instances) / session.nSims);
     var lastNTeams = ((event.teams.length*session.instances) % session.nSims);
     lastNTeams = (lastNTeams==0) ? session.nSims : lastNTeams;
+    // if (session.fillerPolicy == USE_SURROGATES) {
+    // 	var teamsToAdd = session.nSims - lastNTeams;
+    // 	lastNTeams = session.nSims;
+    // }
     session.schedule = new Array(L);
     
     // Figure out how many rounds to make extra long
@@ -257,7 +261,7 @@ function swapFillSession(event, session, teams) {
 			}
 		}
 	}
-	console.log("Fixed " + fixed + " errors by swapping");
+	// console.log("Fixed " + fixed + " errors by swapping");
 	return fixed;
 }
 
@@ -287,6 +291,28 @@ function sortThingsOut(event) {
 				return getSession(a.session_uid).start - getSession(b.session_uid).start
 			return getSession(a.session_uid).type.priority - getSession(b.session_uid).type.priority;
 		});
+	}
+	// Fill in surrogate teams
+	for (var i = 0; i < event.allSessions.length; i++) {
+		var session = event.allSessions[i];
+		if (session.fillerPolicy != USE_SURROGATES) continue;
+		var lastInst = session.schedule[session.schedule.length-1];
+		while (lastInst.teams.length < session.nSims) {
+			lastInst.surrogates++;
+			var found = false;
+			shuffle(event.teams);
+			for (var t = 0; t < event.teams.length; t++) {
+				if (canDo(event,event.teams[t],lastInst)) {
+					lastInst.teams.push(event.teams[t].uid);
+					getTeam(event.teams[t].uid).schedule.push(lastInst);
+					console.log("Found team " + event.teams[t].number)
+					found = true;
+					break;
+				}
+			}
+			if (!found) console.log("NO SURROGATE FOUND");
+			if (!found) lastInst.teams.push(NOT_YET_ADDED);
+		}
 	}
 }
 
