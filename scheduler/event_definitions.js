@@ -109,9 +109,9 @@ function loadPresetFLL() {
 	addRound("Round 1",600,1020,2,4,5,5);
 	addRound("Round 2",600,1020,2,4,5,5);
 	addRound("Round 3",600,1020,2,4,5,5);
-	addJudging("Robot Design Judging",600,1020,4,4,10,5);
-	addJudging("Core Values Judging",600,1020,4,4,10,5);
-	addJudging("Research Project Judging",600,1020,4,4,10,5);
+	addJudging("Robot Design Judging",600,1020,3,3,10,5);
+	addJudging("Core Values Judging",600,1020,3,3,10,5);
+	addJudging("Research Project Judging",600,1020,3,3,10,5);
 	addBreak("Lunch");
 	toggleAdvMode();
 }
@@ -169,6 +169,7 @@ function load(json) {
 	return evt;
 }
 
+// TODO: Don't consider the start of TYPE_BREAK
 function minTravelTime(team) {
 	var time = Infinity;
 	for (var i = 0; i < team.schedule.length; i++) {

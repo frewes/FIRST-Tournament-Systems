@@ -34,8 +34,9 @@ EventParameters:
 **/
 function schedule(event) {
 	buildAllTables(event);
-
 	initialFill(event);
+	swapFill(event);
+	sortThingsOut(event);
 }
 
 function emptySchedule(event) {
@@ -56,6 +57,8 @@ function Instance(uid, num, time, teams, loc) {
 	this.time = time;
 	this.teams = teams;
 	this.loc = loc;
+	this.surrogates=0;
+	this.standins=0;
 	this.extra = false;
 }
 
@@ -67,6 +70,7 @@ function buildAllTables(event) {
 		return a.type.priority - b.type.priority;
 	});
 	for (var i = 0; i < event.allSessions.length; i++) {
+		if (event.allSessions[i].type != TYPE_BREAK) event.allSessions[i].start = timeInc(event,event.allSessions[i].start,0);
 		if (event.allSessions[i].type == TYPE_MATCH_ROUND) continue;
 		var end = tableSession(event,event.allSessions[i],0);
 		if (end > event.allSessions[i].end) alert (event.allSessions[i].name + " will finish late! Consider revising");
@@ -174,17 +178,115 @@ function fillSession(event, session, teams) {
 			} else continue;
 		}
 	}
-	for (var i = 0; i < teams.length; i++) teams[i].schedule.push(new Instance(session.uid, -1,null,null,-1));
+	// TODO: Change this to be right at the end of the swapFilling to make sure this is done correctly.
+	// for (var i = 0; i < teams.length; i++) teams[i].schedule.push(new Instance(session.uid, -1,null,null,-1));
 }
 
+/**
+	Go through all sessions in the event and fix up errors through first-order swapping.
+**/
+function swapFill(event) {
+    for (var j = 0; j < 10; j++) {
+        var fixed = 0;
+        evaluate(event);
+        for (var i = 0; i < event.allSessions.length; i++) {
+            if (event.allSessions[i].nErrors == 0) continue;
+            fixed += swapFillSession(event, event.allSessions[i], event.teams);
+        }
+        if (fixed == 0) break;
+    }
+}
+
+/**
+	Go through a given session, fix all errors with first-order swapping.
+	TODO: deal with the case where instances > 1?  How to do this?
+	@return Number of errors fixed
+**/
+function swapFillSession(event, session, teams) {
+	var fixed = 0;
+	// Make list of teams that aren't in this session enough (lost set)
+	var lostTeams = [];
+	for (var i = 0; i < teams.length ; i++) 
+		if (hasDone(teams[i],session.uid) < session.instances) lostTeams.push(teams[i]);
+	// Find every empty slot in the schedule
+	for (var i = 0; i < session.schedule.length; i++) {
+		var instance_A = session.schedule[i];
+		for (var j = 0; j < instance_A.teams.length; j++) {
+			if (instance_A.teams[j] != NOT_YET_ADDED) continue;
+			// Found empty slot!	
+			// Now find a team A from the full set that can do this time
+			for (var tA = 0; tA < teams.length; tA++) {
+				if (!canDo(event,teams[tA],instance_A,session.uid)) continue;
+				// Now, find a team B from the lost set that can take team A's instance 
+				var instance_B = null;
+				for (var x = 0; x < teams[tA].schedule.length; x++) {
+					if (teams[tA].schedule[x].session_uid == instance_A.session_uid) {
+						instance_B = teams[tA].schedule.splice(x,1)[0];
+						break;
+					}
+				}
+				var f = fixed;
+				if (instance_B == null) {
+					// Team A can just do instance A; no swap required, add the team in.
+					instance_A.teams[j] = teams[tA].uid;
+					teams[tA].schedule.push(instance_A);
+					fixed++;
+					break;
+				}
+				for (var tB = 0; tB < lostTeams.length; tB++) {
+					if (!canDo(event,lostTeams[tB],instance_B)) continue;
+					// Found a team that can swap with A!
+					// Now, swap teams A and B
+					// Add instanceA to teamA
+					instance_A.teams[j] = teams[tA].uid;
+					teams[tA].schedule.push(instance_A);
+					// Add instanceB to teamB
+					var truth = false;
+					for (var idx = 0 ; idx < instance_B.teams.length; idx++) {
+						if (instance_B.teams[idx] == teams[tA].uid) {
+							truth = true;
+							instance_B.teams[idx] = lostTeams[tB].uid;
+						}
+					}
+					lostTeams[tB].schedule.push(instance_B);
+					lostTeams.splice(tB,1);
+					fixed++;
+					break;
+				}
+				if (f == fixed) teams[tA].schedule.push(instance_B);
+			}
+		}
+	}
+	console.log("Fixed " + fixed + " errors by swapping");
+	return fixed;
+}
 
 function evaluate(event) {
 	event.errors = 0;
 	for (var i = 0; i < event.allSessions.length; i++) {
 		var session = event.allSessions[i];
+		session.nErrors = 0;
 		for (var j = 0; j < session.schedule.length; j++)
 			for (var k = 0; k < session.schedule[j].teams.length; k++) 
-				if (session.schedule[j].teams[k] == NOT_YET_ADDED) event.errors++;
+				if (session.schedule[j].teams[k] == NOT_YET_ADDED) session.nErrors++;
+		event.errors += session.nErrors;
+	}
+}
+
+/** 
+	Sorts the sessions and team schedules, in order to ensure individual timetables are consistent.
+**/
+function sortThingsOut(event) {
+	event.allSessions.sort(function(a,b) {
+		if (a.type.priority == b.type.priority) return a.start - b.start;
+		return a.type.priority - b.type.priority;
+	});
+	for (var i = 0; i < event.teams.length; i++) {
+		event.teams[i].schedule.sort(function(a,b) {
+			if (getSession(a.session_uid).type.priority == getSession(b.session_uid).type.priority)
+				return getSession(a.session_uid).start - getSession(b.session_uid).start
+			return getSession(a.session_uid).type.priority - getSession(b.session_uid).type.priority;
+		});
 	}
 }
 
@@ -206,10 +308,16 @@ function timeInc(event,time,len) {
     return newTime;
 }
 
-function canDo(event, team, instance) {
+/**
+	Return true if the team can do the given instance.
+	Returns false if they don't have time to come from a previous instance or go to a later one.
+	if 'excl' is given, do not consider that session ID when checking this.
+**/ 
+function canDo(event, team, instance, excl) {
 	// Check if team already has something in their schedule
 	for (var i = 0; i < team.schedule.length; i++) {
 		var startA = team.schedule[i].time;
+		if (excl && team.schedule[i].session_uid == excl) continue;
 		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK)
 			var endA = startA + getSession(team.schedule[i].session_uid).length;
 		else 
@@ -227,6 +335,17 @@ function canDo(event, team, instance) {
 }
 
 /**
+	Returns how many times a team has done a given session
+**/
+function hasDone(team, uid) {
+	var count = 0;
+	for (var i = 0; i < team.schedule.length; i++) {
+		if (team.schedule[i].session_uid == uid) count++;
+	}
+	return count;
+}
+
+/**
  * Shuffles array in place.
  * @param {Array} a items The array containing the items.
  */
@@ -239,4 +358,3 @@ function shuffle(a) {
         a[j] = x;
     }
 }
-

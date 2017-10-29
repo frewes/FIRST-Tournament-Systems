@@ -115,8 +115,9 @@ function generate() {
 		evaluate(tournament);
 	    var resultElmt = document.getElementById('words');
 	    if (tournament.errors == 0) break;
+	    else console.log("Generation failed with " + tournament.errors + ((tournament.errors==1)?" error":" errors"));
 	}
-	console.log(event);
+	console.log(tournament);
 	autosave();
 	printToDom(tournament);
 }
