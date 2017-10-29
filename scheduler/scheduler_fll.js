@@ -317,7 +317,6 @@ function sortThingsOut(event) {
 				if (canDo(event,event.teams[t],lastInst)) {
 					lastInst.teams.push(event.teams[t].uid);
 					getTeam(event.teams[t].uid).schedule.push(lastInst);
-					console.log("Found team " + event.teams[t].number)
 					found = true;
 					break;
 				}

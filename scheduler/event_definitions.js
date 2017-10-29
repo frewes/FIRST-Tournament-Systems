@@ -175,6 +175,8 @@ function minTravelTime(team) {
 	for (var i = 0; i < team.schedule.length; i++) {
 		for (var j = 0; j < team.schedule.length; j++) {
 			if (i == j) continue;
+			if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK) continue;
+			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
 			var inst1 = team.schedule[i];
 			var start1 = inst1.time; 
 			var end1 = start1 + getSession(inst1.session_uid).length + ((inst1.extra)?tournament.extraTime:0);
