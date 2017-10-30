@@ -3,6 +3,11 @@
     height:200px;
 }
 
+.navbar-left img {
+    /*width:200px;*/
+    height:60px;
+}
+
 
 /* Style the list */
 ul.tab {

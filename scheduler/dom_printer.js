@@ -1,5 +1,7 @@
 var usesSurrogates = false;
 
+var colClass = "col-md-4";
+
 function printToDom(event) {
 	if (event.allSessions[0].schedule == null) return;
     if (event.errors > 0) {
@@ -17,15 +19,21 @@ function printToDom(event) {
 
 	var results=$("#results");
 	results.empty();
+	var judge_row = $("<div class=\"row\">");
+	var match_row = $("<div class=\"row\">");
 	for (var i = 0; i < event.allSessions.length; i++) {
 		var session = event.allSessions[i];
-		if (session.type != TYPE_BREAK) results.append(generateTable(session));
+		if (session.type == TYPE_JUDGING) judge_row.append(generateTable(session));
+		else if (session.type == TYPE_BREAK) console.log("Not printing break");
+		else match_row.append(generateTable(session));
 	}
+	results.append(judge_row);
+	results.append(match_row);
 	results.append(generateIndivTable(event));
 }
 
 function generateTable(session) {
-	var result = $("<div class=\"container-fluid session\">");
+	var result = $("<div class=\""+colClass+" session\">");
 	result.append($("<h4>"+session.name+"</h4>"));
 	var table = $("<table class=\"table resultTable table-responsive\">");
 	var header = "<thead><tr><th>#</th><th>Time</th>";
