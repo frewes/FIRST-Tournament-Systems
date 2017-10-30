@@ -20,199 +20,184 @@
     
 <!-- Fixed navbar -->
 <nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container">
+  <div class="container-fluid">
     <div class="navbar-header">
-    <ul class="tab">
-      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Teams')" id="defaultOpen">Teams</a></li>
-      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Judging')">Judging</a></li>
-      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Matches')">Matches</a></li>
-      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Breaks')">Breaks</a></li>
-      <li><a href="javascript:void(0)" class="tablinks" onclick="openCity(event, 'Logos')">Logos</a></li>
+      <a class="navbar-brand" href="javascript:void(0)">WaterShed</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#event_tab" data-toggle="tab">Event</a></li>
+      <li><a href="#judge_tab" data-toggle="tab">Judging</a></li>
+      <li><a href="#match_tab" data-toggle="tab">Matches</a></li>
+      <li><a href="#break_tab" data-toggle="tab">Breaks</a></li>
+      <li><a href="#logo_tab" data-toggle="tab">Logos</a></li>
     </ul>
-      </div>
+    <ul id="file-nav" class="nav navbar-nav navbar-right">
+        <li><a><label for="adv-toggle">Advanced: </label></a></li>
+        <li><a><label class="switch">
+            <input id="adv-toggle" type="checkbox" onchange="toggleAdvMode()">
+            <span class="slider round"></span></a>
+        </li>
+        <li><a href="javascript:void(0)" onclick="clickSave()">
+            <span class="glyphicon glyphicon-save"></span>Save</a>
+            <a id="saveLink" style="display:none">Download</a>
+        </li>
+        <li><a href="javascript:void(0)" onclick="clickLoad()">
+            <span class="glyphicon glyphicon-open"></span> Load</a>
+            <input type="file" id="loadFileInput" class="hidden" onchange="loadFromFile(this)" accept=".schedule"></li>
+        </ul>
     </div>
 </nav>
 
-<!-- Team parameters -->    
-<div id="Teams" class="tabcontent">
-  <h3>Teams</h3>
-    <table>
-        <tr><td>Number of teams:&nbsp;</td><td><input type=number id="nTeams" value=24 min=1 max=999></td></tr>
-        <tr><td>Min. travel (mins):</td><td><input type=number id="minTravel" value=10 min=1 max=999></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadgenericModal()" data-toggle="modal" data-target="#genericModal">Edit team names</button></td></tr>
-    </table>
+<div class="tab-content">
+    <!-- Team parameters -->    
+    <div id="event_tab" class="tabcontent tab-pane fade in active">
+        <table class="roundtable">
+            <tr><td>Number of days:&nbsp;</td><td><input class="form-control" type=number id="nDays" value=1 min=1 max=5 onchange="tourn_ui.changeNDays()"></td></tr>
+            <tr><td colspan=2><button disabled class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#smallModal">Edit day names</button></td></tr>
+        </table>
+        <table class="roundtable">
+            <tr><td>Number of teams:&nbsp;</td><td><input class="form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
+            <tr>
+                <td><button disabled class="btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#largeModal">Edit names/numbers</button></td>
+                <td class="advanced" hidden><button disabled class="btn" onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Adv. Team details</button></td>
+            </tr>
+        </table>
+        <table class="roundtable">
+            <tr><td>Min. travel (mins):</td><td><input class="form-control" type=number id="minTravel" value=10 min=1 max=999 onchange="tourn_ui.changeMinTravel()"></td></tr>
+            <tr hidden class="advanced"><td>Extra time (mins):</td><td><input class="form-control" type=number id="extraTime" value=5 min=1 max=120 onchange="tourn_ui.changeExtraTime()"></td></tr>
+        </table>
+    </div>
+        
+    <!-- Session parameters -->
+    <div id="judge_tab" class="tabcontent tab-pane fade">
+        <button disabled class="advanced btn" id="addJudgeBtn" onclick="addJudging()">Add!</button>
+    </div>
+
+    <div id="match_tab" class="tabcontent tab-pane fade">
+        <button disabled class="advanced btn" id="addRoundBtn" onclick="addRound()">Add!</button>
+    </div>
+
+    <div id="break_tab" class="tabcontent tab-pane fade">
+        <button disabled class="advanced btn" id="addBreakBtn" onclick="addBreak()">Add!</button>
+    </div>
+    <div id="logo_tab" class="tabcontent tab-pane fade">
+        <table>
+            <tr>
+                <td style='padding:5px'><img id="majrimg" src="mqlogo.png" height="200" alt="Major sponsor">&nbsp;</td>
+            <td style='padding:5px'>
+    	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input class="form-control" id="majrfile" type="file" onchange="tourn_ui.changeMajorLogo()" style="display:none"></label>&nbsp;</td>
+    	</tr><tr>
+            <td style='padding:5px'><img id="gameimg" src="hdlogo.jpg" height="200" alt="Game logo">&nbsp;</td>
+
+            <td style='padding:5px'>
+    	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input class="form-control" id="gamefile" type="file" onchange="tourn_ui.changeGameLogo()" style="display:none"></label>&nbsp;</td>
+            </tr>
+        </table>
+    </div>
 </div>
 
-<!-- Team names Modal -->
-<div id="genericModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+<div id="smallModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-sm">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Team Names</h4>
+                <button disabled class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="sm-modal-title"></h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" id="sm-modal-body">
             </div>
-            <div class="modal-footer">
-                <button type="button" onclick="saveModal()" class="btn btn-default" data-dismiss="modal">Save</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <div class="modal-footer" id="sm-modal-footer">
             </div>
         </div>
     </div>
 </div>
-    
-<!-- Session parameters -->
-<div id="Judging" class="tabcontent">
-    <h3>Judging</h3>
-    <table class=roundtable>
-        <tr><td colspan=2><h3>All</h3></td></tr>
-        <tr><td>Start time:</td><td><input id="judgeAStart" type=time value="10:00" step="900"></td></tr>
-        <tr><td>Must be done by</td><td><input id="judgeAEnd" type=time value="14:00" step="900"></td></tr>
-        <tr><td>Judging length (min):</td><td><input id="jALength" type=number min=0 max=1000 value=10></td></tr>
-        <tr><td>Buffer time (min):</td><td><input id="jABuffer" type=number min=0 max=1000 value=5></td></tr>
-        <tr><td>Number of judges:</td><td><input id="nAJudges" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td colspan=2><button class="btn btn-info" onclick="judgesApplyAll()">Apply to all</button></td></tr>
-
-    </table>
-    <table class=roundtable>
-        <tr><td colspan=2><h3>Robot Design</h3></td></tr>
-        <tr><td>Start time:</td><td><input id="judge1Start" type=time value="10:00" step="900"></td></tr>
-        <tr><td>Must be done by</td><td><input id="judge1End" type=time value="14:00" step="900"></td></tr>
-        <tr><td>Judging length (min):</td><td><input id="j1Length" type=number min=0 max=1000 value=10></td></tr>
-        <tr><td>Buffer time (min):</td><td><input id="j1Buffer" type=number min=0 max=1000 value=5></td></tr>
-        <tr><td>Number of judges:</td><td><input id="n1Judges" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(1)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
-    </table>
-    <table class=roundtable>
-        <tr><td colspan=2><h3>Core Values</h3></td></tr>
-        <tr><td>Start time:</td><td><input id="judge2Start" type=time value="10:00" step="900"></td></tr>
-        <tr><td>Must be done by</td><td><input id="judge2End" type=time value="14:00" step="900"></td></tr>
-        <tr><td>Judging length (min):</td><td><input id="j2Length" type=number min=0 max=1000 value=10></td></tr>
-        <tr><td>Buffer time (min):</td><td><input id="j2Buffer" type=number min=0 max=1000 value=5></td></tr>
-        <tr><td>Number of judges:</td><td><input id="n2Judges" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(2)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
-    </table>
-    <table class=roundtable>
-        <tr><td colspan=2><h3>Research Project</h3></td></tr>
-        <tr><td>Start time:</td><td><input id="judge3Start" type=time value="10:00" step="900"></td></tr>
-        <tr><td>Must be done by</td><td><input id="judge3End" type=time value="14:00" step="900"></td></tr>
-        <tr><td>Judging length (min):</td><td><input id="j3Length" type=number min=0 max=1000 value=10></td></tr>
-        <tr><td>Buffer time (min):</td><td><input id="j3Buffer" type=number min=0 max=1000 value=5></td></tr>
-        <tr><td>Number of judges:</td><td><input id="n3Judges" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(3)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
-    </table>
+<div id="largeModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button disabled class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="lg-modal-title"></h4>
+            </div>
+            <div class="modal-body" id="lg-modal-body">
+            </div>
+            <div class="modal-footer" id="lg-modal-footer">
+            </div>
+        </div>
+    </div>
 </div>
-
-<div id="Matches" class="tabcontent">
-    <h3>Matches (forced serial)</h3>
-    <table class="roundTable">
-        <tr><td colspan=2><h3>All</h3></td></tr>
-        <tr><td>Start time:</td><td><input id="matchAStart" type=time value="10:00" step="900"></td></tr>
-        <tr><td>Must be done by</td><td><input id="matchAEnd" type=time value="16:30" step="900"></td></tr>
-        <tr><td>Match length (min):</td><td><input id="mALength" type=number min=0 max=1000 value=5></td></tr>
-        <tr><td>Match buffer (min):</td><td><input id="mABuffer" type=number min=0 max=1000 value=5></td></tr>
-        <tr><td>Tables:</td><td><input id="nATables" type=number min=0 max=1000 value=4 step=2></td></tr>
-        <tr><td>Sim. Teams:</td><td><input id="nASims" type=number min=0 max=1000 value=2 step=2></td></tr>
-        <tr><td colspan=2><button class="btn btn-info" onclick="matchesApplyAll()">Apply to all</button></td></tr>
-    </table>
-    <table class="roundTable">
-        <tr><td colspan=2><h3>Round 1</h3></td></tr>
-        <tr><td>Start time:</td><td><input id="match1Start" type=time value="10:00" step="900"></td></tr>
-        <tr><td>Must be done by</td><td><input id="match1End" type=time value="16:30" step="900"></td></tr>
-        <tr><td>Match length (min):</td><td><input id="m1Length" type=number min=0 max=1000 value=5></td></tr>
-        <tr><td>Match buffer (min):</td><td><input id="m1Buffer" type=number min=0 max=1000 value=5></td></tr>
-        <tr><td>Tables:</td><td><input id="n1Tables" type=number min=0 max=1000 value=4 step=2></td></tr>
-        <tr><td>Sim. Teams:</td><td><input id="n1Sims" type=number min=0 max=1000 value=2 step=2></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(4)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
-    </table>
-    <table class="roundTable">
-        <tr><td colspan=2><h3>Round 2</h3></td></tr>
-        <tr><td>Start time:</td><td><input id="match2Start" type=time value="10:00" step="900"></td></tr>
-        <tr><td>Must be done by</td><td><input id="match2End" type=time value="16:30" step="900"></td></tr>
-        <tr><td>Match length (min):</td><td><input id="m2Length" type=number min=0 max=1000 value=4></td></tr>
-        <tr><td>Match buffer (min):</td><td><input id="m2Buffer" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td>Tables:</td><td><input id="n2Tables" type=number min=0 max=1000 value=4 step=2></td></tr>
-        <tr><td>Sim. Teams:</td><td><input id="n2Sims" type=number min=0 max=1000 value=2 step=2></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(5)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
-    </table>
-    <table class="roundTable">
-        <tr><td colspan=2><h3>Round 3</h3></td></tr>
-        <tr><td>Start time:</td><td><input id="match3Start" type=time value="10:00" step="900"></td></tr>
-        <tr><td>Must be done by</td><td><input id="match3End" type=time value="17:00" step="900"></td></tr>
-        <tr><td>Match length (min):</td><td><input id="m3Length" type=number min=0 max=1000 value=4></td></tr>
-        <tr><td>Match buffer (min):</td><td><input id="m3Buffer" type=number min=0 max=1000 value=3></td></tr>
-        <tr><td>Tables:</td><td><input id="n3Tables" type=number min=0 max=1000 value=4 step=2></td></tr>
-        <tr><td>Sim. Teams:</td><td><input id="n3Sims" type=number min=0 max=1000 value=2 step=2></td></tr>
-        <tr><td colspan=2><button type="button" class="btn" onclick="loadLocationModal(6)" data-toggle="modal" data-target="#genericModal">Edit location names</button></td></tr>
-    </table>
-
-</div>
-
-<div id="Breaks" class="tabcontent">
-    <h3>Breaks</h3>
-    <table class='break'>
-        <tr>
-            <td style='padding:5px'><input id="breakname" type="text" value="Lunch">&nbsp;</td>
-            <td style='padding:5px'>Start time:&nbsp;</td>
-            <td style='padding:5px'><input id="breakStart" type=time value="12:00"></td>
-            <td style='padding:5px'>End time:&nbsp;</td>
-            <td style='padding:5px'><input id="breakEnd" type=time value="13:00"></td>
-        </tr>
-    </table>
-</div>
-<div id="Logos" class="tabcontent">
-    <h3>Logos</h3>
-    <table>
-        <tr>
-            <td style='padding:5px'><img id="majrimg" src="mqlogo.png" height="200" alt="Major sponsor">&nbsp;</td>
-        <td style='padding:5px'>
-	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input id="majrfile" type="file" onchange="majorLogo()" style="display:none"></label>&nbsp;</td>
-	</tr><tr>
-        <td style='padding:5px'><img id="gameimg" src="hdlogo.jpg" height="200" alt="Game logo">&nbsp;</td>
-
-        <td style='padding:5px'>
-	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input id="gamefile" type="file" onchange="gameLogo()" style="display:none"></label>&nbsp;</td>
-        </tr>
-    </table>
-</div>
-
 
 <div class="container">
   <div class="starter-template">
-  <div id="title" class="title" onclick="changeTitle()">2017 FLL Tournament</div>
-    <button onclick="changeTitle()" class="btn-link">Change event name</button>
+  <div id="title" class="title" onclick="tourn_ui.changeTitle()">2017 FLL Tournament</div>
+    <button disabled onclick="tourn_ui.changeTitle()" class="btn-link">Change event name</button>
 
     <h1>Schedule Generation</h1>
+    <div onchange="tourn_ui.updateMethod()">
       <div class="radio">
-          <label><input type="radio" value="random" name="method" checked>Random</label>
+          <label><input class="form-check-input" type="radio" value="random" name="method" checked>Random</label>
       </div>
       <div class="radio">
-          <label><input type="radio" value="block" name="method">Block</label>
+          <label><input class="form-check-input" type="radio" value="block" name="method">Block</label>
       </div>
+  </div>
+  <div class="advanced" hidden>
+      <table class="roundtable"><tr><td>
+      <label for="attempts">Attempts</label></td>
+      <td><input id="attempts" class="form-control" type="number" value="100" min="1"></td></tr></table>
+  </div>
   <p>Block scheduling is generally more likely to succeed and more consistent, but is less random.</p>
   <br>
       <br>
-      <button id="genBtn" onclick="generate()">Generate</button>
+      <button disabled id="genBtn" class="btn btn-lg btn-info" onclick="generate()">Generate</button>
     <p class="lead" id="words">Press the above button to attempt to generate a schedule using the given parameters.</p>
-      <button id="pdfBtn" onclick="makePDFs(false)" class="btn btn-success" style="display:none">View PDFs</button>
-      <button id="pdfBtnD" onclick="makePDFs(true)" class="btn btn-success" style="display:none">Download PDFs</button>
+      <button disabled id="pdfBtn" onclick="makePDFs(tournament, false)" class="btn btn-success" style="display:none">View PDFs</button>
+      <button disabled id="pdfBtnD" onclick="makePDFs(tournament, true)" class="btn btn-success" style="display:none">Download PDFs</button>
   </div>
 </div>
 
-<div class="container">
+<div class="container-fluid">
     <div class="starter-template" id="results"></div>
 </div>
     
 </body>
     
-<script src="tabs.js" type="text/javascript"></script>
-<script src="pdf.js" type="text/javascript"></script>
-<script src="generator.js" type="text/javascript"></script>
-<script src="scheduler.js" type="text/javascript"></script>
+
+<script src="event_definitions.js" type="text/javascript"></script>
+<script src="event_ui.js" type="text/javascript"></script>
+<script src="scheduler_fll.js" type="text/javascript"></script>
+<script src="dom_printer.js" type="text/javascript"></script>
+<script src="pdf_printer.js" type="text/javascript"></script>
 <!-- JQUERY -->
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script src="../js/pdfmake.min.js"></script>
 <script src="../js/vfs_fonts.js"></script>
+
+<script>
+    if (window.File && window.FileReader && window.Blob) {
+        console.log("File operations supported");
+    } else {
+        console.log("File operations not supported.");
+        $("#file-nav").hide();
+    }
+
+    if (typeof(Storage) !== "undefined") console.log("Local storage supported");
+    else console.log("Local storage not supported, autosave will not work....");
+
+    if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
+    // if (true) {
+        var tournament = load(localStorage.getItem("schedule"));
+        var tourn_ui = new EventPanel(tournament);
+        printToDom(tournament);
+    }
+    if (!tournament) {
+        var tournament = new EventParameters();
+        var tourn_ui = new EventPanel(tournament);
+        loadPresetFLL();
+    }
+    $(":button").removeAttr("disabled");
+    toggleAdvMode();
+</script>
+
 </html>
