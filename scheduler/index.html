@@ -50,7 +50,7 @@
 
 <div class="tab-content">
     <!-- Team parameters -->    
-    <div id="event_tab" class="tabcontent tab-pane fade in active">
+    <div id="event_tab" class="tabcontent tab-pane fade in active">
         <table class="roundtable">
             <tr><td>Number of days:&nbsp;</td><td><input class="form-control" type=number id="nDays" value=1 min=1 max=5 onchange="tourn_ui.changeNDays()"></td></tr>
             <tr><td colspan=2><button disabled class="btn" onclick="openDayModal()" data-toggle="modal" data-target="#smallModal">Edit day names</button></td></tr>
@@ -77,7 +77,7 @@
         <button disabled class="advanced btn" id="addRoundBtn" onclick="addRound()">Add!</button>
     </div>
 
-    <div id="break_tab" class="tabcontent tab-pane fade">
+    <div id="break_tab" class="tabcontent tab-pane fade">
         <button disabled class="advanced btn" id="addBreakBtn" onclick="addBreak()">Add!</button>
     </div>
     <div id="logo_tab" class="tabcontent tab-pane fade">
@@ -87,7 +87,7 @@
             <td style='padding:5px'>
     	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input class="form-control" id="majrfile" type="file" onchange="tourn_ui.changeMajorLogo()" style="display:none"></label>&nbsp;</td>
     	</tr><tr>
-            <td style='padding:5px'><img id="gameimg" src="hdlogo.jpg" height="200" alt="Game logo">&nbsp;</td>
+            <td style='padding:5px'><img id="gameimg" src="gamelogo.jpg" height="200" alt="Game logo">&nbsp;</td>
 
             <td style='padding:5px'>
     	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input class="form-control" id="gamefile" type="file" onchange="tourn_ui.changeGameLogo()" style="display:none"></label>&nbsp;</td>

@@ -285,6 +285,9 @@ IMAGEDICT = {
 function getBase64Image(img) {
 	console.log(img);
     if (img.src.substring(0,4) == "data") return img.src;
+    console.log(img.src);
+    if (img.src.endsWith("mqlogo.png")) return IMAGEDICT.mqlogo;
+    if (img.src.endsWith("gamelogo.jpg")) return IMAGEDICT.gamelogo;
     // Create an empty canvas element
     var canvas = document.createElement("canvas");
     canvas.width = img.naturalWidth;
