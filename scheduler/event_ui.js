@@ -408,10 +408,11 @@ function minsToTime(x) {
 	return zh+h+":"+zm+m;
 }
 
-function minsToDT(x) {
+function minsToDT(x,sep) {
+	if (!sep) var sep = " ";
 	var date = tournament.days[minsToDate(x)];
 	var time = minsToTime(x);
-	if (tournament.days.length > 1) var result = date + " " + time;
+	if (tournament.days.length > 1) var result = date + sep + time;
 	else var result = time;
 	return result;
 }

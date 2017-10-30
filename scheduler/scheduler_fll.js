@@ -101,10 +101,6 @@ function tableSession(event, session, numOffset) {
     var L = Math.ceil((event.teams.length*session.instances) / session.nSims);
     var lastNTeams = ((event.teams.length*session.instances) % session.nSims);
     lastNTeams = (lastNTeams==0) ? session.nSims : lastNTeams;
-    // if (session.fillerPolicy == USE_SURROGATES) {
-    // 	var teamsToAdd = session.nSims - lastNTeams;
-    // 	lastNTeams = session.nSims;
-    // }
     session.schedule = new Array(L);
     
     // Figure out how many rounds to make extra long
@@ -114,8 +110,8 @@ function tableSession(event, session, numOffset) {
     	if (event.teams[i].special) specialTeams++;
     }
     var extraRoundsNeeded = Math.ceil(specialTeams/session.nSims);
-    var everyNRounds = ((session.extraTimeFirst)?1:0) +((session.extraTimeEvery)?L/everyN:0);
-    if (everyNRounds < extraRoundsNeeded) {
+    var extraRoundsMade = ((session.extraTimeFirst)?1:0) +((session.extraTimeEvery)?L/everyN:0);
+    if (extraRoundsMade < extraRoundsNeeded) {
     	everyN = (L+1)/(extraRoundsNeeded+1);
     }
 
@@ -129,7 +125,7 @@ function tableSession(event, session, numOffset) {
 	        session.schedule[i] = new Instance(session.uid,i+1+numOffset,now,new Array(session.nSims),locOffset);
 	        now = timeInc(event,now,session.length+session.buffer);
 	        roundsSinceExtra++;
-            if (((i == 0 && session.extraTimeFirst) || (roundsSinceExtra >= everyN)) && extraRounds < extraRoundsNeeded) {
+            if ((i == 0 && session.extraTimeFirst) || (roundsSinceExtra >= everyN)) {
 	        	session.schedule[i].extra = true;
 	        	now = timeInc(event,now,event.extraTime);
 	        	roundsSinceExtra = 0;

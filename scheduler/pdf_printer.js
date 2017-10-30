@@ -78,8 +78,8 @@ function sessionPage(doc, session) {
     t.body = new Array(1);
     //Header row
     t.body[0] = new Array(2);
-    t.body[0][0] = {text:"Time",alignment:'center'};
-    t.body[0][1] = {text:"#",alignment:'center'};
+    t.body[0][0] = {text:"#",alignment:'center'};
+    t.body[0][1] = {text:"Time",alignment:'center'};
     for (var i = 0; i < session.nLocs; i++) {
     	var loc = session.locations[i];
         t.body[0][i+2] = {text:loc,alignment:'center'};
@@ -90,10 +90,10 @@ function sessionPage(doc, session) {
 		var row = [];
 		if (instance.extra) {
 			row.push({text:instance.num+"",style:'extraTime'});
-			row.push({text:minsToDT(instance.time)+"",style:'extraTime'});
+			row.push({text:minsToDT(instance.time,"\n")+"",style:'extraTime'});
 		} else {
 			row.push({text:instance.num+"",alignment:'center'});
-			row.push({text:minsToDT(instance.time)+"",alignment:'center'});
+			row.push({text:minsToDT(instance.time,"\n")+"",alignment:'center'});
 		}
 
         var diff = session.nLocs;
@@ -190,7 +190,7 @@ function PDFifyAllTeams(event,download) {
 			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
 			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
            	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
-           	row.push({text: minsToDT(team.schedule[j].time)+"", style:'tablebody', color:col});
+           	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
            	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
 		}
 		row.push({text: minTravelTime(team)+"", style:'tablebody', color:col});
@@ -198,10 +198,10 @@ function PDFifyAllTeams(event,download) {
             var col = (j%2 == 1) ? 'blue' : 'black';
 			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
            	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
-           	row.push({text: minsToDT(team.schedule[j].time)+"", style:'tablebody', color:col});
+           	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
            	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
 		}
-		if (!team.isSurrogate) {
+		if (usesSurrogates && !team.isSurrogate) {
 			row.push({});
 			row.push({});
 			row.push({});
@@ -267,7 +267,7 @@ STYLEDICT = {
     footer: {fontSize: 14,bold: true,alignment: 'center',color: 'grey'},
     header2: {fontSize: 20,bold: true,alignment: 'center'},
     tablebody: {fontSize: 8,alignment:'center'},
-    extraTime: {fontSize: 8,alignment: 'center',color: 'red'},
+    extraTime: {alignment: 'center',color: 'red'},
     tablehead: {fontSize: 10,bold: true,alignment:'center'}
 };
 

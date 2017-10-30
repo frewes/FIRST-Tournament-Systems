@@ -59,9 +59,10 @@ function generateTable(session) {
 			if ((instance.teams.length - t) <= instance.surrogates) surrogate = "*";
 			if ((instance.teams.length - t) <= instance.surrogates) usesSurrogates = true;
 			if (instance.teams[t] == NOT_YET_ADDED)
-				row.append($("<td draggable=\"true\" class=\"unfilled\" ondrop=\"drop("+deets+")\" ondragstart=\"drag("+deets+")\" ondragover=\"allowDrop("+deets+")\">--"+surrogate+"</td>"));
+				row.append($("<td draggable=\"true\" class=\"table-team unfilled\" ondrop=\"drop("+deets+")\" ondragstart=\"drag("+deets+")\" ondragover=\"allowDrop("+deets+")\">--"+surrogate+"</td>"));
 			else 
-				row.append($("<td draggable=\"true\" ondrop=\"drop("+deets+")\" ondragover=\"allowDrop("+deets+")\" ondragstart=\"drag("+deets+")\">"+getTeam(instance.teams[t]).number+surrogate+"</td>"));
+				row.append($("<td draggable=\"true\" class=\"table-team\" ondrop=\"drop("+deets+")\" ondragover=\"allowDrop("+deets+")\" ondragstart=\"drag("+deets+")\">"+getTeam(instance.teams[t]).number+surrogate+"</td>"));
+			$(".table-team").attr("draggable", "false");  //Draggable should be a selection thing.
 		}
 		while (diff-- > 0) row.append($("<td>"));
 		tbody.append(row);
