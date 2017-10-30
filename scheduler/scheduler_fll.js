@@ -33,10 +33,18 @@ EventParameters:
 		schedule
 **/
 function schedule(event) {
-	buildAllTables(event);
-	initialFill(event);
-	swapFill(event);
-	sortThingsOut(event);
+	var sessions = buildAllTables(event);
+	if (sessions) {
+		alert (sessions + " won't finish in time. Please adjust parameters");
+		return false;
+	} else {
+		initialFill(event);
+		// console.log("MIN TRAVEL: " + event.minTravel);
+		// return false;
+		swapFill(event);
+		sortThingsOut(event);
+		return true;
+	}
 }
 
 function emptySchedule(event) {
@@ -45,6 +53,7 @@ function emptySchedule(event) {
 		event.teams[i].schedule = [];
 		event.teams[i].isSurrogate = false;
 	}
+	event.errors = Infinity;
 }
 
 /**
@@ -68,6 +77,7 @@ function Instance(uid, num, time, teams, loc) {
 const NOT_YET_ADDED = -64;
 
 function buildAllTables(event) {
+	var willWork = null;
 	event.allSessions.sort(function(a,b) {
 		if (a.type.priority == b.type.priority) return a.start - b.start;
 		return a.type.priority - b.type.priority;
@@ -76,7 +86,10 @@ function buildAllTables(event) {
 		if (event.allSessions[i].type != TYPE_BREAK) event.allSessions[i].start = timeInc(event,event.allSessions[i].start,0);
 		if (event.allSessions[i].type == TYPE_MATCH_ROUND) continue;
 		var end = tableSession(event,event.allSessions[i],0);
-		if (end > event.allSessions[i].end) alert (event.allSessions[i].name + " will finish late! Consider revising");
+		if (event.allSessions[i].type != TYPE_BREAK && end > event.allSessions[i].end) {
+			if (willWork) willWork = willWork+", "+event.allSessions[i].name; 
+			else willWork = event.allSessions[i].name;			
+		}
 	}
 	var end = -Infinity;
 	var offset = 0;
@@ -85,8 +98,12 @@ function buildAllTables(event) {
 		if (event.allSessions[i].start < end) event.allSessions[i].start = end;
 		end = tableSession(event,event.allSessions[i],offset);
 		offset += event.allSessions[i].schedule.length;
-		if (end > event.allSessions[i].end) alert (event.allSessions[i].name + " will finish late! Consider revising");
+		if (event.allSessions[i].type != TYPE_BREAK && end > event.allSessions[i].end) {
+			if (willWork) willWork = willWork+", "+event.allSessions[i].name; 
+			else willWork = event.allSessions[i].name;			
+		}
 	}
+	return willWork;
 }
 
 /**
@@ -181,6 +198,7 @@ function fillSession(event, session, teams) {
 			} else continue;
 		}
 	}
+	console.log(teams);
 	// TODO: Change this to be right at the end of the swapFilling to make sure this is done correctly.
 	// for (var i = 0; i < teams.length; i++) teams[i].schedule.push(new Instance(session.uid, -1,null,null,-1));
 }
@@ -351,16 +369,20 @@ function canDo(event, team, instance, excl) {
 		if (excl && team.schedule[i].session_uid == excl) continue;
 		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK)
 			var endA = startA + getSession(team.schedule[i].session_uid).length;
-		else 
+		else {
 			var endA = startA + getSession(team.schedule[i].session_uid).length + event.minTravel;
+		}
 		var startB = instance.time;
 		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK)
 			var endB = startB + getSession(instance.session_uid).length;
-		else
+		else {
 			var endB = startB + getSession(instance.session_uid).length + event.minTravel;
-		if (startA == startB) return false;
-		if (startA < startB && endA > startB) return false;
-		if (startA > startB && startA < endB) return false;
+		}
+		if (startA == startB || startA < startB && endA > startB || startB < startA && endB > startA) {
+			// console.log("Can't do because of: ");
+			// console.log(team.schedule[i]);
+			return false;
+		}
 	}
 	return true;
 }

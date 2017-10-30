@@ -166,6 +166,7 @@ function load(json) {
 		if (s.type.name == TYPE_MATCH_ROUND.name) s.type = TYPE_MATCH_ROUND;
 	}
 	toggleAdvMode();
+	console.log(evt);
 	return evt;
 }
 

@@ -3,11 +3,22 @@ var usesSurrogates = false;
 var colClass = "col-md-4";
 
 function printToDom(event) {
-	if (event.allSessions[0].schedule == null) return;
-    if (event.errors > 0) {
-        $("#words")[0].style.color = "red";
+	var results=$("#results");
+	results.empty();
+	if (event.allSessions[0].schedule == null) {
+    	$("#words")[0].style.color = "black";
+        $("#words")[0].innerHTML = "Press the above button to attempt to generate a schedule using the given parameters.";
+		return;
+	}
+    if (event.errors == null || event.errors > 0) {
         var str = (event.errors == 1) ? " error" : " errors";
-        $("#words")[0].innerHTML = event.errors + str + ".  Try again, or adjust your parameters.";
+        if (event.errors == Infinity || event.errors == null) {
+	    	$("#words")[0].style.color = "orange";
+	        $("#words")[0].innerHTML = "Some sessions will finish late.  Please review parameters.";
+        } else {
+	    	$("#words")[0].style.color = "red";
+	        $("#words")[0].innerHTML = event.errors + str + ".  Try again, or adjust your parameters.";
+	    }
         $("#pdfBtn").hide();
         $("#pdfBtnD").hide();
     } else {
@@ -17,8 +28,6 @@ function printToDom(event) {
         $("#pdfBtnD").show();
     }
 
-	var results=$("#results");
-	results.empty();
 	var judge_row = $("<div class=\"row\">");
 	var match_row = $("<div class=\"row\">");
 	for (var i = 0; i < event.allSessions.length; i++) {
@@ -29,7 +38,7 @@ function printToDom(event) {
 	}
 	results.append(judge_row);
 	results.append(match_row);
-	results.append(generateIndivTable(event));
+	if (event.errors == 0) results.append(generateIndivTable(event));
 }
 
 function generateTable(session) {

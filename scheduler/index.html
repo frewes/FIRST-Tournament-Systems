@@ -214,6 +214,7 @@
     if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
     // if (true) {
         var tournament = load(localStorage.getItem("schedule"));
+        console.log(localStorage.getItem("schedule"));
         var tourn_ui = new EventPanel(tournament);
         printToDom(tournament);
     }

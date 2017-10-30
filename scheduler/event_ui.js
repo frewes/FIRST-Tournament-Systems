@@ -40,7 +40,7 @@ function EventPanel(params) {
 		autosave();
 	}
 	this.changeMinTravel = function() {
-		this.params.minTravel = this.minsInput.value;		
+		this.params.minTravel = parseInt(this.minsInput.value);		
 		autosave();
 	}
 	this.changeExtraTime = function() {
@@ -93,17 +93,23 @@ function EventPanel(params) {
 
 function generate() {
 	if (tournament.errors == 0 && !confirm("Schedule already generated.  Overwrite?")) return;
+	for (var i = 0; i < tourn_ui.allPanels.length; i++) 
+		tourn_ui.allPanels[i].update();
 	// validate(tournament); * Not yet implemented *
 	var attempts = $("#attempts")[0].value;
 	while(attempts-- > 0) {
 		emptySchedule(tournament);
-		schedule(tournament); 
+		if (!schedule(tournament)) {
+			printToDom(tournament);
+			return;
+		} 
 		evaluate(tournament);
 	    var resultElmt = document.getElementById('words');
 	    if (tournament.errors == 0) break;
 	    else console.log("Generation failed with " + tournament.errors + ((tournament.errors==1)?" error":" errors"));
 	}
 	console.log(tournament);
+	for (var i = 0; i < tourn_ui.allPanels.length; i++) tourn_ui.allPanels[i].updateDOM();
 	autosave();
 	printToDom(tournament);
 	if(tournament.errors == 0) $("#genBtn").blur();
@@ -146,8 +152,9 @@ function loadFromFile(evt) {
 			deleteParams(uids[i]);
 		}
 		//Step 2: Replace tourn_ui.params and tourn_ui
-        tourn_ui.params = load(e.target.result);
-        tourn_ui = new EventPanel(tourn_ui.params);
+        tournament = load(e.target.result);
+        tourn_ui = new EventPanel(tournament);
+        printToDom(tournament);
     }
     if (evt.files[0]) {
         reader.readAsText(evt.files[0]);
@@ -306,8 +313,9 @@ function SessionPanel(session) {
 		this.session.buffer = parseInt(this.bufInput[0].value);
 		this.session.instances = parseInt(this.instanceInput[0].value);
 		this.session.nLocs = parseInt(this.locsInput[0].value);
-		if (this.session.type != TYPE_JUDGING) this.session.nSims = parseInt(this.simInput[0].value);
-		else this.session.nSims = parseInt(this.session.nLocs);
+		if (this.session.type == TYPE_JUDGING) this.session.nSims = parseInt(this.session.nLocs);
+		else if (this.session.type == TYPE_BREAK) this.session.nSims = tournament.teams.length;
+		else this.session.nSims = parseInt(this.simInput[0].value);
 
 		while (this.session.locations.length < this.session.nLocs) {
 			if (this.session.type == TYPE_JUDGING)
