@@ -27,8 +27,7 @@ function EventParameters(name,nTeams,nDays,minTravel,extraTime) {
 	this.teams = [];
 	this.days = [];
 	this.method="random";
-	this.majorLogo = "mqlogo.png";
-	this.gameLogo = "gamelogo.jpg"
+	this.logos = ["flllogo.jpg","gamelogo.jpg","mqlogo.png","firstlogo.png"];
 	this.errors = Infinity;
 	if (!nDays) var nDays = 1
 	while (this.days.length < nDays) this.days.push("Day " + (this.days.length+1));

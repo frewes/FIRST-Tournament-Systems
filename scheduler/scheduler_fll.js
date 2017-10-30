@@ -262,7 +262,6 @@ function swapFillSession(event, session, teams) {
 			}
 		}
 	}
-	// console.log("Fixed " + fixed + " errors by swapping");
 	return fixed;
 }
 

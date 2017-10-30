@@ -1,5 +1,4 @@
 function EventPanel(params) {
-	console.log(params);
 	this.params = params;
 	this.allPanels = [];
 	this.teamInput = $("#nTeams")[0];
@@ -7,17 +6,14 @@ function EventPanel(params) {
 	this.minsInput = $("#minTravel")[0];
 	this.extraTimeInput = $("#extraTime")[0];
 	this.titleInput = $("#title")[0];
-	this.majorLogoInput = $("#majrimg")[0];
-	this.gameLogoInput = $("#gameimg")[0];
-	this.majorFileInput = $("#majrfile")[0];
-	this.gameFileInput = $("#gamefile")[0];
+	this.logoInputs = [$("#logo1")[0],$("#logo2")[0],$("#logo3")[0],$("#logo4")[0]];
+	this.logoFileInputs = [$("#logo1File")[0],$("#logo2File")[0],$("#logo3File")[0],$("#logo4File")[0]];
 	this.teamInput.value = this.params.teams.length;
 	this.daysInput.value = this.params.days.length;
 	this.minsInput.value = this.params.minTravel;
 	this.extraTimeInput.value = this.params.extraTime;
 	this.titleInput.innerHTML = this.params.name;
-	this.majorLogoInput.src = this.params.majorLogo;
-	this.gameLogoInput.src = this.params.gameLogo;
+	for (var i = 0; i < this.logoInputs.length; i++) this.logoInputs[i].src = this.params.logos[i];
 	for (var i = 0; i < params.allSessions.length; i++) {
 		var p = new SessionPanel(params.allSessions[i]);
 		this.allPanels.push(p);
@@ -68,24 +64,12 @@ function EventPanel(params) {
 		toggleAdvMode();
 		autosave();
 	}
-	this.changeMajorLogo = function() {
-	    var file = this.majorFileInput.files[0];
+	this.changeLogo = function(logo) {
+	    var file = this.logoFileInputs[logo].files[0];
 	    var reader = new FileReader();
 	    reader.onloadend = function() {
-	    	tourn_ui.params.majorLogo = this.result;
-			tourn_ui.majorLogoInput.src = tourn_ui.params.majorLogo;
-		    autosave();
-	    }
-	    if (file) {
-			reader.readAsDataURL(file);
-	    }
-	}
-	this.changeGameLogo = function() {
-	    var file = this.gameFileInput.files[0];
-	    var reader = new FileReader();
-	    reader.onloadend = function() {
-	    	tourn_ui.params.gameLogo = this.result;
-			tourn_ui.gameLogoInput.src = tourn_ui.params.gameLogo;
+	    	tourn_ui.params.logos[logo] = this.result;
+			tourn_ui.logoInputs[logo].src = tourn_ui.params.logos[logo];
 		    autosave();
 	    }
 	    if (file) {
@@ -540,7 +524,6 @@ function openTeamEditModal() {
 	   		$(dateInput2).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.end)+"\">"));
 		$("#lg-modal-body>table").append(x);
    	}
-   	console.log($("#lg-modal-body"));
     $("#lg-modal-footer").append($("<button onclick=\"closeTeamEditModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
     $("#lg-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
 }

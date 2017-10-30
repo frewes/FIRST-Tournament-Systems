@@ -29,7 +29,7 @@
       <li><a href="#judge_tab" data-toggle="tab">Judging</a></li>
       <li><a href="#match_tab" data-toggle="tab">Matches</a></li>
       <li><a href="#break_tab" data-toggle="tab">Breaks</a></li>
-      <li><a href="#logo_tab" data-toggle="tab">Logos</a></li>
+      <li><a style="display:none" class="advanced" href="#logo_tab" data-toggle="tab">Logos</a></li>
     </ul>
     <ul id="file-nav" class="nav navbar-nav navbar-right">
         <li><a><label for="adv-toggle">Advanced: </label></a></li>
@@ -81,18 +81,36 @@
         <button disabled class="advanced btn" id="addBreakBtn" onclick="addBreak()">Add!</button>
     </div>
     <div id="logo_tab" class="tabcontent tab-pane fade">
-        <table>
-            <tr>
-                <td style='padding:5px'><img id="majrimg" src="mqlogo.png" height="200" alt="Major sponsor">&nbsp;</td>
-            <td style='padding:5px'>
-    	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input class="form-control" id="majrfile" type="file" onchange="tourn_ui.changeMajorLogo()" style="display:none"></label>&nbsp;</td>
-    	</tr><tr>
-            <td style='padding:5px'><img id="gameimg" src="gamelogo.jpg" height="200" alt="Game logo">&nbsp;</td>
-
-            <td style='padding:5px'>
-    	  <label class="btn btn-default btn-file"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span><input class="form-control" id="gamefile" type="file" onchange="tourn_ui.changeGameLogo()" style="display:none"></label>&nbsp;</td>
-            </tr>
-        </table>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="thumbnail">
+                        <img class="img-responsive" id="logo1" src="flllogo.jpg" height="200" alt="Logo 1" onclick='$("#logo1File").click()'>
+                        <input class="form-control" id="logo1File" type="file" onchange="tourn_ui.changeLogo(0)" style="display:none">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="thumbnail">
+                        <img class="img-responsive" id="logo2" src="gamelogo.jpg" height="200" alt="Logo 2" onclick='$("#logo2File").click()'>
+                        <input class="form-control" id="logo2File" type="file" onchange="tourn_ui.changeLogo(1)" style="display:none">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="thumbnail">
+                        <img class="img-responsive" id="logo3" src="mqlogo.png" height="200" alt="Logo 3" onclick='$("#logo3File").click()'>
+                        <input class="form-control" id="logo3File" type="file" onchange="tourn_ui.changeLogo(2)" style="display:none">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="thumbnail">
+                        <img class="img-responsive" id="logo4" src="firstlogo.png" height="200" alt="Logo 4" onclick='$("#logo4File").click()'>
+                        <input class="form-control" id="logo4File" type="file" onchange="tourn_ui.changeLogo(3)" style="display:none">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
