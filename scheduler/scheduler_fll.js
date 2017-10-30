@@ -232,8 +232,6 @@ function swapFillSession(event, session, teams) {
 				var f = fixed;
 				if (instance_B == null) {
 					continue;
-					console.log("Floop:");
-					console.log(teams[tA]);
 					// Team A can just do instance A; no swap required, add the team in.
 					// instance_A.teams[j] = teams[tA].uid;
 					// teams[tA].schedule.push(instance_A);
@@ -242,9 +240,6 @@ function swapFillSession(event, session, teams) {
 				}
 				for (var tB = 0; tB < lostTeams.length; tB++) {
 					if (!canDo(event,lostTeams[tB],instance_B)) continue;
-					console.log("Flarb:");
-					console.log(teams[tA]);
-					console.log(lostTeams[tB]);
 					// Found a team that can swap with A!
 					// Now, swap teams A and B
 					// Add instanceA to teamA
@@ -284,9 +279,9 @@ function evaluate(event) {
 		event.errors += session.nErrors;
 	}
 	// Now, add errors due to teams having an incorrect number of instances
-	for (var i = 0 ; i < event.teams.length ; i++) {
-		event.errors += Math.abs(event.teams[i].schedule.length - event.allSessions.length);
-	}
+	// for (var i = 0 ; i < event.teams.length ; i++) {
+	// 	event.errors += Math.abs(event.teams[i].schedule.length - event.allSessions.length);
+	// }
 }
 
 /** 

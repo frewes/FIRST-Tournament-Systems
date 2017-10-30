@@ -108,6 +108,7 @@ function EventPanel(params) {
 }
 
 function generate() {
+	if (tournament.errors == 0 && !confirm("Schedule already generated.  Overwrite?")) return;
 	// validate(tournament); * Not yet implemented *
 	var attempts = $("#attempts")[0].value;
 	while(attempts-- > 0) {
@@ -121,6 +122,7 @@ function generate() {
 	console.log(tournament);
 	autosave();
 	printToDom(tournament);
+	if(tournament.errors == 0) $("#genBtn").blur();
 }
 
 function autosave() {

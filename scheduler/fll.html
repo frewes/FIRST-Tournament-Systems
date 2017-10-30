@@ -151,8 +151,8 @@
       <br>
       <button disabled id="genBtn" class="btn btn-lg btn-info" onclick="generate()">Generate</button>
     <p class="lead" id="words">Press the above button to attempt to generate a schedule using the given parameters.</p>
-      <button disabled id="pdfBtn" onclick="makePDFs(false)" class="btn btn-success" style="display:none">View PDFs</button>
-      <button disabled id="pdfBtnD" onclick="makePDFs(true)" class="btn btn-success" style="display:none">Download PDFs</button>
+      <button disabled id="pdfBtn" onclick="makePDFs(tournament, false)" class="btn btn-success" style="display:none">View PDFs</button>
+      <button disabled id="pdfBtnD" onclick="makePDFs(tournament, true)" class="btn btn-success" style="display:none">Download PDFs</button>
   </div>
 </div>
 
@@ -167,11 +167,12 @@
 <script src="event_ui.js" type="text/javascript"></script>
 <script src="scheduler_fll.js" type="text/javascript"></script>
 <script src="dom_printer.js" type="text/javascript"></script>
+<script src="pdf_printer.js" type="text/javascript"></script>
 <!-- JQUERY -->
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
-<script src="../js/vfs_fonts.js"></script>
 <script src="../js/pdfmake.min.js"></script>
+<script src="../js/vfs_fonts.js"></script>
 
 <script>
     if (window.File && window.FileReader && window.Blob) {
@@ -184,8 +185,8 @@
     if (typeof(Storage) !== "undefined") console.log("Local storage supported");
     else console.log("Local storage not supported, autosave will not work....");
 
-    // if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
-    if (false) {
+    if (localStorage.getItem("schedule") && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
+    // if (true) {
         var tournament = load(localStorage.getItem("schedule"));
         var tourn_ui = new EventPanel(tournament);
         printToDom(tournament);

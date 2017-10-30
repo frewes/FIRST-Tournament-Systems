@@ -6,9 +6,13 @@ function printToDom(event) {
         $("#words")[0].style.color = "red";
         var str = (event.errors == 1) ? " error" : " errors";
         $("#words")[0].innerHTML = event.errors + str + ".  Try again, or adjust your parameters.";
+        $("#pdfBtn").hide();
+        $("#pdfBtnD").hide();
     } else {
         $("#words")[0].style.color = "green";        
         $("#words")[0].innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed. <br>NB: PDFs are not currently supported in Internet Explorer, but you can still use the tables.";
+        $("#pdfBtn").show();
+        $("#pdfBtnD").show();
     }
 
 	var results=$("#results");
@@ -42,7 +46,7 @@ function generateTable(session) {
 			row.append("<td>"+minsToDT(instance.time)+"</td>");
 		}
 
-        var diff = instance.loc+instance.teams.length+1;
+        var diff = session.nLocs;
         for (var dummy = 0; dummy < instance.loc; dummy++) {
         	diff--;
             row.append($("<td>"));
@@ -58,9 +62,8 @@ function generateTable(session) {
 				row.append($("<td draggable=\"true\" class=\"unfilled\" ondrop=\"drop("+deets+")\" ondragstart=\"drag("+deets+")\" ondragover=\"allowDrop("+deets+")\">--"+surrogate+"</td>"));
 			else 
 				row.append($("<td draggable=\"true\" ondrop=\"drop("+deets+")\" ondragover=\"allowDrop("+deets+")\" ondragstart=\"drag("+deets+")\">"+getTeam(instance.teams[t]).number+surrogate+"</td>"));
-			console.log
 		}
-		while (diff-- >= 0) row.append($("<td>"));
+		while (diff-- > 0) row.append($("<td>"));
 		tbody.append(row);
 	}
 	table.append(tbody);
@@ -109,7 +112,7 @@ function generateIndivTable(event) {
 			if (team.schedule[j].loc == -1)
 				row.append($("<td>--</td>"));
 			else
-				row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].loc]+"</td>"));
+				row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
 		}
 		row.append($("<td>"+minTravelTime(team)+"</td>"));
 		tbody.append(row);
