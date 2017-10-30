@@ -81,7 +81,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		if (this.type == TYPE_BREAK) this.buffer = 0;
 	}
 	this.locations = locs || [];
-	this.schedule = null; // To be filled in later
+	this.schedule = []; // To be filled in later
 	this.nErrors = 0;
 
 	this.instances = 1; // Can be changed in later versions, specifically for TYPE_MATCH_FILLER.

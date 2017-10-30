@@ -182,6 +182,25 @@ function toggleAdvMode() {
 	}
 }
 
+function toggleLockedMode() {
+	if (tournament.allSessions[0].schedule.length == 0) {
+		$(".non-cosmetic").removeAttr('disabled');
+		$("#unlockDiv").hide();
+	} else {
+		$(".non-cosmetic").attr('disabled','disabled')
+		$(".cosmetic").change(function() {printToDom(tournament);});
+		$("#unlockDiv").show();
+	}
+}
+
+function unlock() {
+	if (confirm("Delete schedule?")) {
+		emptySchedule(tournament);
+		console.log(tournament);
+		printToDom(tournament);
+	}
+}
+
 function SessionPanel(session) {
 	this.session = session;
 
@@ -189,27 +208,27 @@ function SessionPanel(session) {
 	this.docObj = $("<table class=\"roundtable\">");
 
 	// DOM objects
-	this.title=$("<input class=\"adv-title form-control\" type=text value=\"Title\">");
-	this.startDateInput=$("<select class=\"form-control\"></select>");
+	this.title=$("<input class=\"cosmetic adv-title form-control\" type=text value=\"Title\">");
+	this.startDateInput=$("<select class=\"non-cosmetic form-control\"></select>");
 	for (var i = 0; i < tournament.days.length; i++)
 		this.startDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
 	if (tournament.days.length <= 1) this.startDateInput.hide();
 	else this.startDateInput.show();
-	this.startTimeInput=$("<input class=\"form-control\" type=time value=\"09:00\" step=\"900\">");
-	this.endDateInput=$("<select class=\"form-control\"></select>");
+	this.startTimeInput=$("<input class=\"non-cosmetic form-control\" type=time value=\"09:00\" step=\"900\">");
+	this.endDateInput=$("<select class=\"non-cosmetic form-control\"></select>");
 	for (var i = 0; i < tournament.days.length; i++)
 		this.endDateInput.append($("<option value=\""+i+"\">"+tournament.days[i]+"</option>"));
 	if (tournament.days.length <= 1) this.endDateInput.hide();
 	else this.endDateInput.show();
-	this.endTimeInput=$("<input class=\"form-control\" type=time value=\"14:00\" step=\"900\">");
-	this.lenInput=$("<input class=\"form-control\" type=number min=0 max=1000 value=10>")
-	this.bufInput=$("<input class=\"form-control\" type=number min=0 max=1000 value=10>")
-	this.simInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
-	this.instanceInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
-	this.locsInput=$("<input class=\"form-control\" type=number min=1 max=100 value=1>");
-	this.firstExtraInput=$("<input class=\"form-control\" type=\"checkbox\">");
-	this.nExtraInput=$("<input class=\"form-control\" type=number min=0 max=99>");
-	this.policyInput=$("<select class=\"form-control\"></select>");
+	this.endTimeInput=$("<input class=\"non-cosmetic form-control\" type=time value=\"14:00\" step=\"900\">");
+	this.lenInput=$("<input class=\"non-cosmetic form-control\" type=number min=0 max=1000 value=10>")
+	this.bufInput=$("<input class=\"non-cosmetic form-control\" type=number min=0 max=1000 value=10>")
+	this.simInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
+	this.instanceInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
+	this.locsInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
+	this.firstExtraInput=$("<input class=\"non-cosmetic form-control\" type=\"checkbox\">");
+	this.nExtraInput=$("<input class=\"non-cosmetic form-control\" type=number min=0 max=99>");
+	this.policyInput=$("<select class=\"non-cosmetic form-control\"></select>");
 	for (var i = 0 ; i < POLICIES.length; i++ )
 		this.policyInput.append($("<option value=\""+i+"\">"+POLICIES[i]+"</option>"));
 	// this.extraTimeFirst = false; // Should the first round be a little longer?
@@ -218,7 +237,7 @@ function SessionPanel(session) {
 
 	// Build docObj
 	if (this.session.type != TYPE_BREAK)
-		var x = $("<tr><td><h3></h3></td><td><button class=\"btn\" onclick=\"copyToAll("+this.session.uid+")\">Copy to all</button></td></tr>");
+		var x = $("<tr><td><h3></h3></td><td><button class=\"non-cosmetic btn\" onclick=\"copyToAll("+this.session.uid+")\">Copy to all</button></td></tr>");
 	else var x = $("<tr><td colspan=\"2\"><h3></h3></td></tr>");
 	$("h3", x).append(this.title);
 	this.docObj.append(x);
@@ -270,8 +289,8 @@ function SessionPanel(session) {
 		$("div", x).append(this.policyInput);
 		this.docObj.append(x);
 	}
-	this.docObj.append($("<tr><td><button class=\"btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
-		</td><td><button class=\"advanced btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
+	this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
+		</td><td><button class=\"non-cosmetic advanced btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
 	// Add change listeners
     var ins = $("input,select", this.docObj);
     for (var i = 0; i < ins.length; i++) {
@@ -436,6 +455,7 @@ function closeLocationModal() {
 	panel = getPanel(uid);
 	for (var i = 1; i < inputs.length; i++)
 		panel.session.locations[i-1] = inputs[i].value;
+	printToDom(tournament);
 	autosave();
 }
 
@@ -457,6 +477,7 @@ function closeDayModal() {
 	for (var i = 0; i < inputs.length; i++)
 		tourn_ui.params.days[i] = inputs[i].value;
 	tourn_ui.changeNDays();
+	printToDom(tournament);
 }
 
 function openTeamImportModal() {
@@ -485,6 +506,10 @@ function closeTeamImportModal() {
 	if (names[names.length-1] == "") names.splice(names.length-1,1);
 	while (nums.length < names.length) nums.push(""+(nums.length+1));
 	while (nums.length > names.length) nums.splice(nums.length-1,1);
+	if (tournament.allSessions[0].schedule.length != 0 && (nums.length != tourn_ui.params.teams.length || names.length != tourn_ui.params.teams.length)) {
+		alert ("Cannot change number of teams with locked schedule");
+		return;
+	}
 	while (tourn_ui.params.teams.length < nums.length) tourn_ui.params.teams.push(new TeamParameters(0));
 	while (tourn_ui.params.teams.length > nums.length) tourn_ui.params.teams.splice(tourn_ui.params.teams.length-1,1);
 	for (var i = 0; i < nums.length; i++) {
@@ -493,6 +518,7 @@ function closeTeamImportModal() {
 	}
 	tourn_ui.teamInput.value = tourn_ui.params.teams.length;
 	autosave();
+	printToDom(tournament);
 }
 
 function openTeamEditModal() {
@@ -547,6 +573,7 @@ function closeTeamEditModal() {
 		team.end = dtToMins(inputs[3].value,inputs[4].value);
 	}
 	autosave();
+	printToDom(tournament);
 }
 
 function clickSave() {

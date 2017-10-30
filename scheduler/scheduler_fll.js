@@ -48,12 +48,13 @@ function schedule(event) {
 }
 
 function emptySchedule(event) {
-	for (var i = 0; i < event.allSessions.length; i++) event.allSessions.schedule = [];
+	for (var i = 0; i < event.allSessions.length; i++) event.allSessions[i].schedule = [];
 	for (var i = 0; i < event.teams.length; i++) {
 		event.teams[i].schedule = [];
 		event.teams[i].isSurrogate = false;
 	}
 	event.errors = Infinity;
+	console.log(tournament);
 }
 
 /**

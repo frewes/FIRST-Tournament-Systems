@@ -5,9 +5,12 @@ var colClass = "col-md-4";
 function printToDom(event) {
 	var results=$("#results");
 	results.empty();
-	if (event.allSessions[0].schedule == null) {
+	toggleLockedMode();
+	if (event.allSessions[0].schedule.length == 0) {
     	$("#words")[0].style.color = "black";
         $("#words")[0].innerHTML = "Press the above button to attempt to generate a schedule using the given parameters.";
+        $("#pdfBtn").hide();
+        $("#pdfBtnD").hide();
 		return;
 	}
     if (event.errors == null || event.errors > 0) {
