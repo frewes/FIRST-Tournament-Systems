@@ -73,7 +73,6 @@ function getBase64Image(img) {
     } else if (img.src.search(new RegExp('.jpe?g','i')) != -1) {
 	var dataURL = canvas.toDataURL("image/jpeg");
     }
-
     return dataURL;
 }
 

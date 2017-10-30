@@ -76,6 +76,9 @@ function generateIndivTable(event) {
 	result.append($("<h4>Individual Schedules</h4>"));
 	var table = $("<table class=\"table resultTable table-condensed table-responsive\">");
 	var header = "<thead><tr><th colspan=2>Team</th>";
+	event.teams.sort(function(a,b) {
+		return a.uid - b.uid;
+	});
 	for (var i = 0; i < event.allSessions.length; i++) { 
 		if (event.allSessions[i].type == TYPE_BREAK) continue;
 		header += "<th colspan=3>"+event.allSessions[i].name+"</th>";
@@ -107,6 +110,7 @@ function generateIndivTable(event) {
 		row.append($("<td>"+team.number+"</td><td>"+team.name+"</td>"));
 		for (var j = 0; j < team.schedule.length; j++) {
 			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
+			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
 			row.append($("<td>"+team.schedule[j].num+"</td>"));
 			row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
 			if (team.schedule[j].loc == -1)
@@ -115,6 +119,15 @@ function generateIndivTable(event) {
 				row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
 		}
 		row.append($("<td>"+minTravelTime(team)+"</td>"));
+		for (var j = 0; j < team.schedule.length; j++) {
+			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
+			row.append($("<td>"+team.schedule[j].num+"</td>"));
+			row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
+			if (team.schedule[j].loc == -1)
+				row.append($("<td>--</td>"));
+			else
+				row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
+		}
 		tbody.append(row);
 	}
 	table.append(tbody);

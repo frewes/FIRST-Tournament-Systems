@@ -116,8 +116,10 @@ function sessionPage(doc, session) {
         t.body.push(row);
     }
     doc.content.push({text: session.name + " Schedule", style:'header2',margin:[0,10]});
-    
     doc.content.push({table: t,layout: 'lightHorizontalLines'});
+    if (usesSurrogates && session.fillerPolicy == USE_SURROGATES)
+    	    doc.content.push({text:"\n* Surrogate team; results not counted",alignment:'center'});
+
     doc.content.push({text: " ", pageBreak:'after'});
     return doc;
 }
@@ -186,11 +188,24 @@ function PDFifyAllTeams(event,download) {
 		for (var j = 0; j < team.schedule.length; j++) {
             var col = (j%2 == 1) ? 'blue' : 'black';
 			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
+			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
            	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
            	row.push({text: minsToDT(team.schedule[j].time)+"", style:'tablebody', color:col});
            	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
 		}
 		row.push({text: minTravelTime(team)+"", style:'tablebody', color:col});
+		for (var j = 0; j < team.schedule.length; j++) {
+            var col = (j%2 == 1) ? 'blue' : 'black';
+			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
+           	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
+           	row.push({text: minsToDT(team.schedule[j].time)+"", style:'tablebody', color:col});
+           	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
+		}
+		if (!team.isSurrogate) {
+			row.push({});
+			row.push({});
+			row.push({});
+		}
 		t.body.push(row);
 	}
 	doc.content.push({table: t, layout: 'lightHorizontalLines'});

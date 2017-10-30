@@ -101,6 +101,7 @@ function TeamParameters(number,name) {
 	this.special = false;
 	this.start = null; // Can be used to define when the team must arrive.
 	this.end = null; // Can be used to define when the team must leave.
+	this.isSurrogate = false;
 	this.schedule = [];
 	// For the above two parameters, will probably need to conduct a check before scheduling; if they physically can't fit anything, don't try.
 }

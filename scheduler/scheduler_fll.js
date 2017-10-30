@@ -41,7 +41,10 @@ function schedule(event) {
 
 function emptySchedule(event) {
 	for (var i = 0; i < event.allSessions.length; i++) event.allSessions.schedule = [];
-	for (var i = 0; i < event.teams.length; i++) event.teams[i].schedule = [];
+	for (var i = 0; i < event.teams.length; i++) {
+		event.teams[i].schedule = [];
+		event.teams[i].isSurrogate = false;
+	}
 }
 
 /**
@@ -309,9 +312,10 @@ function sortThingsOut(event) {
 			var found = false;
 			shuffle(event.teams);
 			for (var t = 0; t < event.teams.length; t++) {
-				if (canDo(event,event.teams[t],lastInst)) {
+				if (canDo(event,event.teams[t],lastInst) && !getTeam(event.teams[t].uid).isSurrogate) {
 					lastInst.teams.push(event.teams[t].uid);
 					getTeam(event.teams[t].uid).schedule.push(lastInst);
+					getTeam(event.teams[t].uid).isSurrogate = true;
 					found = true;
 					break;
 				}
