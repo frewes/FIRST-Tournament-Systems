@@ -90,6 +90,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	if (this.type == TYPE_MATCH_ROUND) this.fillerPolicy = USE_SURROGATES;
 	else if (this.type == TYPE_MATCH_FILLER) this.fillerPolicy = USE_SURROGATES;
 	else this.fillerPolicy = LEAVE_BLANKS; // How to fill in empty spots in non-round-number instances.
+	this.appliesTo = []; // Which sessions a break applies to
 
 }
 
