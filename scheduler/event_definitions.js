@@ -3,11 +3,14 @@ const TYPE_MATCH_ROUND = new SessionType(32,"Rounds", 16);
 const TYPE_MATCH_ROUND_PRACTICE = new SessionType(33,"Practice Rounds", 128);
 const TYPE_MATCH_FILLER = new SessionType(48,"Matches", 32);
 const TYPE_BREAK = new SessionType(64,"Breaks", 0);
+const TYPES = [TYPE_JUDGING, TYPE_MATCH_FILLER, TYPE_BREAK, TYPE_MATCH_ROUND, TYPE_MATCH_ROUND_PRACTICE];
 
 const LEAVE_BLANKS = 0;
 const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
+
+const SCHEDULER_VERSION = 1.0;
 
 var TEAM_UID_COUNTER = 0;
 
@@ -18,6 +21,7 @@ function SessionType(uid,name,priority) {
 
 function EventParameters(name,nTeams,nDays,minTravel,extraTime) {
 	this.UID_counter = 1;
+	this.version = SCHEDULER_VERSION;
 	this.teamnum_counter = 1;
 	this.start_time_offset = 0; // Set to number of minutes to start if wanted
 	this.name = (name)?name:"2017 FLL Tournament";
@@ -137,6 +141,14 @@ function deleteParams(id) {
 	tourn_ui.allPanels.splice(toDelete,1);
 }
 
+function allTypes(event, type) {
+	var types=[];
+	for (var i = 0; i < event.allSessions.length; i++) {
+		if (event.allSessions[i].type == type) types.push(event.allSessions[i]);
+	}
+	if (types.length == 0) return null;
+	return types;
+}
 
 function getSession(uid) {
 	for (var i = 0; i < tournament.allSessions.length; i++) {
@@ -162,16 +174,13 @@ function save() {
 // Reads given json string, makes parameters match.
 function load(json) {
 	var evt = JSON.parse(json);
+	if (!evt.version) evt.version = 1.0;
 	for (var i = 0; i < evt.allSessions.length; i++) {
 		var s = evt.allSessions[i];
-		if (s.type.uid && s.type.uid == TYPE_JUDGING.uid) s.type = TYPE_JUDGING;
-		else if (s.type.name == TYPE_JUDGING.name) s.type = TYPE_JUDGING;
-		if (s.type.uid && s.type.uid == TYPE_MATCH_ROUND.uid) s.type = TYPE_MATCH_ROUND;
-		else if (s.type.name == TYPE_MATCH_ROUND.name) s.type = TYPE_MATCH_ROUND;
-		if (s.type.uid && s.type.uid == TYPE_MATCH_FILLER.uid) s.type = TYPE_MATCH_FILLER;
-		else if (s.type.name == TYPE_MATCH_FILLER.name) s.type = TYPE_MATCH_FILLER;
-		if (s.type.uid && s.type.uid == TYPE_BREAK.uid) s.type = TYPE_BREAK;
-		else if (s.type.name == TYPE_BREAK.name) s.type = TYPE_BREAK
+		for (var j = 0; j < TYPES.length; j++) {
+			if (s.type.uid && s.type.uid == TYPES[j].uid) s.type = TYPES[j];
+			else if (s.type.name == TYPES[j].name) s.type = TYPES[j];
+		}
 	}
 	toggleAdvMode();
 	console.log(evt);

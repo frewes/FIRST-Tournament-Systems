@@ -155,8 +155,8 @@
 
 <div class="container">
   <div class="jumbotron" style="text-align: center">
-  <div id="title" class="cosmetic title" onclick="tourn_ui.changeTitle()">2017 FLL Tournament</div>
-    <button disabled onclick="tourn_ui.changeTitle()" class="btn-link">Change event name</button>
+  <div id="title" class="cosmetic title" data-toggle="modal" data-target="#smallModal" onclick="openTitleModal()">2017 FLL Tournament</div>
+    <button disabled onclick="openTitleModal()" data-toggle="modal" data-target="#smallModal" class="btn-link">Change event name</button>
 
     <h1>Schedule Generation</h1>
     <div onchange="tourn_ui.updateMethod()">

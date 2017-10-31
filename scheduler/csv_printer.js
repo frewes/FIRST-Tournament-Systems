@@ -28,10 +28,10 @@ function saveToCSV(event) {
 		for (var j = 0; j < allMatches[i].schedule.length; j++) {
 			var instance = allMatches[i].schedule[j];
 			csv += instance.num + ",";
-			csv += instance.start + ",";
+			csv += minsToExcel(instance.start) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += (instance.start+instance.length+extra) + ",";
+			csv += minsToExcel(instance.start+instance.length+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -53,10 +53,10 @@ function saveToCSV(event) {
 		for (var j = 0; j < allJudging[i].schedule.length; j++) {
 			var instance = allJudging[i].schedule[j];
 			csv += instance.num + ",";
-			csv += instance.start + ",";
+			csv += minsToExcel(instance.start) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += (instance.start+instance.length+extra) + ",";
+			csv += minsToExcel(instance.start+instance.length+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -84,10 +84,10 @@ function saveToCSV(event) {
 		for (var j = 0; j < allMatches[i].schedule.length; j++) {
 			var instance = allMatches[i].schedule[j];
 			csv += instance.num + ",";
-			csv += instance.start + ",";
+			csv += minsToExcel(instance.start) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += (instance.start+instance.length+extra) + ",";
+			csv += minsToExcel(instance.start+instance.length+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -97,15 +97,10 @@ function saveToCSV(event) {
 
 }
 
-function allTypes(event, type) {
-	var types=[];
-	for (var i = 0; i < event.allSessions.length; i++) {
-		if (event.allSessions[i].type == type) types.push(event.allSessions[i]);
-	}
-	if (types.length == 0) return null;
-	return types;
-}
-
+// Excel represents time decimally as follows:
+// Time = x.yyyyyyyy
+// Where x = Number of days since 1/1/1900
+// and	 y = Proportion of day (mins/(24*60))
 function minsToExcel(mins) {
-
+	return mins/(24*60);
 }

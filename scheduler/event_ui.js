@@ -26,13 +26,6 @@ function EventPanel(params) {
 		else if (p.session.type == TYPE_BREAK)
 			p.docObj.insertBefore("#addBreakBtn");
 	}
-	this.changeTitle = function() {
-	    var safe = this.params.name;
-	    this.params.name = prompt("Enter title here", this.titleInput.textContent);
-	    if (this.params.name == null) this.params.name = safe;
-	    this.titleInput.innerHTML = this.params.name;
-		autosave();
-	}
 	this.changeNTeams = function() {
 		var nTeams = this.teamInput.value;
 		while (this.params.teams.length < nTeams)
@@ -124,6 +117,7 @@ function autosave() {
 
 var saveFile = null;
 function saveToFile(filename, content) {
+	if (filename.startsWith("null.")) return;
 	var data = new Blob([content], {type: 'text/plain'});
     if (saveFile !== null) {
       window.URL.revokeObjectURL(saveFile); //Prevents memory leaks on multiple saves.
@@ -154,12 +148,14 @@ function loadFromFile(evt) {
 		//Step 2: Replace tourn_ui.params and tourn_ui
         tournament = load(e.target.result);
         tourn_ui = new EventPanel(tournament);
+		toggleAdvMode();
         printToDom(tournament);
     }
     if (evt.files[0]) {
         reader.readAsText(evt.files[0]);
     }
 	printToDom(tournament);
+	toggleAdvMode();
 	alert ("Loaded " + evt.files[0].name + "!");
 
 }
@@ -436,6 +432,23 @@ function dtToMins(d,t) {
     return d*(60*24) + parseInt(res[0])*60 + parseInt(res[1]) - tournament.start_time_offset;
 }
 
+function openTitleModal() {
+    $("#sm-modal-body").empty();
+    $("#sm-modal-footer").empty();
+    $("#sm-modal-title")[0].innerHTML = "Event Title";
+	$("#sm-modal-body").append($("<input type=\"text\" class=\"form-control\" value=\""+tournament.name+"\"><br>"));
+    $("#sm-modal-footer").append($("<button onclick=\"closeTitleModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#sm-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+}
+
+function closeTitleModal() {
+	var input = $("#sm-modal-body>input")[0];
+	tournament.name = input.value;
+	tourn_ui.titleInput.innerHTML = tournament.name;
+	autosave();
+}
+
+
 function openLocationModal(uid) {
 	panel = getPanel(uid);
     $("#sm-modal-body").empty();
@@ -455,8 +468,18 @@ function closeLocationModal() {
 	var inputs = $("#sm-modal-body>input");
 	uid = inputs[0].value;
 	panel = getPanel(uid);
-	for (var i = 1; i < inputs.length; i++)
-		panel.session.locations[i-1] = inputs[i].value;
+	if (panel.session.type == TYPE_MATCH_ROUND || panel.session.type == TYPE_MATCH_ROUND_PRACTICE) { 
+		for (var i = 0; i < tournament.allSessions.length; i++) {
+			if (tournament.allSessions[i].type == TYPE_MATCH_ROUND || tournament.allSessions[i].type == TYPE_MATCH_ROUND_PRACTICE) {
+				for (var j = 1; j < inputs.length; j++) {
+					tournament.allSessions[i].locations[j-1] = inputs[j].value;
+				}
+			}
+		}
+	} else {
+		for (var i = 1; i < inputs.length; i++)
+			panel.session.locations[i-1] = inputs[i].value;
+	}
 	printToDom(tournament);
 	autosave();
 }
