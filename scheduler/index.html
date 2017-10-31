@@ -177,8 +177,11 @@
       <button disabled id="genBtn" class="btn btn-lg btn-info" onclick="generate()">Generate</button>
       <div hidden id="unlockDiv"><button disabled id="unlockBtn" class="btn btn-lg btn-warning" onclick="unlock()">Unlock Parameters</button></div>
     <p class="lead" id="words">Press the above button to attempt to generate a schedule using the given parameters.</p>
-      <button disabled id="pdfBtn" onclick="makePDFs(tournament, false)" class="btn btn-lg btn-success" style="display:none">View PDFs</button>
-      <button disabled id="pdfBtnD" onclick="makePDFs(tournament, true)" class="btn btn-lg btn-success" style="display:none">Download PDFs</button>
+    <div hidden id="exportBtns">
+          <button disabled onclick="makePDFs(tournament, false)" class="btn btn-lg btn-success">View PDFs</button>
+          <button disabled onclick="makePDFs(tournament, true)" class="btn btn-lg btn-success">Download PDFs</button>
+          <button disabled onclick="exportBL(tournament)" class="btn btn-lg btn-info">Export to Bryan Lee format</button>  
+      </div>
   </div>
 </div>
 
@@ -194,6 +197,7 @@
 <script src="scheduler_fll.js" type="text/javascript"></script>
 <script src="dom_printer.js" type="text/javascript"></script>
 <script src="pdf_printer.js" type="text/javascript"></script>
+<script src="csv_printer.js" type="text/javascript"></script>
 <!-- JQUERY -->
 <script src="../js/jquery-3.2.1.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>

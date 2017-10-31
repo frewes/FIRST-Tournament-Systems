@@ -9,8 +9,7 @@ function printToDom(event) {
 	if (event.allSessions[0].schedule.length == 0) {
     	$("#words")[0].style.color = "black";
         $("#words")[0].innerHTML = "Press the above button to attempt to generate a schedule using the given parameters.";
-        $("#pdfBtn").hide();
-        $("#pdfBtnD").hide();
+        $("#exportBtns").hide();
 		return;
 	}
     if (event.errors == null || event.errors > 0) {
@@ -22,13 +21,11 @@ function printToDom(event) {
 	    	$("#words")[0].style.color = "red";
 	        $("#words")[0].innerHTML = event.errors + str + ".  Try again, or adjust your parameters.";
 	    }
-        $("#pdfBtn").hide();
-        $("#pdfBtnD").hide();
+        $("#exportBtns").hide();
     } else {
         $("#words")[0].style.color = "green";        
         $("#words")[0].innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed. <br>NB: PDFs are not currently supported in Internet Explorer, but you can still use the tables.";
-        $("#pdfBtn").show();
-        $("#pdfBtnD").show();
+        $("#exportBtns").show();
     }
 
 	var judge_row = $("<div class=\"row\">");

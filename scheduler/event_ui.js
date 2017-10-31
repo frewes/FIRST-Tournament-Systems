@@ -123,16 +123,14 @@ function autosave() {
 }
 
 var saveFile = null;
-function saveToFile(filename) {
-	fullname = filename+".schedule";
-	json = save();
-	var data = new Blob([json], {type: 'text/plain'});
+function saveToFile(filename, content) {
+	var data = new Blob([content], {type: 'text/plain'});
     if (saveFile !== null) {
       window.URL.revokeObjectURL(saveFile); //Prevents memory leaks on multiple saves.
     }
     saveFile = window.URL.createObjectURL(data);
     saveLink = $("#saveLink")[0];
-    saveLink.download = fullname;
+    saveLink.download = filename;
     saveLink.href = saveFile;
     saveLink.click();
 }
@@ -581,7 +579,7 @@ function closeTeamEditModal() {
 }
 
 function clickSave() {
-	saveToFile(prompt("Enter filename", tourn_ui.params.name.replace(/ /g, '_')));
+	saveToFile(prompt("Enter filename", tourn_ui.params.name.replace(/ /g, '_'))+".schedule",save());
 }
 
 function clickLoad() {
