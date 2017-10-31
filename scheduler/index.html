@@ -161,10 +161,10 @@
     <h1>Schedule Generation</h1>
     <div onchange="tourn_ui.updateMethod()">
       <div class="radio">
-          <label><input class="non-cosmetic form-check-input" type="radio" value="random" name="method" checked>Random</label>
+          <label><input class="form-check-input" type="radio" value="random" name="method" checked>Random</label>
       </div>
       <div class="radio">
-          <label><input class="non-cosmetic form-check-input" type="radio" value="block" name="method">Block</label>
+          <label><input class="form-check-input" type="radio" value="block" name="method">Block</label>
       </div>
   </div>
   <div class="advanced" hidden>
@@ -172,7 +172,6 @@
       <label for="attempts">Attempts</label></td>
       <td><input id="attempts" class="form-control" type="number" value="100" min="1"></td></tr></table>
   </div>
-  <p>Block scheduling is generally more likely to succeed and more consistent, but is less random.</p>
   <br>
       <br>
       <button disabled id="genBtn" class="btn btn-lg btn-info" onclick="generate()">Generate</button>

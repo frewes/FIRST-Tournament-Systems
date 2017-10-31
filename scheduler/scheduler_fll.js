@@ -39,8 +39,6 @@ function schedule(event) {
 		return false;
 	} else {
 		initialFill(event);
-		// console.log("MIN TRAVEL: " + event.minTravel);
-		// return false;
 		swapFill(event);
 		sortThingsOut(event);
 		return true;
@@ -54,7 +52,6 @@ function emptySchedule(event) {
 		event.teams[i].isSurrogate = false;
 	}
 	event.errors = Infinity;
-	console.log(tournament);
 }
 
 /**
@@ -127,13 +124,18 @@ function tableSession(event, session, numOffset) {
     for (var i = 0; i < event.teams.length; i++) {
     	if (event.teams[i].special) specialTeams++;
     }
+    var roundsSinceExtra = 0;
+    var flag = false;
+
     var extraRoundsNeeded = Math.ceil(specialTeams/session.nSims);
     var extraRoundsMade = ((session.extraTimeFirst)?1:0) +((session.extraTimeEvery)?L/everyN:0);
     if (extraRoundsMade < extraRoundsNeeded) {
     	everyN = (L+1)/(extraRoundsNeeded+1);
+    	everyN += Math.floor(Math.random()*2);
+    	roundsSinceExtra += Math.floor(Math.random()*L);
+    	flag = true;
     }
 
-    var roundsSinceExtra = 0;
     var extraRounds = 0;
     if (session.type == TYPE_BREAK) everyN = Infinity;
     for (var i = 0; i < L; i++) {
@@ -144,18 +146,24 @@ function tableSession(event, session, numOffset) {
 	        now = timeInc(event,now,session.length+session.buffer);
 	        roundsSinceExtra++;
             if ((i == 0 && session.extraTimeFirst) || (roundsSinceExtra >= everyN)) {
-	        	session.schedule[i].extra = true;
-	        	now = timeInc(event,now,event.extraTime);
-	        	roundsSinceExtra = 0;
-	        	extraRounds++;
+            	if (!(flag && extraRounds >= extraRoundsNeeded)) {
+		        	session.schedule[i].extra = true;
+		        	now = timeInc(event,now,event.extraTime);
+		        	roundsSinceExtra = 0;
+		        	extraRounds++;
+		        }
 	        }
 	    } else {
 	    	session.schedule[i] = new Instance(session.uid,i+1+numOffset,now,new Array(lastNTeams),locOffset);
 	    	now = now + session.length + session.buffer;
 	        roundsSinceExtra++;
             if (roundsSinceExtra >= everyN) {
-	        	session.schedule[i].extra = true;
-	        	now = now + event.extraTime;
+            	if (flag && extraRounds >= extraRoundsNeeded) {
+            		console.log("Enough rounds added");
+            	} else {
+		        	session.schedule[i].extra = true;
+		        	now = now + event.extraTime;
+		        }
 	        }
 	    }
 
@@ -199,9 +207,6 @@ function fillSession(event, session, teams) {
 			} else continue;
 		}
 	}
-	console.log(teams);
-	// TODO: Change this to be right at the end of the swapFilling to make sure this is done correctly.
-	// for (var i = 0; i < teams.length; i++) teams[i].schedule.push(new Instance(session.uid, -1,null,null,-1));
 }
 
 /**
@@ -365,6 +370,7 @@ function timeInc(event,time,len) {
 **/ 
 function canDo(event, team, instance, excl) {
 	// Check if team already has something in their schedule
+	if (team.special && !instance.extra && getSession(instance.session_uid).type != TYPE_BREAK) return false;
 	for (var i = 0; i < team.schedule.length; i++) {
 		var startA = team.schedule[i].time;
 		if (excl && team.schedule[i].session_uid == excl) continue;
@@ -380,8 +386,6 @@ function canDo(event, team, instance, excl) {
 			var endB = startB + getSession(instance.session_uid).length + event.minTravel;
 		}
 		if (startA == startB || startA < startB && endA > startB || startB < startA && endB > startA) {
-			// console.log("Can't do because of: ");
-			// console.log(team.schedule[i]);
 			return false;
 		}
 	}

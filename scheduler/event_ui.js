@@ -1,3 +1,5 @@
+var locked = false;
+
 function EventPanel(params) {
 	this.params = params;
 	this.allPanels = [];
@@ -183,13 +185,15 @@ function toggleAdvMode() {
 }
 
 function toggleLockedMode() {
-	if (tournament.allSessions[0].schedule.length == 0) {
+	if (tournament.allSessions[0].schedule.length == 0 || tournament.errors == Infinity) {
 		$(".non-cosmetic").removeAttr('disabled');
 		$("#unlockDiv").hide();
+		locked = false;
 	} else {
 		$(".non-cosmetic").attr('disabled','disabled')
 		$(".cosmetic").change(function() {printToDom(tournament);});
 		$("#unlockDiv").show();
+		locked = true;
 	}
 }
 
@@ -506,7 +510,7 @@ function closeTeamImportModal() {
 	if (names[names.length-1] == "") names.splice(names.length-1,1);
 	while (nums.length < names.length) nums.push(""+(nums.length+1));
 	while (nums.length > names.length) nums.splice(nums.length-1,1);
-	if (tournament.allSessions[0].schedule.length != 0 && (nums.length != tourn_ui.params.teams.length || names.length != tourn_ui.params.teams.length)) {
+	if (locked && (nums.length != tourn_ui.params.teams.length || names.length != tourn_ui.params.teams.length)) {
 		alert ("Cannot change number of teams with locked schedule");
 		return;
 	}
