@@ -1,5 +1,6 @@
 const TYPE_JUDGING = new SessionType(16,"Judging", 8);
 const TYPE_MATCH_ROUND = new SessionType(32,"Rounds", 16);
+const TYPE_MATCH_ROUND_PRACTICE = new SessionType(33,"Practice Rounds", 128);
 const TYPE_MATCH_FILLER = new SessionType(48,"Matches", 32);
 const TYPE_BREAK = new SessionType(64,"Breaks", 0);
 
@@ -163,9 +164,14 @@ function load(json) {
 	var evt = JSON.parse(json);
 	for (var i = 0; i < evt.allSessions.length; i++) {
 		var s = evt.allSessions[i];
-		if (s.type.uid == TYPE_JUDGING.uid) s.type = TYPE_JUDGING;
-		if (s.type.uid == TYPE_BREAK.uid) s.type = TYPE_BREAK;
-		if (s.type.uid == TYPE_MATCH_ROUND.uid) s.type = TYPE_MATCH_ROUND;
+		if (s.type.uid && s.type.uid == TYPE_JUDGING.uid) s.type = TYPE_JUDGING;
+		else if (s.type.name == TYPE_JUDGING.name) s.type = TYPE_JUDGING;
+		if (s.type.uid && s.type.uid == TYPE_MATCH_ROUND.uid) s.type = TYPE_MATCH_ROUND;
+		else if (s.type.name == TYPE_MATCH_ROUND.name) s.type = TYPE_MATCH_ROUND;
+		if (s.type.uid && s.type.uid == TYPE_MATCH_FILLER.uid) s.type = TYPE_MATCH_FILLER;
+		else if (s.type.name == TYPE_MATCH_FILLER.name) s.type = TYPE_MATCH_FILLER;
+		if (s.type.uid && s.type.uid == TYPE_BREAK.uid) s.type = TYPE_BREAK;
+		else if (s.type.name == TYPE_BREAK.name) s.type = TYPE_BREAK
 	}
 	toggleAdvMode();
 	console.log(evt);
