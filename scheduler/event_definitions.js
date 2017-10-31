@@ -98,6 +98,7 @@ function TeamParameters(number,name) {
 	this.uid = TEAM_UID_COUNTER++;
 	this.number = (number)?number:(tournament.teamnum_counter++);
 	this.name = (name)?name:("Team " +this.number);
+	this.pitNum = 0;
 	this.special = false;
 	this.start = null; // Can be used to define when the team must arrive.
 	this.end = null; // Can be used to define when the team must leave.
