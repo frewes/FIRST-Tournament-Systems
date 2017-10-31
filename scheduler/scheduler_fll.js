@@ -131,7 +131,7 @@ function tableSession(event, session, numOffset) {
     var extraRoundsMade = ((session.extraTimeFirst)?1:0) +((session.extraTimeEvery)?L/everyN:0);
     if (extraRoundsMade < extraRoundsNeeded) {
     	everyN = (L+1)/(extraRoundsNeeded+1);
-    	everyN += Math.floor(Math.random()*2);
+    	everyN += Math.round(Math.random()*2);
     	roundsSinceExtra += Math.floor(Math.random()*L);
     	flag = true;
     }
@@ -374,16 +374,21 @@ function canDo(event, team, instance, excl) {
 	for (var i = 0; i < team.schedule.length; i++) {
 		var startA = team.schedule[i].time;
 		if (excl && team.schedule[i].session_uid == excl) continue;
+		var extra = 0;
+		if (team.schedule[i].extra) extra = event.extraTime;
 		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK)
 			var endA = startA + getSession(team.schedule[i].session_uid).length;
 		else {
-			var endA = startA + getSession(team.schedule[i].session_uid).length + event.minTravel;
+			var endA = startA + getSession(team.schedule[i].session_uid).length + extra + event.minTravel;
 		}
 		var startB = instance.time;
+		extra = 0;
+		if (instance.extra) extra = event.extraTime;
+		
 		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK)
 			var endB = startB + getSession(instance.session_uid).length;
 		else {
-			var endB = startB + getSession(instance.session_uid).length + event.minTravel;
+			var endB = startB + getSession(instance.session_uid).length + event.minTravel + extra;
 		}
 		if (startA == startB || startA < startB && endA > startB || startB < startA && endB > startA) {
 			return false;
