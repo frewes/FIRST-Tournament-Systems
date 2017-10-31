@@ -27,11 +27,12 @@ function saveToCSV(event) {
 	for (var i = 0; i < allMatches.length; i++) {
 		for (var j = 0; j < allMatches[i].schedule.length; j++) {
 			var instance = allMatches[i].schedule[j];
+			var len = getSession(instance.session_uid).length;
 			csv += instance.num + ",";
-			csv += minsToExcel(instance.start) + ",";
+			csv += minsToExcel(instance.time) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += minsToExcel(instance.start+instance.length+extra) + ",";
+			csv += minsToExcel(instance.time+len+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -52,11 +53,12 @@ function saveToCSV(event) {
 		csv += "\n";
 		for (var j = 0; j < allJudging[i].schedule.length; j++) {
 			var instance = allJudging[i].schedule[j];
+			var len = getSession(instance.session_uid).length;
 			csv += instance.num + ",";
-			csv += minsToExcel(instance.start) + ",";
+			csv += minsToExcel(instance.time) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += minsToExcel(instance.start+instance.length+extra) + ",";
+			csv += minsToExcel(instance.time+len+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -82,12 +84,13 @@ function saveToCSV(event) {
 	csv += "\n";
 	for (var i = 0; i < allMatches.length; i++) {
 		for (var j = 0; j < allMatches[i].schedule.length; j++) {
+			var len = getSession(instance.session_uid).length;
 			var instance = allMatches[i].schedule[j];
 			csv += instance.num + ",";
-			csv += minsToExcel(instance.start) + ",";
+			csv += minsToExcel(instance.time) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += minsToExcel(instance.start+instance.length+extra) + ",";
+			csv += minsToExcel(instance.time+len+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -101,6 +104,6 @@ function saveToCSV(event) {
 // Time = x.yyyyyyyy
 // Where x = Number of days since 1/1/1900
 // and	 y = Proportion of day (mins/(24*60))
-function minsToExcel(mins) {
-	return mins/(24*60);
+function minsToExcel(m) {
+	return m/(24*60);
 }

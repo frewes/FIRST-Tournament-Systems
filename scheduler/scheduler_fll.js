@@ -15,7 +15,7 @@ EventParameters:
 	teams (TeamParameters):
 		function TeamParameters(number,name) {
 		[number, name]
-		special
+		extraTime
 		start
 		end
 		schedule
@@ -112,22 +112,25 @@ function buildAllTables(event) {
 */
 function tableSession(event, session, numOffset) {
 	if (!numOffset) numOffset = 0;
+	var teams = [];
+	for (var i = 0; i < event.teams.length; i++) 
+		if (session.type != TYPE_JUDGING || !event.teams[i].excludeJudging) teams.push(event.teams[i]);
     var now = session.start;
-    var L = Math.ceil((event.teams.length*session.instances) / session.nSims);
-    var lastNTeams = ((event.teams.length*session.instances) % session.nSims);
+    var L = Math.ceil((teams.length*session.instances) / session.nSims);
+    var lastNTeams = ((teams.length*session.instances) % session.nSims);
     lastNTeams = (lastNTeams==0) ? session.nSims : lastNTeams;
     session.schedule = new Array(L);
     
     // Figure out how many rounds to make extra long
     var everyN = (session.extraTimeEvery)?session.extraTimeEvery:Infinity;
-    var specialTeams = 0;
-    for (var i = 0; i < event.teams.length; i++) {
-    	if (event.teams[i].special) specialTeams++;
+    var extraTimeTeams = 0;
+    for (var i = 0; i < teams.length; i++) {
+    	if (event.teams[i].extraTime) extraTimeTeams++;
     }
     var roundsSinceExtra = 0;
     var flag = false;
 
-    var extraRoundsNeeded = Math.ceil(specialTeams/session.nSims);
+    var extraRoundsNeeded = Math.ceil(extraTimeTeams/session.nSims);
     var extraRoundsMade = ((session.extraTimeFirst)?1:0) +((session.extraTimeEvery)?L/everyN:0);
     if (extraRoundsMade < extraRoundsNeeded) {
     	everyN = (L+1)/(extraRoundsNeeded+1);
@@ -180,7 +183,8 @@ function initialFill(event) {
 	for (var i = 0; i < event.allSessions.length; i++) {
 		var teams = [];
 		for (var j = 0; j < event.allSessions[i].instances; j++) 
-			teams = teams.concat(oneSetOfTeams.slice());
+			for (var k = 0; k < oneSetOfTeams.length; k++) 
+				if (event.allSessions[i].type != TYPE_JUDGING || !oneSetOfTeams[k].excludeJudging) teams.push(oneSetOfTeams[k]);
         if (event.method == "block") {
             for (var j = 0; j < event.allSessions[i].nSims*2; j++)
                 teams.push(teams.shift());
@@ -315,6 +319,9 @@ function sortThingsOut(event) {
 		return a.type.priority - b.type.priority;
 	});
 	for (var i = 0; i < event.teams.length; i++) {
+		for (var j = 0; j < event.allSessions.length; j++) 
+			if (event.allSessions[j].type == TYPE_JUDGING && event.teams[i].excludeJudging) 
+				event.teams[i].schedule.push(new Instance(event.allSessions[j].uid));
 		event.teams[i].schedule.sort(function(a,b) {
 			if (getSession(a.session_uid).type.priority == getSession(b.session_uid).type.priority)
 				return getSession(a.session_uid).start - getSession(b.session_uid).start
@@ -370,7 +377,8 @@ function timeInc(event,time,len) {
 **/ 
 function canDo(event, team, instance, excl) {
 	// Check if team already has something in their schedule
-	if (team.special && !instance.extra && getSession(instance.session_uid).type != TYPE_BREAK) return false;
+	if (team.extraTime && !instance.extra && getSession(instance.session_uid).type != TYPE_BREAK) return false;
+	if (team.excludeJudging && getSession(instance.session_uid).type == TYPE_JUDGING) return false;
 	for (var i = 0; i < team.schedule.length; i++) {
 		var startA = team.schedule[i].time;
 		if (excl && team.schedule[i].session_uid == excl) continue;

@@ -551,13 +551,17 @@ function openTeamEditModal() {
     $("#lg-modal-footer").empty();
     $("#lg-modal-title")[0].innerHTML = "Team features";
     $("#lg-modal-body").append($("<table class=\"table\">"));
-    $("#lg-modal-body>table").append($("<thead><tr><th>Team</th><th>Needs extra time?</th><th>Arrival time</th><th>Departure time</th></tr></thead>"));
+    $("#lg-modal-body>table").append($("<thead><tr><th>Team</th><th>Exclude from judging?</th><th>Needs extra time?</th><th>Arrival time</th><th>Departure time</th></tr></thead>"));
     $("#lg-modal-body>table").append($("<tbody>"));
    	for (var i = 0; i < tourn_ui.params.teams.length; i++) {
    		var team = tourn_ui.params.teams[i];
    		var x = $("<tr>");
    		$(x).append($("<td>"+team.number+", "+team.name+"</td>"));
-   		if (team.special)
+   		if (team.excludeJudging)
+	   		$(x).append($("<td><input type=\"checkbox\" class=\"form-control\" checked></td>"));
+   		else 
+   			$(x).append($("<td><input type=\"checkbox\" class=\"form-control\"></td>"));
+   		if (team.extraTime)
 	   		$(x).append($("<td><input type=\"checkbox\" class=\"form-control\" checked></td>"));
    		else 
    			$(x).append($("<td><input type=\"checkbox\" class=\"form-control\"></td>"));
@@ -593,9 +597,10 @@ function closeTeamEditModal() {
 	for (var i = 1; i < rows.length; i++) {
 		var inputs = $("input,select",rows[i]);
 		var team = tourn_ui.params.teams[i-1];
-		team.special = inputs[0].checked;
-		team.start = dtToMins(inputs[1].value,inputs[2].value);
-		team.end = dtToMins(inputs[3].value,inputs[4].value);
+		team.excludeJudging = inputs[0].checked;
+		team.extraTime = inputs[1].checked;
+		team.start = dtToMins(inputs[2].value,inputs[3].value);
+		team.end = dtToMins(inputs[4].value,inputs[5].value);
 	}
 	autosave();
 	printToDom(tournament);

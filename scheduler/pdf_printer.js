@@ -208,14 +208,21 @@ function PDFifyAllTeams(event,download) {
 		for (var j = 0; j < team.schedule.length; j++) {
             var col = (j%2 == 1) ? 'blue' : 'black';
 			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
-			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
-           	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
-           	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
-           	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
+			if (team.schedule[j].teams && (team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
+            if (!team.schedule[j].teams) {
+                row.push({text:""});
+                row.push({text:""});
+                row.push({text:""});
+            } else {
+               	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
+               	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
+               	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
+            }
 		}
 		row.push({text: minTravelTime(team)+"", style:'tablebody', color:col});
 		for (var j = 0; j < team.schedule.length; j++) {
             var col = (j%2 == 1) ? 'blue' : 'black';
+            if (!team.schedule[j].teams) continue;
 			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
            	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
            	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
@@ -245,7 +252,9 @@ function PDFifyIndivTeams(event, download) {
 }
 
 function teamPage(doc, event, team) {
-	var schedule = team.schedule.slice();
+	var schedule = [];
+    for (var i = 0; i < team.schedule.length; i++)
+        if (team.schedule[i].teams) schedule.push(team.schedule[i]);
 	schedule.sort(function(a,b) {
 		return a.time - b.time;
 	});

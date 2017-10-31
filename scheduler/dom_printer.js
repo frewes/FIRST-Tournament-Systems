@@ -128,23 +128,32 @@ function generateIndivTable(event) {
 		row.append($("<td>"+team.number+"</td><td>"+team.name+"</td>"));
 		for (var j = 0; j < team.schedule.length; j++) {
 			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
-			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
-			row.append($("<td>"+team.schedule[j].num+"</td>"));
-			row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
-			if (team.schedule[j].loc == -1)
-				row.append($("<td>--</td>"));
-			else
-				row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
+			if (team.schedule[j].teams && (team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
+			if (!team.schedule[j].teams) {
+				row.append($("<td></td>"));
+				row.append($("<td></td>"));
+				row.append($("<td></td>"));
+			} else {
+				row.append($("<td>"+team.schedule[j].num+"</td>"));
+				row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
+				if (team.schedule[j].loc == -1)
+					row.append($("<td>--</td>"));
+				else
+					row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
+			}
 		}
 		row.append($("<td>"+minTravelTime(team)+"</td>"));
 		for (var j = 0; j < team.schedule.length; j++) {
+			if (!team.schedule[j].teams) continue;
 			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
-			row.append($("<td>"+team.schedule[j].num+"</td>"));
-			row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
-			if (team.schedule[j].loc == -1)
-				row.append($("<td>--</td>"));
-			else
-				row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
+			else {
+				row.append($("<td>"+team.schedule[j].num+"</td>"));
+				row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
+				if (team.schedule[j].loc == -1)
+					row.append($("<td>--</td>"));
+				else
+					row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
+			}
 		}
 		tbody.append(row);
 	}

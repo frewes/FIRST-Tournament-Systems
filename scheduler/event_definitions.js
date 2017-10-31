@@ -10,7 +10,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
 
-const SCHEDULER_VERSION = 1.0;
+const SCHEDULER_VERSION = 1.1;
 
 var TEAM_UID_COUNTER = 0;
 
@@ -30,6 +30,7 @@ function EventParameters(name,nTeams,nDays,minTravel,extraTime) {
 	this.extraTime = (extraTime)?extraTime:5;
 	this.allSessions = [];
 	this.teams = [];
+	this.startDate = null;
 	this.days = [];
 	this.method="random";
 	this.logos = ["flllogo.jpg","gamelogo.jpg","mqlogo.png","firstlogo.png"];
@@ -104,7 +105,8 @@ function TeamParameters(number,name) {
 	this.number = (number)?number:(tournament.teamnum_counter++);
 	this.name = (name)?name:("Team " +this.number);
 	this.pitNum = 0;
-	this.special = false;
+	this.extraTime = false;
+	this.excludeJudging = false;
 	this.start = null; // Can be used to define when the team must arrive.
 	this.end = null; // Can be used to define when the team must leave.
 	this.isSurrogate = false;
@@ -175,6 +177,17 @@ function save() {
 function load(json) {
 	var evt = JSON.parse(json);
 	if (!evt.version) evt.version = 1.0;
+	// Do legacy checks
+	if (evt.version < 1.1) {
+		evt.startDate = null;
+		if (evt.days.length > 1) evt.startDate = new Date();
+		for (var t = 0; t < evt.teams.length; t++) {
+			t.extraTime = t.special;
+			t.excludeJudging = false;
+		}
+	}
+
+	// Convert types to literal TYPE objects for later comparisons
 	for (var i = 0; i < evt.allSessions.length; i++) {
 		var s = evt.allSessions[i];
 		for (var j = 0; j < TYPES.length; j++) {
@@ -195,6 +208,7 @@ function minTravelTime(team) {
 			if (i == j) continue;
 			if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK) continue;
 			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
+			if (!team.schedule[i].teams || !team.schedule[j].teams) continue;
 			var inst1 = team.schedule[i];
 			var start1 = inst1.time; 
 			var end1 = start1 + getSession(inst1.session_uid).length + ((inst1.extra)?tournament.extraTime:0);
