@@ -1,7 +1,7 @@
-const TYPE_JUDGING = new SessionType("Judging", 8);
-const TYPE_MATCH_ROUND = new SessionType("Rounds", 16);
-const TYPE_MATCH_FILLER = new SessionType("Matches", 32);
-const TYPE_BREAK = new SessionType("Breaks", 0);
+const TYPE_JUDGING = new SessionType(16,"Judging", 8);
+const TYPE_MATCH_ROUND = new SessionType(32,"Rounds", 16);
+const TYPE_MATCH_FILLER = new SessionType(48,"Matches", 32);
+const TYPE_BREAK = new SessionType(64,"Breaks", 0);
 
 const LEAVE_BLANKS = 0;
 const USE_SURROGATES = 1;
@@ -10,7 +10,7 @@ const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
 
 var TEAM_UID_COUNTER = 0;
 
-function SessionType(name,priority) {
+function SessionType(uid,name,priority) {
 	this.name = name;
 	this.priority = priority;
 }
@@ -162,9 +162,9 @@ function load(json) {
 	var evt = JSON.parse(json);
 	for (var i = 0; i < evt.allSessions.length; i++) {
 		var s = evt.allSessions[i];
-		if (s.type.name == TYPE_JUDGING.name) s.type = TYPE_JUDGING;
-		if (s.type.name == TYPE_BREAK.name) s.type = TYPE_BREAK;
-		if (s.type.name == TYPE_MATCH_ROUND.name) s.type = TYPE_MATCH_ROUND;
+		if (s.type.uid == TYPE_JUDGING.uid) s.type = TYPE_JUDGING;
+		if (s.type.uid == TYPE_BREAK.uid) s.type = TYPE_BREAK;
+		if (s.type.uid == TYPE_MATCH_ROUND.uid) s.type = TYPE_MATCH_ROUND;
 	}
 	toggleAdvMode();
 	console.log(evt);
