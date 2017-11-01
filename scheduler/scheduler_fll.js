@@ -304,7 +304,7 @@ function evaluate(event) {
 				if (session.schedule[j].teams[k] == NOT_YET_ADDED) session.nErrors++;
 		event.errors += session.nErrors;
 	}
-	// Now, add errors due to teams having an incorrect number of instances
+	// // Now, add errors due to teams having an incorrect number of instances
 	// for (var i = 0 ; i < event.teams.length ; i++) {
 	// 	event.errors += Math.abs(event.teams[i].schedule.length - event.allSessions.length);
 	// }
@@ -315,7 +315,10 @@ function evaluate(event) {
 **/
 function sortThingsOut(event) {
 	event.allSessions.sort(function(a,b) {
-		if (a.type.priority == b.type.priority) return a.start - b.start;
+		if (a.type.priority == b.type.priority) {
+			if (a.start == b.start) return a.uid-b.uid;
+			return a.start - b.start;
+		}
 		return a.type.priority - b.type.priority;
 	});
 	for (var i = 0; i < event.teams.length; i++) {

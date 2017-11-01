@@ -186,7 +186,15 @@
           <button disabled onclick="makePDFs(tournament, false)" class="btn btn-lg btn-success">View PDFs</button>
           <button disabled onclick="makePDFs(tournament, true)" class="btn btn-lg btn-success">Download PDFs</button>
           <button disabled onclick="exportBL(tournament)" class="btn btn-lg btn-info">Export to CSV</button>  
-      </div>
+          <p><label for="drag-toggle">Drag-and-drop</label>
+            <br>
+            <label class="switch">
+                <input id="drag-toggle" type="checkbox" onchange="toggleDragMode()">
+                <span class="slider round"></span>
+            </label>
+          </p>
+    </div>
+      
   </div>
 </div>
 

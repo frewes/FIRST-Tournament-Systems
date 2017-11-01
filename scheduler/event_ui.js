@@ -185,6 +185,14 @@ function toggleAdvMode() {
 	}
 }
 
+function toggleDragMode() {
+	if ($("#drag-toggle")[0].checked) {
+		$(".table-team").attr("draggable","true");  //Draggable should be a selection thing.
+	} else {
+		$(".table-team").attr("draggable", "false");  //Draggable should be a selection thing.
+	}
+}
+
 function toggleLockedMode() {
 	if (tournament.allSessions[0].schedule.length == 0 || tournament.errors == Infinity) {
 		$(".non-cosmetic").removeAttr('disabled');

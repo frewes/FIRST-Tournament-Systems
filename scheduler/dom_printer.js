@@ -83,7 +83,6 @@ function generateTable(session) {
 		while (diff-- > 0) row.append($("<td>"));
 		tbody.append(row);
 	}
-	// $(".table-team").removeAttr("draggable");  //Draggable should be a selection thing.
 	table.append(tbody);
 	result.append(table);
 	return result;
@@ -159,6 +158,7 @@ function generateIndivTable(event) {
 	}
 	table.append(tbody);
 	result.append(table);
+	toggleDragMode();
 	return result;
 }
 
@@ -168,9 +168,64 @@ function drop(evt,uid,i,t) {
     var from_i = parseInt(evt.dataTransfer.getData("instance"));
     var from_t = parseInt(evt.dataTransfer.getData("team"));
 	var from_instance = getSession(from_uid).schedule[from_i];
-    console.log(from_instance);
     var to_instance = getSession(uid).schedule[i];
+    if (from_instance.session_uid != to_instance.session_uid) return;
+    var from_team = getTeam(from_instance.teams[from_t]);
+    var to_team = getTeam(to_instance.teams[t]);
+    if (!canDo(tournament,from_team,to_instance,uid) || !canDo(tournament,to_team,from_instance,from_uid)) {
+    	alert ("These two teams cannot swap");
+    	return;
+    }
+    console.log("From ("+from_uid+","+from_i+","+from_t+")");
+    console.log(from_instance);
+    console.log(from_team);
+    console.log("To ("+uid+","+i+","+t+")");
     console.log(to_instance);
+    console.log(to_team);
+
+    // from_instance.teams[from_instance.teams.indexOf(from_team.uid)] = to_team.uid;
+    // to_instance.teams[to_instance.teams.indexOf(to_team.uid)] = from_team.uid;
+    from_instance.teams[from_t] = to_team.uid;
+    to_instance.teams[t] = from_team.uid;
+    var fromToRemove = null;
+    for (var i = 0; i < from_team.schedule.length; i++) {
+    	if (from_team.schedule[i].session_uid == from_instance.session_uid) fromToRemove = i;
+    }
+    var toToRemove = null;
+    for (var i = 0; i < to_team.schedule.length; i++) {
+    	if (to_team.schedule[i].session_uid == to_instance.session_uid) toToRemove = i;
+    }
+    if (fromToRemove == null || toToRemove == null) {
+    	alert ("Error during swapping");
+    	return;
+    }
+    from_team.schedule.splice(fromToRemove,1);
+	to_team.schedule.splice(toToRemove,1);
+
+	from_team.schedule.push(to_instance);
+	to_team.schedule.push(from_instance);
+	from_team.schedule.sort(function(a,b) {
+		var s_a = getSession(a.session_uid);
+		var s_b = getSession(b.session_uid);
+		if (s_a.type.priority == s_b.type.priority) {
+			if (s_a.start == s_b.start) return s_a.uid-s_b.uid;
+			return s_a.start - s_b.start;
+		}
+		return s_a.type.priority - s_b.type.priority;
+	});
+	to_team.schedule.sort(function(a,b) {
+		var s_a = getSession(a.session_uid);
+		var s_b = getSession(b.session_uid);
+		if (s_a.type.priority == s_b.type.priority) {
+			if (s_a.start == s_b.start) return s_a.uid-s_b.uid;
+			return s_a.start - s_b.start;
+		}
+		return s_a.type.priority - s_b.type.priority;
+	});
+	var errs = tournament.errors;
+	evaluate(tournament);
+	if (tournament.errors > errs) alert ("Something went wrong!  The schedule is broken");
+	printToDom(tournament);
 }
 
 function allowDrop(evt,uid,i,t) {
