@@ -7,7 +7,7 @@ function saveToCSV(event) {
 	csv += "Block Format,1\n";
 	csv += "Number of Teams,"+event.teams.length+"\n";
 	for (var i = 0; i < event.teams.length; i++) {
-		csv += event.teams[i].number + "," + event.teams[i].name + ",0\n";
+		csv += event.teams[i].number + "," + event.teams[i].name + ","+event.teams[i].pitNum+",\n";
 	}
 	csv += "Block Format,2\n";
 	var rankingMatches = 0;
@@ -29,10 +29,10 @@ function saveToCSV(event) {
 			var instance = allMatches[i].schedule[j];
 			var len = getSession(instance.session_uid).length;
 			csv += instance.num + ",";
-			csv += minsToExcel(instance.time) + ",";
+			csv += minsToExcel(event.startDate,instance.time) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += minsToExcel(instance.time+len+extra) + ",";
+			csv += minsToExcel(event.startDate,instance.time+len+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -55,10 +55,10 @@ function saveToCSV(event) {
 			var instance = allJudging[i].schedule[j];
 			var len = getSession(instance.session_uid).length;
 			csv += instance.num + ",";
-			csv += minsToExcel(instance.time) + ",";
+			csv += minsToExcel(event.startDate,instance.time) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += minsToExcel(instance.time+len+extra) + ",";
+			csv += minsToExcel(event.startDate,instance.time+len+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -87,10 +87,10 @@ function saveToCSV(event) {
 			var len = getSession(instance.session_uid).length;
 			var instance = allMatches[i].schedule[j];
 			csv += instance.num + ",";
-			csv += minsToExcel(instance.time) + ",";
+			csv += minsToExcel(event.startDate,instance.time) + ",";
 			var extra = 0;
 			if (instance.extra) extra = event.extraTime;
-			csv += minsToExcel(instance.time+len+extra) + ",";
+			csv += minsToExcel(event.startDate,instance.time+len+extra) + ",";
 			for (var t = 0; t < instance.teams.length; t++) {
 				csv += getTeam(instance.teams[t]).number + ",";
 			}
@@ -104,6 +104,30 @@ function saveToCSV(event) {
 // Time = x.yyyyyyyy
 // Where x = Number of days since 1/1/1900
 // and	 y = Proportion of day (mins/(24*60))
-function minsToExcel(m) {
-	return m/(24*60);
+function minsToExcel(sd,m) {
+	var millenium = new Date();
+	sd = new String(sd);
+	millenium.setFullYear(1900,0,1);
+	var tourn = new Date();
+	tourn.setFullYear(sd.split("-")[0],sd.split("-")[1]-1,sd.split("-")[2]);
+	console.log(tourn);
+	console.log(millenium);
+	if (event.days.length > 1) 
+		return Date.daysBetween(millenium,tourn)+(m/(24*60));
+	else return m/(24*60);
+}
+
+Date.daysBetween = function( date1, date2 ) {
+  //Get 1 day in milliseconds
+  var one_day=1000*60*60*24;
+
+  // Convert both dates to milliseconds
+  var date1_ms = date1.getTime();
+  var date2_ms = date2.getTime();
+
+  // Calculate the difference in milliseconds
+  var difference_ms = date2_ms - date1_ms;
+    
+  // Convert back to days and return
+  return Math.round(difference_ms/one_day); 
 }

@@ -72,13 +72,17 @@ function EventPanel(params) {
 	    }
 	}
 	this.sequenceTeams = function() {
-	    var x = $("#lg-modal-body>textarea")[0];
+	    var nums = $("#lg-modal-body>textarea")[0];
+	    var pits = $("#lg-modal-body>textarea")[2];
 	    var names = $("#lg-modal-body>textarea")[1].value.split('\n');
 	    nameLen = names.length;
 	    if (names[names.length-1] == "") nameLen--;
-	    x.value = "";
-	    for (var i = 0; i < nameLen; i++)
-	    	x.value = x.value + ((i+1)+"\n");
+	    nums.value = "";
+	    pits.value = "";
+	    for (var i = 0; i < nameLen; i++) {
+	    	nums.value = nums.value + ((i+1)+"\n");
+	    	pits.value = pits.value + ((i+1)+"\n");
+	    }
 	}
 	this.updateMethod = function() {
         this.params.method = ($("input[name='method']:checked").val());
@@ -488,10 +492,14 @@ function openDayModal() {
     $("#sm-modal-body").empty();
     $("#sm-modal-footer").empty();
     $("#sm-modal-title")[0].innerHTML = "Days";
+    $("#sm-modal-body").append($("<label for=\"start-date-input\">Start Date:</label>"));
+    $("#sm-modal-body").append($("<input type=\"date\" id=\"start-date-input\" class=\"form-control\" value=\""+tournament.startDate+"\">"));
+    $("#sm-modal-body").append($("<br>"));
+    $("#sm-modal-body").append($("<label>Day names:</label>"));
     for (var i = 0; i < tourn_ui.params.days.length; i++) {
     	var input = $("<input type=\"text\" class=\"form-control\" value=\""+tourn_ui.params.days[i]+"\">");
 	    $("#sm-modal-body").append(input);
-	    $("#sm-modal-body").append(document.createElement("BR"));
+	    $("#sm-modal-body").append($("<br>"));
 	}
     $("#sm-modal-footer").append($("<button onclick=\"closeDayModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
     $("#sm-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
@@ -499,8 +507,11 @@ function openDayModal() {
 
 function closeDayModal() {
 	var inputs = $("#sm-modal-body>input");
-	for (var i = 0; i < inputs.length; i++)
-		tourn_ui.params.days[i] = inputs[i].value;
+	if (inputs[0].value)
+		tourn_ui.params.startDate = inputs[0].value;
+	console.log(tourn_ui.params.startDate);
+	for (var i = 1; i < inputs.length; i++)
+		tourn_ui.params.days[i-1] = inputs[i].value;
 	tourn_ui.changeNDays();
 	printToDom(tournament);
 }
@@ -508,16 +519,21 @@ function closeDayModal() {
 function openTeamImportModal() {
     $("#lg-modal-body").empty();
     $("#lg-modal-footer").empty();
-    $("#lg-modal-title")[0].innerHTML = "Team names/numbers";
+    $("#lg-modal-title")[0].innerHTML = "Team names, numbers, pit numbers";
     $("#lg-modal-body").append($("<p>One line per team.  Team numbers will automatically add\/delete to match the number of team names.</p>"))
     $("#lg-modal-body").append($("<p><button class=\"btn\" onclick=\"tourn_ui.sequenceTeams()\">Number sequentially</button></p>"));
-    var x = $("<textarea rows=\""+tourn_ui.params.teams.length+"\" cols=\"5\"></textarea>");
+    var x = $("<textarea rows=\""+tourn_ui.params.teams.length+"\" cols=\"6\"></textarea>");
     for (var i = 0; i < tourn_ui.params.teams.length; i++)
     	x.append(tourn_ui.params.teams[i].number+"\n");
     $("#lg-modal-body").append(x);
     var x = $("<textarea rows=\""+tourn_ui.params.teams.length+"\" cols=\"60\"></textarea>");
     for (var i = 0; i < tourn_ui.params.teams.length; i++)
     	x.append(tourn_ui.params.teams[i].name+"\n");
+    $("#lg-modal-body").append(x);
+    var x = $("<textarea rows=\""+tourn_ui.params.teams.length+"\" cols=\"6\"></textarea>");
+    for (var i = 0; i < tourn_ui.params.teams.length; i++)
+    	x.append(tourn_ui.params.teams[i].pitNum+"\n");
+    $("#lg-modal-body").append(x);
     $("#lg-modal-body").append(x);
     $("#lg-modal-footer").append($("<button onclick=\"closeTeamImportModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
     $("#lg-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
@@ -529,17 +545,22 @@ function closeTeamImportModal() {
 	if (nums[nums.length-1] == "") nums.splice(nums.length-1,1);
 	var names = inputs[1].value.split("\n");
 	if (names[names.length-1] == "") names.splice(names.length-1,1);
+	var pits = inputs[2].value.split("\n");
+	if (pits[pits.length-1] == "") pits.splice(pits.length-1,1);
 	while (nums.length < names.length) nums.push(""+(nums.length+1));
 	while (nums.length > names.length) nums.splice(nums.length-1,1);
-	if (locked && (nums.length != tourn_ui.params.teams.length || names.length != tourn_ui.params.teams.length)) {
+	while (pits.length < names.length) pits.push("0");
+	while (pits.length > names.length) pits.splice(pits.length-1,1);
+	if (locked && (names.length != tourn_ui.params.teams.length)) {
 		alert ("Cannot change number of teams with locked schedule");
 		return;
 	}
-	while (tourn_ui.params.teams.length < nums.length) tourn_ui.params.teams.push(new TeamParameters(0));
-	while (tourn_ui.params.teams.length > nums.length) tourn_ui.params.teams.splice(tourn_ui.params.teams.length-1,1);
-	for (var i = 0; i < nums.length; i++) {
+	while (tourn_ui.params.teams.length < names.length) tourn_ui.params.teams.push(new TeamParameters(0));
+	while (tourn_ui.params.teams.length > names.length) tourn_ui.params.teams.splice(tourn_ui.params.teams.length-1,1);
+	for (var i = 0; i < names.length; i++) {
 		tourn_ui.params.teams[i].number = nums[i];
 		tourn_ui.params.teams[i].name = names[i];
+		tourn_ui.params.teams[i].pitNum = pits[i];
 	}
 	tourn_ui.teamInput.value = tourn_ui.params.teams.length;
 	autosave();

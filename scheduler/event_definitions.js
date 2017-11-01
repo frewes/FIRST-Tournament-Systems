@@ -11,7 +11,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
 
-const SCHEDULER_VERSION = 1.1;
+const SCHEDULER_VERSION = 1.2;
 
 var TEAM_UID_COUNTER = 0;
 
@@ -23,15 +23,16 @@ function SessionType(uid,name,priority) {
 function EventParameters(name,nTeams,nDays,minTravel,extraTime) {
 	this.UID_counter = 1;
 	this.version = SCHEDULER_VERSION;
+	this.startDate = new Date().toDateInputValue();
 	this.teamnum_counter = 1;
 	this.start_time_offset = 0; // Set to number of minutes to start if wanted
-	this.name = (name)?name:"2017 FLL Tournament";
+	var year = this.startDate.split("-")[0];
+	this.name = (name)?name:(year+" FLL Tournament");
 	if (!nTeams) var nTeams=24;
 	this.minTravel = (minTravel)?minTravel:10;
 	this.extraTime = (extraTime)?extraTime:5;
 	this.allSessions = [];
 	this.teams = [];
-	this.startDate = null;
 	this.days = [];
 	this.method="random";
 	this.logos = ["flllogo.jpg","gamelogo.jpg","mqlogo.png","firstlogo.png"];
@@ -180,12 +181,15 @@ function load(json) {
 	if (!evt.version) evt.version = 1.0;
 	// Do legacy checks
 	if (evt.version < 1.1) {
-		evt.startDate = null;
-		if (evt.days.length > 1) evt.startDate = new Date();
+		evt.startDate = new Date().toDateInputValue();
 		for (var t = 0; t < evt.teams.length; t++) {
-			t.extraTime = t.special;
-			t.excludeJudging = false;
+			evt.teams[t].extraTime = evt.teams[t].special;
+			evt.teams[t].excludeJudging = false;
+			if (!(evt.teams[t].pitNum)) evt.teams[t].pitNum = 0;
 		}
+	}
+	if (evt.version < 1.2) {
+		if (evt.startDate == null) evt.startDate = new Date().toDateInputValue();
 	}
 
 	// Convert types to literal TYPE objects for later comparisons
@@ -224,3 +228,10 @@ function minTravelTime(team) {
 	}
 	return time;
 }
+
+Date.prototype.toDateInputValue = (function() {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+});
+
