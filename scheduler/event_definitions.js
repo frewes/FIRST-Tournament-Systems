@@ -2,6 +2,7 @@ const TYPE_JUDGING = new SessionType(16,"Judging", 8);
 const TYPE_MATCH_ROUND = new SessionType(32,"Rounds", 16);
 const TYPE_MATCH_ROUND_PRACTICE = new SessionType(33,"Practice Rounds", 128);
 const TYPE_MATCH_FILLER = new SessionType(48,"Matches", 32);
+const TYPE_MATCH_FILLER_PRACTICE = new SessionType(49,"Practice Matches", 129);
 const TYPE_BREAK = new SessionType(64,"Breaks", 0);
 const TYPES = [TYPE_JUDGING, TYPE_MATCH_FILLER, TYPE_BREAK, TYPE_MATCH_ROUND, TYPE_MATCH_ROUND_PRACTICE];
 
