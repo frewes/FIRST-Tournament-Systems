@@ -81,7 +81,7 @@ function buildAllTables(event) {
 		return a.type.priority - b.type.priority;
 	});
 	for (var i = 0; i < event.allSessions.length; i++) {
-		if (event.allSessions[i].type != TYPE_BREAK) event.allSessions[i].start = timeInc(event,event.allSessions[i].start,0);
+		if (event.allSessions[i].type != TYPE_BREAK) event.allSessions[i].start = timeInc(event,event.allSessions[i].start,0,event.allSessions[i]);
 		if (event.allSessions[i].type == TYPE_MATCH_ROUND) continue;
 		var end = tableSession(event,event.allSessions[i],0);
 		if (event.allSessions[i].type != TYPE_BREAK && end > event.allSessions[i].end) {
@@ -146,12 +146,12 @@ function tableSession(event, session, numOffset) {
         var locOffset = (i%d)*session.nSims;
         if (i < L-1) { 
 	        session.schedule[i] = new Instance(session.uid,i+1+numOffset,now,new Array(session.nSims),locOffset);
-	        now = timeInc(event,now,session.length+session.buffer);
+	        now = timeInc(event,now,session.length+session.buffer,session);
 	        roundsSinceExtra++;
             if ((i == 0 && session.extraTimeFirst) || (roundsSinceExtra >= everyN)) {
             	if (!(flag && extraRounds >= extraRoundsNeeded)) {
 		        	session.schedule[i].extra = true;
-		        	now = timeInc(event,now,event.extraTime);
+		        	now = timeInc(event,now,event.extraTime,session);
 		        	roundsSinceExtra = 0;
 		        	extraRounds++;
 		        }
@@ -359,11 +359,12 @@ function sortThingsOut(event) {
 	Increments given time, skipping breaks.
 	@return Returns the incremented time.
 */
-function timeInc(event,time,len) {
+function timeInc(event,time,len,s) {
     var newTime = time + len;
     for (var i = 0; i < event.allSessions.length; i++) {
     	var session = event.allSessions[i];
     	if (session.type != TYPE_BREAK) continue;
+    	if (!applies(session,s)) continue;
     	if ((time+len) >= session.start && time < session.end)
     		newTime = session.end;
     }
@@ -380,7 +381,10 @@ function canDo(event, team, instance, excl) {
 	if (team.extraTime && !instance.extra && getSession(instance.session_uid).type != TYPE_BREAK) return false;
 	if (team.excludeJudging && getSession(instance.session_uid).type == TYPE_JUDGING) return false;
 	for (var i = 0; i < team.schedule.length; i++) {
-		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK && getSession(instance.session_uid).type == TYPE_BREAK) continue;
+		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK){
+			if (!applies(getSession(team.schedule[i].session_uid),getSession(instance.session_uid))) continue;
+			if (getSession(instance.session_uid).type == TYPE_BREAK) continue;
+		} 
 		var startA = team.schedule[i].time;
 		if (excl && team.schedule[i].session_uid == excl) continue;
 		var extra = 0;
@@ -399,9 +403,9 @@ function canDo(event, team, instance, excl) {
 		else {
 			var endB = startB + getSession(instance.session_uid).length + event.minTravel + extra;
 		}
-		if (startA == startB || startA < startB && endA > startB || startB < startA && endB > startA) {
+		if ((team.start && startB < team.start) || (team.end && endB > team.end)) return false;
+		if (startA == startB || startA < startB && endA > startB || startB < startA && endB > startA)
 			return false;
-		}
 	}
 	return true;
 }
@@ -429,4 +433,17 @@ function shuffle(a) {
         a[i - 1] = a[j];
         a[j] = x;
     }
+}
+
+function applies(brk,session) {
+	if (brk.appliesTo.length == 0) {
+		// console.log(brk.name + " =A= " + session.name);
+		return true;
+	}
+	if (brk.appliesTo.indexOf(session.uid) != -1) {
+		// console.log(brk.name + " =B= " + session.name);
+		return true;
+	}
+	// console.log(brk.name + " =C= " + session.name + ": ");	
+	return false;
 }

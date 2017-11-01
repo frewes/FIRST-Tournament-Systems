@@ -296,12 +296,15 @@ function SessionPanel(session) {
 		$("div", x).append(this.policyInput);
 		this.docObj.append(x);
 	}
+	if (this.session.type == TYPE_BREAK) 
+		this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openAppliesModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Break applies to...</button></td></tr><tr><td>&nbsp;</td></tr>"));
 	if (this.session.type == TYPE_BREAK || this.session.type == TYPE_MATCH_ROUND_PRACTICE) 
 		this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
 			</td><td><button class=\"non-cosmetic btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
 	else
 		this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
 			</td><td><button class=\"non-cosmetic advanced btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
+	
 	// Add change listeners
     var ins = $("input,select", this.docObj);
     for (var i = 0; i < ins.length; i++) {
@@ -340,6 +343,7 @@ function SessionPanel(session) {
 		this.session.start = dtToMins(this.startDateInput[0].value,this.startTimeInput[0].value);
 		this.session.end = dtToMins(this.endDateInput[0].value,this.endTimeInput[0].value);
 		this.session.length = parseInt(this.lenInput[0].value);
+		if (this.session.type == TYPE_BREAK) this.session.length = this.end-this.start;
 		this.session.buffer = parseInt(this.bufInput[0].value);
 		this.session.instances = parseInt(this.instanceInput[0].value);
 		this.session.nLocs = parseInt(this.locsInput[0].value);
@@ -540,6 +544,38 @@ function closeDayModal() {
 	printToDom(tournament);
 }
 
+function openAppliesModal(uid) {
+    $("#sm-modal-body").empty();
+    $("#sm-modal-footer").empty();
+    $("#sm-modal-body").append($("<input type=\"hidden\" value=\""+uid+"\">"));
+    var bk = getSession(uid);
+    $("#sm-modal-title")[0].innerHTML = "Break applies to...";
+    $("#sm-modal-body").append($("<p>If no sessions are selected, break applies to all sessions</p>"));
+    for (var i = 0; i < tourn_ui.params.allSessions.length; i++) {
+    	var session = tourn_ui.params.allSessions[i];
+    	if (session.type == TYPE_BREAK) continue;
+    	var input = $("<div class=\"checkbox\"><label><input type=\"checkbox\">"+session.name+"</label></div>");
+    	for (var j = 0; j < bk.appliesTo.length; j++) if (bk.appliesTo[j] == session.uid) $("input", input).attr("checked","checked");
+	    $("#sm-modal-body").append(input);
+	}
+    $("#sm-modal-footer").append($("<button onclick=\"closeAppliesModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#sm-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+}
+
+function closeAppliesModal() {
+	var inputs = $("#sm-modal-body input");
+	console.log(inputs);
+	uid = inputs[0].value;
+	panel = getPanel(uid);
+	panel.session.appliesTo = new Array();
+	var j = 1;
+    for (var i = 0; i < tourn_ui.params.allSessions.length; i++) {
+    	if (tourn_ui.params.allSessions[i].type == TYPE_BREAK) continue;
+    	if (inputs[j++].checked) panel.session.appliesTo.push(tourn_ui.params.allSessions[i].uid);
+    }
+    autosave();
+}
+
 function openTeamImportModal() {
     $("#lg-modal-body").empty();
     $("#lg-modal-footer").empty();
@@ -610,16 +646,16 @@ function openTeamEditModal() {
 	   		$(x).append($("<td><input type=\"checkbox\" class=\"form-control\" checked></td>"));
    		else 
    			$(x).append($("<td><input type=\"checkbox\" class=\"form-control\"></td>"));
-		var dateInput1=$("<td><select disabled class=\"form-control\" value=\""+minsToDate(team.start)+"\"></select></td>");
+		var dateInput1=$("<td><select class=\"form-control\" value=\""+minsToDate(team.start)+"\"></select></td>");
 		for (var j = 0; j < tourn_ui.params.days.length; j++)
 			$("select", dateInput1).append($("<option value=\""+j+"\">"+tourn_ui.params.days[j]+"</option>"));
 		if (tourn_ui.params.days.length <= 1) $("select",dateInput1).hide();
 		else $("select",dateInput1).show();
 		$(x).append(dateInput1);
 		if (team.start == null) 
-	   		$(dateInput1).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\">"));
+	   		$(dateInput1).append($("<input class=\"form-control\" type=\"time\" step=\"900\">"));
 		else 
-	   		$(dateInput1).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.start)+"\">"));
+	   		$(dateInput1).append($("<input class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.start)+"\">"));
 		var dateInput2=$("<td><select disabled class=\"form-control\" value=\""+minsToDate(team.end)+"\"></select></td>");
 		for (var j = 0; j < tourn_ui.params.days.length; j++)
 			$("select", dateInput2).append($("<option value=\""+j+"\">"+tourn_ui.params.days[j]+"</option>"));
@@ -627,9 +663,9 @@ function openTeamEditModal() {
 		else $("select",dateInput2).show();
 		$(x).append(dateInput2);
 		if (team.end == null) 
-	   		$(dateInput2).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\">"));
+	   		$(dateInput2).append($("<input class=\"form-control\" type=\"time\" step=\"900\">"));
 		else 
-	   		$(dateInput2).append($("<input disabled class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.end)+"\">"));
+	   		$(dateInput2).append($("<input class=\"form-control\" type=\"time\" step=\"900\" value=\""+minsToTime(team.end)+"\">"));
 		$("#lg-modal-body>table").append(x);
    	}
     $("#lg-modal-footer").append($("<button onclick=\"closeTeamEditModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));

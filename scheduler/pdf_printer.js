@@ -63,9 +63,14 @@ function PDFifySession(event, type, download) {
     IMAGEDICT.logo4=getBase64Image($("#logo4")[0]);
     var doc = new PdfDoc(event);
     for (var i = 0; i < event.allSessions.length; i++) {
-    	if (event.allSessions[i].type != type) continue;
+        if (event.allSessions[i].type != type) continue;
+        var applyingBreaks = [];
+        for (var j = 0; j < event.allSessions.length; j++) {
+            if (event.allSessions[j].type == TYPE_BREAK && applies(event.allSessions[j],event.allSessions[i]))
+                applyingBreaks.push(event.allSessions[j]);
+        }
         try {
-            sessionPage(doc, event.allSessions[i]);
+            sessionPage(doc, event.allSessions[i],applyingBreaks);
         } catch (err) {
             alert("Error: " + err.message);
         }
@@ -74,14 +79,14 @@ function PDFifySession(event, type, download) {
     // Delete the last page break
     doc.content.splice(doc.content.length-1);
     try {
-	    if (download) pdfMake.createPdf(doc).download(type.name+'Schedule.pdf');
-	    else pdfMake.createPdf(doc).open();
-	} catch (err) {
-	    alert("Error 2: " + err.message);	
-	}
+        if (download) pdfMake.createPdf(doc).download(type.name+'Schedule.pdf');
+        else pdfMake.createPdf(doc).open();
+    } catch (err) {
+        alert ("Error printing: " + err.message);
+    }
 }
 
-function sessionPage(doc, session) {
+function sessionPage(doc, session, applyingBreaks) {
 	// headers are automatically repeated if the table spans over multiple pages
 	// you can declare how many rows should be treated as headers
     var t = {headerRows: 1,dontBreakRows: true};
@@ -100,9 +105,16 @@ function sessionPage(doc, session) {
     	var loc = session.locations[i];
         t.body[0][i+2] = {text:loc,alignment:'center'};
     }
+    var schedule = session.schedule.slice();
+    for (var i = 0; i < applyingBreaks.length; i++) {
+        schedule.push(new Instance(applyingBreaks[i].uid,"",applyingBreaks[i].start,null));
+    }
+    schedule.sort(function(a,b) {
+        return a.time - b.time;
+    });
     // All individual rows
-	for (var i = 0; i < session.schedule.length; i++) {
-		var instance = session.schedule[i];
+	for (var i = 0; i < schedule.length; i++) {
+		var instance = schedule[i];
 		var row = [];
 		if (instance.extra) {
 			row.push({text:instance.num+"",style:'extraTime'});
@@ -111,6 +123,11 @@ function sessionPage(doc, session) {
 			row.push({text:instance.num+"",alignment:'center'});
 			row.push({text:minsToDT(instance.time,"\n")+"",alignment:'center'});
 		}
+        if (getSession(schedule[i].session_uid).type == TYPE_BREAK) {
+            row.push({colSpan:session.nLocs,style:'breakrow',text:""+getSession(schedule[i].session_uid).name});
+            t.body.push(row);
+            continue;
+        }
 
         var diff = session.nLocs;
         for (var dummy = 0; dummy < instance.loc; dummy++) {
@@ -123,7 +140,7 @@ function sessionPage(doc, session) {
 			var surrogate = "";
 			if ((instance.teams.length - team) <= instance.surrogates) surrogate = "*";
 			if ((instance.teams.length - team) <= instance.surrogates) usesSurrogates = true;
-            var tId = session.schedule[i].teams[team];
+            var tId = schedule[i].teams[team];
             var tNum = getTeam(tId).number;
             var tName = getTeam(tId).name;
             row.push({text:tNum+surrogate+"\n"+tName,alignment:'center'});
@@ -290,6 +307,8 @@ function teamPage(doc, event, team) {
     t.body[0][1] = {text:"Event"};
     t.body[0][2] = {text:"Location"};
     for (var i = 0; i < schedule.length; i++) {
+        // If it's a break that applies to specific sessions, don't put it in.
+        if (getSession(schedule[i].session_uid).type == TYPE_BREAK && getSession(schedule[i].session_uid).appliesTo.length > 0) continue;
     	var row = [];
     	var spot = schedule[i].teams.indexOf(team.uid);
     	var num =" ("+schedule[i].num+")";
@@ -313,7 +332,8 @@ STYLEDICT = {
     header2: {fontSize: 20,bold: true,alignment: 'center'},
     tablebody: {fontSize: 8,alignment:'center'},
     extraTime: {alignment: 'center',color: 'red'},
-    tablehead: {fontSize: 10,bold: true,alignment:'center'}
+    tablehead: {fontSize: 10,bold: true,alignment:'center'},
+    breakrow: {bold: true,alignment:'center',fillColor: '#eeeeee'}
 };
 
 IMAGEDICT = {
