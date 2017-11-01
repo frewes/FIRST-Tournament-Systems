@@ -225,6 +225,7 @@ function drop(evt,uid,i,t) {
 	var errs = tournament.errors;
 	evaluate(tournament);
 	if (tournament.errors > errs) alert ("Something went wrong!  The schedule is broken");
+	autosave();
 	printToDom(tournament);
 }
 
