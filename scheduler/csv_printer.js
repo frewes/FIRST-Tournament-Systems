@@ -97,7 +97,7 @@ function saveToCSV(event) {
 			csv += "\n";
 		}
 	}
-
+	return csv;
 }
 
 // Excel represents time decimally as follows:
@@ -110,11 +110,10 @@ function minsToExcel(sd,m) {
 	millenium.setFullYear(1900,0,1);
 	var tourn = new Date();
 	tourn.setFullYear(sd.split("-")[0],sd.split("-")[1]-1,sd.split("-")[2]);
-	console.log(tourn);
-	console.log(millenium);
-	if (event.days.length > 1) 
+	if (tournament.days.length > 1) {
+		console.log(Date.daysBetween(millenium,tourn)+(m/(24*60)));
 		return Date.daysBetween(millenium,tourn)+(m/(24*60));
-	else return m/(24*60);
+	} else return m/(24*60);
 }
 
 Date.daysBetween = function( date1, date2 ) {

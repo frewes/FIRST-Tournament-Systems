@@ -23,8 +23,11 @@ function EventPanel(params) {
 			p.docObj.insertBefore("#addJudgeBtn");
 		else if (p.session.type == TYPE_MATCH_ROUND)
 			p.docObj.insertBefore("#addRoundBtn");
+		else if (p.session.type == TYPE_MATCH_ROUND_PRACTICE)
+			p.docObj.insertBefore("#addPracticeBtn");
 		else if (p.session.type == TYPE_BREAK)
 			p.docObj.insertBefore("#addBreakBtn");
+		toggleAdvMode();
 	}
 	this.changeNTeams = function() {
 		var nTeams = this.teamInput.value;
@@ -272,6 +275,8 @@ function SessionPanel(session) {
 		var x = $("<tr><td># judging panels:</td><td><div></div></td></tr>");
 	else if (this.session.type == TYPE_MATCH_ROUND)
 		var x = $("<tr><td># tables:</td><td><div></div></td></tr>");
+	else if (this.session.type == TYPE_MATCH_ROUND_PRACTICE)
+		var x = $("<tr><td># tables:</td><td><div></div></td></tr>");
 	else if (this.session.type == TYPE_BREAK)
 		var x = null;
 	else 
@@ -291,8 +296,12 @@ function SessionPanel(session) {
 		$("div", x).append(this.policyInput);
 		this.docObj.append(x);
 	}
-	this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
-		</td><td><button class=\"non-cosmetic advanced btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
+	if (this.session.type == TYPE_BREAK || this.session.type == TYPE_MATCH_ROUND_PRACTICE) 
+		this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
+			</td><td><button class=\"non-cosmetic btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
+	else
+		this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
+			</td><td><button class=\"non-cosmetic advanced btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
 	// Add change listeners
     var ins = $("input,select", this.docObj);
     for (var i = 0; i < ins.length; i++) {
@@ -343,7 +352,9 @@ function SessionPanel(session) {
 				this.session.locations.push("Room "+ (this.session.locations.length+1));
 			else if (this.session.type == TYPE_MATCH_ROUND)
 				this.session.locations.push("Table "+ (this.session.locations.length+1));				
-			else this.session.locations.push("Lunch area");
+			else if (this.session.type == TYPE_MATCH_ROUND_PRACTICE)
+				this.session.locations.push("Table "+ (this.session.locations.length+1));				
+			else this.session.locations.push("All areas");
 		}
 		while (this.session.locations.length > this.session.nLocs) {
 			this.session.locations.splice(this.session.locations.length-1,1);
@@ -386,6 +397,7 @@ function addJudging(name,start,end,nSims,nLocs,length,buffer,locs) {
 	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addJudgeBtn")
+	toggleAdvMode();
 }
 
 function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
@@ -395,6 +407,17 @@ function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addRoundBtn")
+	toggleAdvMode();
+}
+
+function addPractice(name,start,end,nSims,nLocs,length,buffer,locs) {
+	// alert("Hello");
+	var s = new SessionParameters(TYPE_MATCH_ROUND_PRACTICE,name,start,end,nSims,nLocs,length,buffer,locs);
+	tourn_ui.params.allSessions.push(s);
+	var p = new SessionPanel(s);
+	tourn_ui.allPanels.push(p);
+	p.docObj.insertBefore("#addPracticeBtn")
+	toggleAdvMode();
 }
 
 function addBreak(name,start,end,locs) {
@@ -404,6 +427,7 @@ function addBreak(name,start,end,locs) {
 	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
 	p.docObj.insertBefore("#addBreakBtn")
+	toggleAdvMode();
 }
 
 function minsToDate(x) {

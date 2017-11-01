@@ -380,6 +380,7 @@ function canDo(event, team, instance, excl) {
 	if (team.extraTime && !instance.extra && getSession(instance.session_uid).type != TYPE_BREAK) return false;
 	if (team.excludeJudging && getSession(instance.session_uid).type == TYPE_JUDGING) return false;
 	for (var i = 0; i < team.schedule.length; i++) {
+		if (getSession(team.schedule[i].session_uid).type == TYPE_BREAK && getSession(instance.session_uid).type == TYPE_BREAK) continue;
 		var startA = team.schedule[i].time;
 		if (excl && team.schedule[i].session_uid == excl) continue;
 		var extra = 0;

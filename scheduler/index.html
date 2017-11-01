@@ -34,6 +34,7 @@
     <ul class="nav navbar-nav">
       <li class="active"><a href="#event_tab" data-toggle="tab">Event</a></li>
       <li><a href="#judge_tab" data-toggle="tab">Judging</a></li>
+      <li><a href="#practice_tab" data-toggle="tab">Practice Matches</a></li>
       <li><a href="#match_tab" data-toggle="tab">Matches</a></li>
       <li><a href="#break_tab" data-toggle="tab">Breaks</a></li>
       <li><a style="display:none" class="advanced" href="#logo_tab" data-toggle="tab">Logos</a></li>
@@ -81,12 +82,16 @@
         <button disabled class="non-cosmetic advanced btn" id="addJudgeBtn" onclick="addJudging()">Add!</button>
     </div>
 
+    <div id="practice_tab" class="tabcontent tab-pane fade">
+        <button disabled  class="non-cosmetic btn" id="addPracticeBtn" onclick="addPractice()">Add!</button>
+    </div>
+
     <div id="match_tab" class="tabcontent tab-pane fade">
         <button disabled  class="non-cosmetic advanced btn" id="addRoundBtn" onclick="addRound()">Add!</button>
     </div>
 
     <div id="break_tab" class="tabcontent tab-pane fade">
-        <button disabled class="non-cosmetic advanced btn" id="addBreakBtn" onclick="addBreak()">Add!</button>
+        <button disabled class="non-cosmetic btn" id="addBreakBtn" onclick="addBreak()">Add!</button>
     </div>
     <div id="logo_tab" class="tabcontent tab-pane fade">
         <div class="container">
@@ -180,7 +185,7 @@
     <div hidden id="exportBtns">
           <button disabled onclick="makePDFs(tournament, false)" class="btn btn-lg btn-success">View PDFs</button>
           <button disabled onclick="makePDFs(tournament, true)" class="btn btn-lg btn-success">Download PDFs</button>
-          <button disabled onclick="exportBL(tournament)" class="btn btn-lg btn-info">Export to Bryan Lee format</button>  
+          <button disabled onclick="exportBL(tournament)" class="btn btn-lg btn-info">Export to CSV</button>  
       </div>
   </div>
 </div>

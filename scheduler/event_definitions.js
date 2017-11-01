@@ -60,9 +60,12 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	this.type = type || TYPE_JUDGING;
 	if (name) this.name = name;
 	else {
-		if (this.type == TYPE_JUDGING) this.name = "Judging " + this.uid;
-		if (this.type == TYPE_MATCH_ROUND) this.name = "Round " + this.uid;
-		if (this.type == TYPE_BREAK) this.name = "Lunch";
+		var count = 1; 
+		for (var i = 0; i < tournament.allSessions.length; i++) if (tournament.allSessions[i].type == this.type) count++;
+		if (this.type == TYPE_JUDGING) this.name = "Judging " + count;
+		if (this.type == TYPE_MATCH_ROUND) this.name = "Round " + count;
+		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.name = "Practice Round " + count;
+		if (this.type == TYPE_BREAK) this.name = "Break " + count;
 	}
 	if (start) this.start = start;
 	else this.start = (this.type==TYPE_BREAK)?(12*60):(10*60);
@@ -74,18 +77,21 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	else {
 		if (this.type == TYPE_JUDGING) this.nSims = nLocs;
 		if (this.type == TYPE_MATCH_ROUND) this.nSims = 2;
+		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.nSims = 2;
 		if (this.type == TYPE_BREAK) this.nSims = tournament.teams.length;
 	}
 	if (length) this.length = length;
 	else {
 		if (this.type == TYPE_JUDGING) this.length = 10;
 		if (this.type == TYPE_MATCH_ROUND) this.length = 4;
+		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.length = 4;
 		if (this.type == TYPE_BREAK) this.length = (this.end-this.start);
 	}
 	if (buffer) this.buffer = buffer;
 	else {
 		if (this.type == TYPE_JUDGING) this.buffer = 5;
 		if (this.type == TYPE_MATCH_ROUND) this.buffer = 4;
+		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.buffer = 4;
 		if (this.type == TYPE_BREAK) this.buffer = 0;
 	}
 	this.locations = locs || [];
@@ -96,6 +102,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	this.extraTimeFirst = false; // Should the first round be a little longer?
 	this.extraTimeEvery = null; // Extra time every N rounds
 	if (this.type == TYPE_MATCH_ROUND) this.fillerPolicy = USE_SURROGATES;
+	if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.fillerPolicy = USE_SURROGATES;
 	else if (this.type == TYPE_MATCH_FILLER) this.fillerPolicy = USE_SURROGATES;
 	else this.fillerPolicy = LEAVE_BLANKS; // How to fill in empty spots in non-round-number instances.
 	this.appliesTo = []; // Which sessions a break applies to
