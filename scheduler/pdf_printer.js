@@ -1,3 +1,33 @@
+landscapeBackground = function() {return [
+        // margin: [left, top, right, bottom]
+        {image: 'header', width: 800, height: 20, alignment: 'center', margin: [0,10,0,0]},
+        {
+            table: {
+                widths: ['*','auto','*'],
+                body: [
+                    [ {image: 'logo1', fit: [100,65], margin: [50,0,0,0], alignment: 'left'}, // Top left?
+                    {text: ""},
+                    {image: 'logo2', fit: [100,65], margin: [50,0,0,0], alignment: 'right'} // Top right
+                ] ]
+            },
+            layout: 'noBorders',
+        },
+        {text: "", margin: 190, alignment: 'center'},
+        {
+            table: {
+                widths: ['*','auto','*'],
+                body: [
+                    [ {image: 'logo3', fit: [100,65], margin: [50,0,0,0], alignment: 'left'}, // Top left?
+                    {text: ""},
+                    {image: 'logo4', fit: [100,65], margin: [50,0,0,0], alignment: 'right'} // Top right
+                ] ]
+            },
+            layout: 'noBorders',
+        },
+        {image: 'header', width: 800, height: 20, alignment: 'center'}
+    ];
+};
+
 function makePDFs(tournament, download) {
     PDFifySession(tournament,TYPE_JUDGING,download);
     PDFifySession(tournament,TYPE_MATCH_ROUND,download);
@@ -70,6 +100,10 @@ function PDFifySession(event, type, download) {
                 applyingBreaks.push(event.allSessions[j]);
         }
         try {
+            if (event.allSessions[i].nLocs > 4) {
+                doc.pageOrientation='landscape';
+                doc.background = landscapeBackground;
+            }
             sessionPage(doc, event.allSessions[i],applyingBreaks);
         } catch (err) {
             alert("Error: " + err.message);
@@ -160,41 +194,14 @@ function sessionPage(doc, session, applyingBreaks) {
 function PDFifyAllTeams(event,download) {
 	var doc = new PdfDoc(event);
 	doc.pageOrientation='landscape';
-    doc.background = function() {return [
-        // margin: [left, top, right, bottom]
-        {image: 'header', width: 800, height: 20, alignment: 'center', margin: [0,10,0,0]},
-        {
-            table: {
-                widths: ['*','auto','*'],
-                body: [
-                    [ {image: 'logo1', fit: [100,65], margin: [50,0,0,0], alignment: 'left'}, // Top left?
-                    {text: ""},
-                    {image: 'logo2', fit: [100,65], margin: [50,0,0,0], alignment: 'right'} // Top right
-                ] ]
-            },
-            layout: 'noBorders',
-        },
-        {text: "", margin: 190, alignment: 'center'},
-        {
-            table: {
-                widths: ['*','auto','*'],
-                body: [
-                    [ {image: 'logo3', fit: [100,65], margin: [50,0,0,0], alignment: 'left'}, // Top left?
-                    {text: ""},
-                    {image: 'logo4', fit: [100,65], margin: [50,0,0,0], alignment: 'right'} // Top right
-                ] ]
-            },
-            layout: 'noBorders',
-        },
-        {image: 'header', width: 800, height: 20, alignment: 'center'}
-    ];};
+    doc.background = landscapeBackground;
     doc.content.push({text: "All Team Schedule", style:'header2',margin:[0,10]});
     var N = 0;
     for (var i = 0; i < event.allSessions.length; i++){
     	if (event.allSessions[i].type != TYPE_BREAK) N++;
     }
-    N = (N+1)*3;
-    if (usesSurrogates) N += 3;
+    N = (N+1)*2+1;
+    if (usesSurrogates) N += 2;
     var t = {headerRows: 2,dontBreakRows: true,keepWithHeaderRows: 1};
     t.widths = new Array(N);
     var w = 600/N;
@@ -208,8 +215,8 @@ function PDFifyAllTeams(event,download) {
 	for (var i = 0; i < event.allSessions.length; i++) { 
 		if (event.allSessions[i].type == TYPE_BREAK) continue;
         var col = (i%2 == 1) ? 'blue' : 'black';
-		t.body[0].push({text: event.allSessions[i].name,colSpan:3,style:'tablehead',color:col});
-        t.body[0].push({});
+		t.body[0].push({text: event.allSessions[i].name,colSpan:2,style:'tablehead',color:col});
+        // t.body[0].push({});
         t.body[0].push({});
     }
     t.body[0].push({text: " "});
@@ -217,20 +224,20 @@ function PDFifyAllTeams(event,download) {
     t.body[1].push({text: "#",style:'tablehead'});
     t.body[1].push({text: "Name",style:'tablehead'});
 	if (usesSurrogates) {
-		t.body[0].push({text: "Surrogate",colSpan:3,style:'tablehead',color:col});
-        t.body[0].push({});
+		t.body[0].push({text: "Surrogate",colSpan:2,style:'tablehead',color:col});
+        // t.body[0].push({});
         t.body[0].push({});
 	}
 	for (var i = 0; i < event.allSessions.length; i++) { 
 		if (event.allSessions[i].type == TYPE_BREAK) continue;
         var col = (i%2 == 1) ? 'blue' : 'black';
-        t.body[1].push({text: "#",style:'tablehead', color:col});
+        // t.body[1].push({text: "#",style:'tablehead', color:col});
         t.body[1].push({text: "Time",style:'tablehead', color:col});
         t.body[1].push({text: "Loc",style:'tablehead', color:col});
     }
     t.body[1].push({text: "Min travel time",style:'tablehead'});
 	if (usesSurrogates) {
-	    t.body[1].push({text: "#",style:'tablehead'});
+	    // t.body[1].push({text: "#",style:'tablehead'});
 	    t.body[1].push({text: "Time",style:'tablehead'});
 	    t.body[1].push({text: "Loc",style:'tablehead'});
 	}
@@ -245,11 +252,11 @@ function PDFifyAllTeams(event,download) {
 			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
 			if (team.schedule[j].teams && (team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
             if (!team.schedule[j].teams) {
-                row.push({text:""});
+                // row.push({text:""});
                 row.push({text:""});
                 row.push({text:""});
             } else {
-               	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
+               	// row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
                	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
                	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
             }
@@ -259,18 +266,19 @@ function PDFifyAllTeams(event,download) {
             var col = (j%2 == 1) ? 'blue' : 'black';
             if (!team.schedule[j].teams) continue;
 			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
-           	row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
+           	// row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
            	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
            	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
 		}
 		if (usesSurrogates && !team.isSurrogate) {
-			row.push({});
+			// row.push({});
 			row.push({});
 			row.push({});
 		}
 		t.body.push(row);
 	}
 	doc.content.push({table: t, layout: 'lightHorizontalLines'});
+    console.log(doc);
 	if (download) pdfMake.createPdf(doc).download('individualSchedule.pdf');
     else pdfMake.createPdf(doc).open();    
 }
