@@ -316,6 +316,7 @@ function teamPage(doc, event, team) {
 		if (getSession(schedule[i].session_uid).type == TYPE_BREAK) num ="";
 
 		var loc = getSession(schedule[i].session_uid).locations[spot];
+        if (getSession(schedule[i].session_uid).type == TYPE_BREAK) loc = getSession(schedule[i].session_uid).locations[0];
 		if (!loc) loc = "";
     	row.push({text: minsToDT(schedule[i].time)+num});
     	row.push({text: getSession(schedule[i].session_uid).name});

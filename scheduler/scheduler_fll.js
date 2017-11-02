@@ -82,7 +82,7 @@ function buildAllTables(event) {
 	});
 	for (var i = 0; i < event.allSessions.length; i++) {
 		if (event.allSessions[i].type != TYPE_BREAK) event.allSessions[i].start = timeInc(event,event.allSessions[i].start,0,event.allSessions[i]);
-		if (event.allSessions[i].type == TYPE_MATCH_ROUND) continue;
+		if (event.allSessions[i].type == TYPE_MATCH_ROUND || event.allSessions[i].type == TYPE_MATCH_ROUND_PRACTICE) continue;
 		var end = tableSession(event,event.allSessions[i],0);
 		if (event.allSessions[i].type != TYPE_BREAK && end > event.allSessions[i].end) {
 			if (willWork) willWork = willWork+", "+event.allSessions[i].name; 
@@ -93,6 +93,18 @@ function buildAllTables(event) {
 	var offset = 0;
 	for (var i = 0; i < event.allSessions.length; i++) {
 		if (event.allSessions[i].type != TYPE_MATCH_ROUND) continue;
+		if (event.allSessions[i].start < end) event.allSessions[i].start = end;
+		end = tableSession(event,event.allSessions[i],offset);
+		offset += event.allSessions[i].schedule.length;
+		if (event.allSessions[i].type != TYPE_BREAK && end > event.allSessions[i].end) {
+			if (willWork) willWork = willWork+", "+event.allSessions[i].name; 
+			else willWork = event.allSessions[i].name;			
+		}
+	}
+	var end = -Infinity;
+	var offset = 0;
+	for (var i = 0; i < event.allSessions.length; i++) {
+		if (event.allSessions[i].type != TYPE_MATCH_ROUND_PRACTICE) continue;
 		if (event.allSessions[i].start < end) event.allSessions[i].start = end;
 		end = tableSession(event,event.allSessions[i],offset);
 		offset += event.allSessions[i].schedule.length;
