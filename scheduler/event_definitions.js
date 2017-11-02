@@ -136,7 +136,6 @@ function loadPresetFLL() {
 
 function deleteParams(id) {
 	var toDelete = -1;
-
 	for (var i = 0; i < tourn_ui.allPanels.length; i++) {
 		if (tourn_ui.allPanels[i].session.uid == id) {
 			$(tourn_ui.allPanels[i].docObj).remove();
@@ -148,8 +147,18 @@ function deleteParams(id) {
 		console.log("Delete failed....whattup?");
 		return;
 	}
-	tournament.allSessions.splice(toDelete,1);
 	tourn_ui.allPanels.splice(toDelete,1);
+	toDelete = -1;
+	for (var i = 0; i < tourn_ui.params.allSessions.length; i++) {
+		if (tourn_ui.params.allSessions[i].uid == id) {
+			toDelete = i;
+		}
+	}
+	if (toDelete == -1) {
+		alert ("Something terrible went wrong D:");
+		return;
+	}
+	tourn_ui.params.allSessions.splice(toDelete,1);
 }
 
 function allTypes(event, type) {

@@ -209,7 +209,6 @@ function toggleLockedMode() {
 function unlock() {
 	if (confirm("Delete schedule?")) {
 		emptySchedule(tournament);
-		console.log(tournament);
 		printToDom(tournament);
 	}
 }
@@ -305,7 +304,7 @@ function SessionPanel(session) {
 		this.docObj.append(x);
 	}
 	if (this.session.type == TYPE_BREAK) 
-		this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openAppliesModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Break applies to...</button></td></tr><tr><td>&nbsp;</td></tr>"));
+		this.docObj.append($("<tr><td><button class=\"non-cosmetic btn\" onclick=\"openAppliesModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Break applies to...</button></td></tr><tr><td>&nbsp;</td></tr>"));
 	if (this.session.type == TYPE_BREAK || this.session.type == TYPE_MATCH_ROUND_PRACTICE) 
 		this.docObj.append($("<tr><td><button class=\"cosmetic btn\" onclick=\"openLocationModal("+this.session.uid+")\" data-toggle=\"modal\" data-target=\"#smallModal\">Edit location names</button>\
 			</td><td><button class=\"non-cosmetic btn\" onclick=deleteParams("+this.session.uid+")>Delete</button></td></tr>"));
@@ -545,7 +544,6 @@ function closeDayModal() {
 	var inputs = $("#sm-modal-body>input");
 	if (inputs[0].value)
 		tourn_ui.params.startDate = inputs[0].value;
-	console.log(tourn_ui.params.startDate);
 	for (var i = 1; i < inputs.length; i++)
 		tourn_ui.params.days[i-1] = inputs[i].value;
 	tourn_ui.changeNDays();
@@ -572,7 +570,6 @@ function openAppliesModal(uid) {
 
 function closeAppliesModal() {
 	var inputs = $("#sm-modal-body input");
-	console.log(inputs);
 	uid = inputs[0].value;
 	panel = getPanel(uid);
 	panel.session.appliesTo = new Array();
