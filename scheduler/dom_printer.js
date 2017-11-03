@@ -4,6 +4,7 @@ var colClass = "col-md-4";
 
 function printToDom(event) {
 	var results=$("#results");
+	evaluate(event);
 	results.empty();
 	toggleLockedMode();
 	if (event.allSessions[0].schedule.length == 0) {

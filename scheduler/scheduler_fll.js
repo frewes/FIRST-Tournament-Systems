@@ -312,10 +312,22 @@ function evaluate(event) {
 		var session = event.allSessions[i];
 		session.nErrors = 0;
 		for (var j = 0; j < session.schedule.length; j++)
-			for (var k = 0; k < session.schedule[j].teams.length; k++) 
+			for (var k = 0; k < session.schedule[j].teams.length; k++) {
 				if (session.schedule[j].teams[k] == NOT_YET_ADDED) session.nErrors++;
+			}
 		event.errors += session.nErrors;
 	}
+	// Adelaide Ken bug: Teams getting assigned weirdly. Count the number of these errors.
+	for (var i = 0 ; i < event.teams.length ; i++) {
+		for (var j = 0; j < event.teams[i].schedule.length; j++) {
+			// console.log(event.teams[i].schedule[j].teams.indexOf(event.teams[i].uid));
+			if (event.teams[i].schedule[j].teams.indexOf(event.teams[i].uid) == -1) {
+				// alert("Error found!");
+				event.errors++;
+			}
+		}
+	}
+
 	// // Now, add errors due to teams having an incorrect number of instances
 	// for (var i = 0 ; i < event.teams.length ; i++) {
 	// 	event.errors += Math.abs(event.teams[i].schedule.length - event.allSessions.length);
