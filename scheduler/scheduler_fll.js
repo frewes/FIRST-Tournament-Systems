@@ -150,7 +150,7 @@ function tableSession(event, session, numOffset) {
     	roundsSinceExtra += Math.floor(Math.random()*L);
     	flag = true;
     }
-
+    console.log("Extra time" + (10+event.extraTime));
     var extraRounds = 0;
     if (session.type == TYPE_BREAK) everyN = Infinity;
     for (var i = 0; i < L; i++) {

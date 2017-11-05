@@ -42,7 +42,7 @@ function EventPanel(params) {
 		autosave();
 	}
 	this.changeExtraTime = function() {
-		this.params.extraTime = this.extraTimeInput.value;
+		this.params.extraTime = parseInt(this.extraTimeInput.value);
 		autosave();
 	}
 	this.changeNDays = function() {
@@ -94,6 +94,7 @@ function EventPanel(params) {
 }
 
 function generate() {
+	console.log(tournament.extraTimeEvery);
 	if (tournament.errors == 0 && !confirm("Schedule already generated.  Overwrite?")) return;
 	for (var i = 0; i < tourn_ui.allPanels.length; i++) 
 		tourn_ui.allPanels[i].update();
@@ -196,12 +197,12 @@ function toggleDragMode() {
 function toggleLockedMode() {
 	if (tournament.allSessions[0].schedule.length == 0 || tournament.errors == Infinity) {
 		$(".non-cosmetic").removeAttr('disabled');
-		$("#unlockDiv").hide();
+		$("#unlockDiv").attr("hidden","hidden");
 		locked = false;
 	} else {
 		$(".non-cosmetic").attr('disabled','disabled')
 		$(".cosmetic").change(function() {printToDom(tournament);});
-		$("#unlockDiv").show();
+		$("#unlockDiv").removeAttr("hidden");
 		locked = true;
 	}
 }
@@ -238,7 +239,7 @@ function SessionPanel(session) {
 	this.simInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
 	this.instanceInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
 	this.locsInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
-	this.firstExtraInput=$("<input class=\"non-cosmetic form-control\" type=\"checkbox\">");
+	this.firstExtraInput=$("<input class=\"non-cosmetic form-check\" type=\"checkbox\">");
 	this.nExtraInput=$("<input class=\"non-cosmetic form-control\" type=number min=0 max=99>");
 	this.policyInput=$("<select class=\"non-cosmetic form-control\"></select>");
 	for (var i = 0 ; i < POLICIES.length; i++ )

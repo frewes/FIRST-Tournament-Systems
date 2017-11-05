@@ -6,12 +6,14 @@ const TYPE_MATCH_FILLER_PRACTICE = new SessionType(49,"Practice Matches", 129);
 const TYPE_BREAK = new SessionType(64,"Breaks", 0);
 const TYPES = [TYPE_JUDGING, TYPE_MATCH_FILLER, TYPE_BREAK, TYPE_MATCH_ROUND, TYPE_MATCH_ROUND_PRACTICE];
 
+const EVENT_FLL = 0;
+
 const LEAVE_BLANKS = 0;
 const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
 
-const SCHEDULER_VERSION = 1.2;
+const SCHEDULER_VERSION = 2.0;
 
 var TEAM_UID_COUNTER = 0;
 
@@ -20,8 +22,9 @@ function SessionType(uid,name,priority) {
 	this.priority = priority;
 }
 
-function EventParameters(name,nTeams,nDays,minTravel,extraTime) {
+function EventParameters(type,name,nTeams,nDays,minTravel,extraTime) {
 	this.UID_counter = 1;
+	this.type = EVENT_FLL;
 	this.version = SCHEDULER_VERSION;
 	this.startDate = new Date().toDateInputValue();
 	this.teamnum_counter = 1;
@@ -207,7 +210,9 @@ function load(json) {
 	if (evt.version < 1.2) {
 		if (evt.startDate == null) evt.startDate = new Date().toDateInputValue();
 	}
-
+	if (evt.version < 2.0) {
+		evt.type = EVENT_FLL;
+	}
 	// Convert types to literal TYPE objects for later comparisons
 	for (var i = 0; i < evt.allSessions.length; i++) {
 		var s = evt.allSessions[i];
