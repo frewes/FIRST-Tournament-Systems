@@ -29,8 +29,8 @@ function printToDom(event) {
         $("#exportBtns").removeAttr("hidden");
     }
 
-	var judge_row = $("<div class=\"row\">");
-	var match_row = $("<div class=\"row\">");
+	var judge_row = $("<div>");
+	var match_row = $("<div>");
 	for (var i = 0; i < event.allSessions.length; i++) {
 		var session = event.allSessions[i];
 		if (session.type == TYPE_JUDGING) judge_row.append(generateTable(session));
@@ -43,7 +43,7 @@ function printToDom(event) {
 }
 
 function generateTable(session) {
-	var result = $("<div class=\""+colClass+" session\">");
+	var result = $("<div class=\"session\">");
 	result.append($("<h4>"+session.name+"</h4>"));
 	var table = $("<table class=\"table resultTable table-responsive\">");
 	var header = "<thead><tr><th>#</th><th>Time</th>";
@@ -92,7 +92,7 @@ function generateTable(session) {
 function generateIndivTable(event) {
 	var result = $("<div class=\"container-fluid indiv\">");
 	result.append($("<h4>Individual Schedules</h4>"));
-	var table = $("<table class=\"table resultTable table-condensed table-responsive\">");
+	var table = $("<table class=\"table resultTable table-responsive\">");
 	var header = "<thead><tr><th colspan=2>Team</th>";
 	event.teams.sort(function(a,b) {
 		return a.uid - b.uid;

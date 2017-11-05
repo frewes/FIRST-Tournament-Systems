@@ -42,14 +42,6 @@
     <a class="nav-item nav-link" id="nav-break-tab" data-toggle="tab" href="#nav-break" role="tab" aria-controls="nav-break" aria-selected="false">Breaks</a>
     <a class="nav-item nav-link" id="nav-logo-tab" data-toggle="tab" href="#nav-logo" role="tab" aria-controls="nav-logo" aria-selected="false">Logos</a>
 </nav>
-        <ul id="file-nav" class="nav navbar-nav navbar-right">
-        <li><a></a></li>
-        <li><a></a>
-        </li>
-        <li>
-        </li>
-        <li></li>
-        </ul>
 <div class="tab-content" id="nav-tabContent">
   <div class="tab-pane fade show active" id="nav-event" role="tabpanel" aria-labelledby="nav-event-tab">
     <table class="roundtable">
@@ -60,7 +52,7 @@
         <tr><td>Number of teams:&nbsp;</td><td><input class="non-cosmetic form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
         <tr>
             <td><button disabled class="cosmetic btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#largeModal">Edit names/numbers</button></td>
-            <td class="advanced" hidden><button disabled class="non-cosmetic btn" onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Adv. Team details</button></td>
+            <td class="advanced"><button disabled class="non-cosmetic btn" onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Adv. Team details</button></td>
         </tr>
     </table>
     <table class="roundtable">
@@ -118,117 +110,6 @@
 </div>
 
 
-<!-- Fixed navbar --><!-- 
-<nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="javascript:void(0)"></a>
-    </div>
-    <div class="collapse navbar-collapse" id="navbar-collapse-1">
-    <ul class="nav navbar-nav">
-      <li class="active"><a href="#event_tab" data-toggle="tab">Event</a></li>
-      <li><a href="#judge_tab" data-toggle="tab">Judging</a></li>
-      <li><a href="#practice_tab" data-toggle="tab">Practice</a></li>
-      <li><a href="#match_tab" data-toggle="tab">Matches</a></li>
-      <li><a href="#break_tab" data-toggle="tab">Breaks</a></li>
-      <li><a href="#logo_tab" data-toggle="tab">Logos</a></li>
-    </ul>
-    <ul id="file-nav" class="nav navbar-nav navbar-right">
-        <li><a><label for="adv-toggle">Advanced: </label></a></li>
-        <li><a><label class="switch">
-            <input id="adv-toggle" type="checkbox" onchange="toggleAdvMode()">
-            <span class="slider round"></span></a>
-        </li>
-        <li><a href="javascript:void(0)" onclick="clickSave()">
-            <span class="glyphicon glyphicon-save"></span>Save</a>
-            <a id="saveLink" style="display:none">Download</a>
-        </li>
-        <li><a href="javascript:void(0)" onclick="clickLoad()">
-            <span class="glyphicon glyphicon-open"></span> Load</a>
-            <input type="file" id="loadFileInput" class="hidden" onchange="loadFromFile(this)" accept=".schedule"></li>
-        </ul>
-    </label>
-    </div>
-</nav>
- -->
-<!-- <div class="tab-content"> -->
-    <!-- Team parameters -->    
-<!--     <div id="event_tab" class="tabcontent tab-pane fade in active">
-        <table class="roundtable">
-            <tr><td>Number of days:&nbsp;</td><td><input class="non-cosmetic form-control" type=number id="nDays" value=1 min=1 max=5 onchange="tourn_ui.changeNDays()"></td></tr>
-            <tr><td colspan=2><button disabled class="cosmetic btn" onclick="openDayModal()" data-toggle="modal" data-target="#smallModal">Edit day names</button></td></tr>
-        </table>
-        <table class="roundtable">
-            <tr><td>Number of teams:&nbsp;</td><td><input class="non-cosmetic form-control" type=number id="nTeams" value=24 min=1 max=999 onChange="tourn_ui.changeNTeams()"></td></tr>
-            <tr>
-                <td><button disabled class="cosmetic btn" onclick="openTeamImportModal()" data-toggle="modal" data-target="#largeModal">Edit names/numbers</button></td>
-                <td class="advanced" hidden><button disabled class="non-cosmetic btn" onclick="openTeamEditModal()" data-toggle="modal" data-target="#largeModal" >Adv. Team details</button></td>
-            </tr>
-        </table>
-        <table class="roundtable">
-            <tr><td>Min. travel (mins):</td><td><input class="non-cosmetic form-control" type=number id="minTravel" value=10 min=1 max=999 onchange="tourn_ui.changeMinTravel()"></td></tr>
-            <tr hidden class="advanced"><td>Extra time (mins):</td><td><input class="non-cosmetic form-control" type=number id="extraTime" value=5 min=1 max=120 onchange="tourn_ui.changeExtraTime()"></td></tr>
-        </table>
-    </div>
- -->        
-    <!-- Session parameters -->
-<!--     <div id="judge_tab" class="tabcontent tab-pane fade">
-        <button disabled class="non-cosmetic advanced btn" id="addJudgeBtn" onclick="addJudging()">Add!</button>
-    </div>
-
-    <div id="practice_tab" class="tabcontent tab-pane fade">
-        <button disabled  class="non-cosmetic btn" id="addPracticeBtn" onclick="addPractice()">Add!</button>
-    </div>
-
-    <div id="match_tab" class="tabcontent tab-pane fade">
-        <button disabled  class="non-cosmetic advanced btn" id="addRoundBtn" onclick="addRound()">Add!</button>
-    </div>
-
-    <div id="break_tab" class="tabcontent tab-pane fade">
-        <button disabled class="non-cosmetic btn" id="addBreakBtn" onclick="addBreak()">Add!</button>
-    </div>
-    <div id="logo_tab" class="tabcontent tab-pane fade">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="thumbnail">
-                        <img class="img-responsive" id="logo1" src="flllogo.jpg" height="200" alt="Logo 1" onclick='$("#logo1File").click()'>
-                        <input class="cosmetic form-control" id="logo1File" type="file" onchange="tourn_ui.changeLogo(0)" style="display:none">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="thumbnail">
-                        <img class="img-responsive" id="logo2" src="gamelogo.jpg" height="200" alt="Logo 2" onclick='$("#logo2File").click()'>
-                        <input class="cosmetic form-control" id="logo2File" type="file" onchange="tourn_ui.changeLogo(1)" style="display:none">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="thumbnail">
-                        <img class="img-responsive" id="logo3" src="mqlogo.png" height="200" alt="Logo 3" onclick='$("#logo3File").click()'>
-                        <input class="cosmetic form-control" id="logo3File" type="file" onchange="tourn_ui.changeLogo(2)" style="display:none">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="thumbnail">
-                        <img class="img-responsive" id="logo4" src="firstlogo.png" height="200" alt="Logo 4" onclick='$("#logo4File").click()'>
-                        <input class="cosmetic form-control" id="logo4File" type="file" onchange="tourn_ui.changeLogo(3)" style="display:none">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <label>* Currently, only JPEG and PNG images are supported.</label>
-    </div>
-</div>
-
- -->
  <div id="smallModal" class="modal fade" role="dialog">
     <div class="modal-dialog modal-sm" role="document">
         <!-- Modal content-->
@@ -247,12 +128,14 @@
     </div>
 </div>
 <div id="largeModal" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" role="document">
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button disabled class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title" id="lg-modal-title"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body" id="lg-modal-body">
             </div>
@@ -302,7 +185,7 @@
   </div>
 </div>
 
-<div class="container" style="text-align: center">
+<div class="container-fluid" style="text-align: center">
     <div id="results"></div>
 </div>
     

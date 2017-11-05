@@ -82,19 +82,19 @@ body {
 }
 
 .indiv{
-    display:inline-table;
-    padding: 4px;
+    /*display:inline-table;*/
+    /*padding: 4px;*/
     
 }
 
 .indiv th{
-    padding:4px;
+    /*padding:4px;*/
     text-align: center;
     /*border: solid #CCCCCC 1px;*/
 }
 
 .indiv td{
-    padding: 2px;
+    /*padding: 2px;*/
     text-align: center;
     /*border: solid #CCCCCC 1px;*/
     
