@@ -239,7 +239,8 @@ function SessionPanel(session) {
 	this.simInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
 	this.instanceInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
 	this.locsInput=$("<input class=\"non-cosmetic form-control\" type=number min=1 max=100 value=1>");
-	this.firstExtraInput=$("<input class=\"non-cosmetic form-check\" type=\"checkbox\">");
+	// this.firstExtraInput=$("<input class=\"non-cosmetic form-check\" type=\"checkbox\">");
+	this.firstExtraInput=$("<label class=\"switch\"><input class=\"non-cosmetic\" type=\"checkbox\"><span class=\"slider round\"></span></label>");
 	this.nExtraInput=$("<input class=\"non-cosmetic form-control\" type=number min=0 max=99>");
 	this.policyInput=$("<select class=\"non-cosmetic form-control\"></select>");
 	for (var i = 0 ; i < POLICIES.length; i++ )
@@ -645,13 +646,13 @@ function openTeamEditModal() {
    		var x = $("<tr>");
    		$(x).append($("<td>"+team.number+", "+team.name+"</td>"));
    		if (team.excludeJudging)
-	   		$(x).append($("<td><input type=\"checkbox\" class=\"form-control\" checked></td>"));
+	   		$(x).append($("<td><label class=\"switch\"><input class=\"non-cosmetic\" type=\"checkbox\" checked><span class=\"slider round\"></span></label></td>"));
    		else 
-   			$(x).append($("<td><input type=\"checkbox\" class=\"form-control\"></td>"));
+   			$(x).append($("<td><label class=\"switch\"><input class=\"non-cosmetic\" type=\"checkbox\"><span class=\"slider round\"></span></label></td>"));
    		if (team.extraTime)
-	   		$(x).append($("<td><input type=\"checkbox\" class=\"form-control\" checked></td>"));
+	   		$(x).append($("<td><<label class=\"switch\"><input class=\"non-cosmetic\" type=\"checkbox\" checked><span class=\"slider round\"></span></label></td>"));
    		else 
-   			$(x).append($("<td><input type=\"checkbox\" class=\"form-control\"></td>"));
+   			$(x).append($("<td><label class=\"switch\"><input class=\"non-cosmetic\" type=\"checkbox\"><span class=\"slider round\"></span></label></td>"));
 		var dateInput1=$("<td><select class=\"form-control\" value=\""+minsToDate(team.start)+"\"></select></td>");
 		for (var j = 0; j < tourn_ui.params.days.length; j++)
 			$("select", dateInput1).append($("<option value=\""+j+"\">"+tourn_ui.params.days[j]+"</option>"));
