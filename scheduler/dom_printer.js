@@ -139,7 +139,7 @@ function generateIndivTable(event) {
 				if (team.schedule[j].loc == -1)
 					row.append($("<td>--</td>"));
 				else
-					row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
+					row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]+"</td>"));
 			}
 		}
 		row.append($("<td>"+minTravelTime(team)+"</td>"));
@@ -152,7 +152,7 @@ function generateIndivTable(event) {
 				if (team.schedule[j].loc == -1)
 					row.append($("<td>--</td>"));
 				else
-					row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"</td>"));
+					row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]+"</td>"));
 			}
 		}
 		tbody.append(row);

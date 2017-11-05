@@ -258,7 +258,7 @@ function PDFifyAllTeams(event,download) {
             } else {
                	// row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
                	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
-               	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
+               	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]+"", style:'tablebody', color:col});
             }
 		}
 		row.push({text: minTravelTime(team)+"", style:'tablebody', color:col});
@@ -268,7 +268,7 @@ function PDFifyAllTeams(event,download) {
 			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
            	// row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
            	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
-           	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)]+"", style:'tablebody', color:col});
+           	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]+"", style:'tablebody', color:col});
 		}
 		if (usesSurrogates && !team.isSurrogate) {
 			// row.push({});
@@ -323,7 +323,7 @@ function teamPage(doc, event, team) {
 		if ((schedule[i].teams.length - schedule[i].teams.indexOf((team.uid))) <= schedule[i].surrogates) num = " ("+schedule[i].num+", surrogate)";
 		if (getSession(schedule[i].session_uid).type == TYPE_BREAK) num ="";
 
-		var loc = getSession(schedule[i].session_uid).locations[spot];
+		var loc = getSession(schedule[i].session_uid).locations[spot+schedule[i].loc];
         if (getSession(schedule[i].session_uid).type == TYPE_BREAK) loc = getSession(schedule[i].session_uid).locations[0];
 		if (!loc) loc = "";
     	row.push({text: minsToDT(schedule[i].time)+num});
