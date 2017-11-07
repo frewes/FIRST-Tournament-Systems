@@ -221,6 +221,10 @@ function load(json) {
 			else if (s.type.name == TYPES[j].name) s.type = TYPES[j];
 		}
 	}
+	// Fix UID counters
+	for (var i = 0; i < evt.teams.length; i++) {
+		if (evt.teams[i].uid > TEAM_UID_COUNTER) TEAM_UID_COUNTER = evt.teams[i].uid+1;
+	}
 	toggleAdvMode();
 	console.log(evt);
 	return evt;
