@@ -13,7 +13,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
 
-const SCHEDULER_VERSION = 2.0;
+const SCHEDULER_VERSION = "2.0.1";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -197,9 +197,9 @@ function save() {
 // Reads given json string, makes parameters match.
 function load(json) {
 	var evt = JSON.parse(json);
-	if (!evt.version) evt.version = 1.0;
+	if (!evt.version) evt.version = "1.0";
 	// Do legacy checks
-	if (evt.version < 1.1) {
+	if (cmpVersions(""+evt.version, "1.1")) {
 		evt.startDate = new Date().toDateInputValue();
 		for (var t = 0; t < evt.teams.length; t++) {
 			evt.teams[t].extraTime = evt.teams[t].special;
@@ -207,12 +207,13 @@ function load(json) {
 			if (!(evt.teams[t].pitNum)) evt.teams[t].pitNum = 0;
 		}
 	}
-	if (evt.version < 1.2) {
+	if (cmpVersions(""+evt.version, "1.2")) {
 		if (evt.startDate == null) evt.startDate = new Date().toDateInputValue();
 	}
-	if (evt.version < 2.0) {
+	if (cmpVersions(""+evt.version, "2.0")) {
 		evt.type = EVENT_FLL;
 	}
+	evt.version = SCHEDULER_VERSION;
 	// Convert types to literal TYPE objects for later comparisons
 	for (var i = 0; i < evt.allSessions.length; i++) {
 		var s = evt.allSessions[i];
@@ -259,4 +260,21 @@ Date.prototype.toDateInputValue = (function() {
     local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
     return local.toJSON().slice(0,10);
 });
+
+//https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number, LeJared
+function cmpVersions (a, b) {
+    var i, diff;
+    var regExStrip0 = /(\.0+)+$/;
+    var segmentsA = a.replace(regExStrip0, '').split('.');
+    var segmentsB = b.replace(regExStrip0, '').split('.');
+    var l = Math.min(segmentsA.length, segmentsB.length);
+
+    for (i = 0; i < l; i++) {
+        diff = parseInt(segmentsA[i], 10) - parseInt(segmentsB[i], 10);
+        if (diff) {
+            return diff;
+        }
+    }
+    return segmentsA.length - segmentsB.length;
+}
 

@@ -15,6 +15,7 @@ function EventPanel(params) {
 	this.minsInput.value = this.params.minTravel;
 	this.extraTimeInput.value = this.params.extraTime;
 	this.titleInput.innerHTML = this.params.name;
+	$("#version-footer")[0].innerHTML = "Version " + params.version;
 	for (var i = 0; i < this.logoInputs.length; i++) this.logoInputs[i].src = this.params.logos[i];
 	for (var i = 0; i < params.allSessions.length; i++) {
 		var p = new SessionPanel(params.allSessions[i]);
@@ -38,7 +39,7 @@ function EventPanel(params) {
 		autosave();
 	}
 	this.changeMinTravel = function() {
-		this.params.minTravel = parseInt(this.minsInput.value);		
+		this.params.minTravel = parseInt(this.minsInput.value);
 		autosave();
 	}
 	this.changeExtraTime = function() {
@@ -695,7 +696,8 @@ function closeTeamEditModal() {
 }
 
 function clickSave() {
-	saveToFile(prompt("Enter filename", tourn_ui.params.name.replace(/ /g, '_'))+".schedule",save());
+	var filename =prompt("Enter filename", tourn_ui.params.name.replace(/ /g, '_'));
+	if (filename != null) saveToFile(filename+".schedule",save());
 }
 
 function clickLoad() {

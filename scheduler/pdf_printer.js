@@ -29,13 +29,18 @@ landscapeBackground = function() {return [
 };
 
 function makePDFs(tournament, download) {
-    PDFifySession(tournament,TYPE_JUDGING,download);
-    PDFifySession(tournament,TYPE_MATCH_ROUND,download);
-    PDFifySession(tournament,TYPE_MATCH_ROUND_PRACTICE,download);
-    PDFifySession(tournament,TYPE_MATCH_FILLER,download);
-    PDFifySession(tournament,TYPE_MATCH_FILLER_PRACTICE,download);
-	PDFifyAllTeams(tournament,download);
-	PDFifyIndivTeams(tournament,download);
+    var prefix="";
+    if (download) {
+        prefix=prompt("File name prefix", tournament.name.replace(/ /g,"-"));
+        if (prefix == null) return;
+    }
+    PDFifySession(tournament,TYPE_JUDGING,download,prefix);
+    PDFifySession(tournament,TYPE_MATCH_ROUND,download,prefix);
+    PDFifySession(tournament,TYPE_MATCH_ROUND_PRACTICE,download,prefix);
+    PDFifySession(tournament,TYPE_MATCH_FILLER,download,prefix);
+    PDFifySession(tournament,TYPE_MATCH_FILLER_PRACTICE,download,prefix);
+	PDFifyAllTeams(tournament,download,prefix);
+	PDFifyIndivTeams(tournament,download,prefix);
 }
 
 function PdfDoc(tournament) {
@@ -85,7 +90,7 @@ function PdfDoc(tournament) {
     this.styles = STYLEDICT;
 }
 
-function PDFifySession(event, type, download) {
+function PDFifySession(event, type, download,prefix) {
     //Note: Logo numbering is stupid and arbitrary at the moment.  Can't be fucked to fix this.
     IMAGEDICT.logo1=getBase64Image($("#logo1")[0]);
     IMAGEDICT.logo2=getBase64Image($("#logo2")[0]);
@@ -113,7 +118,7 @@ function PDFifySession(event, type, download) {
     // Delete the last page break
     doc.content.splice(doc.content.length-1);
     try {
-        if (download) pdfMake.createPdf(doc).download(type.name+'Schedule.pdf');
+        if (download) pdfMake.createPdf(doc).download((prefix+"-"+type.name+"-schedule.pdf").replace(/ /g, "-"));
         else pdfMake.createPdf(doc).open();
     } catch (err) {
         alert ("Error printing: " + err.message);
@@ -191,7 +196,7 @@ function sessionPage(doc, session, applyingBreaks) {
     return doc;
 }
 
-function PDFifyAllTeams(event,download) {
+function PDFifyAllTeams(event,download,prefix) {
 	var doc = new PdfDoc(event);
 	doc.pageOrientation='landscape';
     doc.background = landscapeBackground;
@@ -279,18 +284,18 @@ function PDFifyAllTeams(event,download) {
 	}
 	doc.content.push({table: t, layout: 'lightHorizontalLines'});
     console.log(doc);
-	if (download) pdfMake.createPdf(doc).download('individualSchedule.pdf');
+    if (download) pdfMake.createPdf(doc).download((prefix+"-individual-schedule.pdf").replace(/ /g, '-'));
     else pdfMake.createPdf(doc).open();    
 }
 
-function PDFifyIndivTeams(event, download) {
+function PDFifyIndivTeams(event, download,prefix) {
     var doc = new PdfDoc(event);
     for (var i = 0; i < event.teams.length; i++) {
         teamPage(doc, event, event.teams[i]);
     }
     // Delete the last page break
     doc.content.splice(doc.content.length-1);
-    if (download) pdfMake.createPdf(doc).download('teamSchedule.pdf');
+    if (download) pdfMake.createPdf(doc).download((prefix+"-team-schedule.pdf").replace(/ /g, '-'));
     else pdfMake.createPdf(doc).open();    
 }
 
