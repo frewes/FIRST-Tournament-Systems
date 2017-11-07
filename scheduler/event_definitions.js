@@ -223,7 +223,7 @@ function load(json) {
 	}
 	// Fix UID counters
 	for (var i = 0; i < evt.teams.length; i++) {
-		if (evt.teams[i].uid > TEAM_UID_COUNTER) TEAM_UID_COUNTER = evt.teams[i].uid+1;
+		if (evt.teams[i].uid >= TEAM_UID_COUNTER) TEAM_UID_COUNTER = evt.teams[i].uid+1;
 	}
 	toggleAdvMode();
 	console.log(evt);
