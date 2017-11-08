@@ -102,7 +102,7 @@ function PDFifySession(event, type, download,prefix) {
         var applyingBreaks = [];
         for (var j = 0; j < event.allSessions.length; j++) {
             if (event.allSessions[j].type == TYPE_BREAK && applies(event.allSessions[j],event.allSessions[i]))
-                applyingBreaks.push(event.allSessions[j]);
+                if (overlaps(event.allSessions[j],event.allSessions[i])) applyingBreaks.push(event.allSessions[j]);
         }
         try {
             if (event.allSessions[i].nLocs > 4) {

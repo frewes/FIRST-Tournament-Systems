@@ -95,7 +95,7 @@ function EventPanel(params) {
 }
 
 function generate() {
-	console.log(tournament.extraTimeEvery);
+		// console.log(tournament.extraTimeEvery);
 	if (tournament.errors == 0 && !confirm("Schedule already generated.  Overwrite?")) return;
 	for (var i = 0; i < tourn_ui.allPanels.length; i++) 
 		tourn_ui.allPanels[i].update();

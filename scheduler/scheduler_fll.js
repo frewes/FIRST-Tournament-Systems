@@ -398,6 +398,14 @@ function timeInc(event,time,len,s) {
     return newTime;
 }
 
+// Checks if two session overlap at all
+function overlaps(a,b) {
+	if (a.start == b.start || a.end == b.end) return true;
+	if (a.start < b.start && a.end > b.start) return true;
+	if (b.start < a.start && b.end > a.start) return true;
+	return false;
+}
+
 /**
 	Return true if the team can do the given instance.
 	Returns false if they don't have time to come from a previous instance or go to a later one.

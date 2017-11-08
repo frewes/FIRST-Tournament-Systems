@@ -9,11 +9,11 @@ const TYPES = [TYPE_JUDGING, TYPE_MATCH_FILLER, TYPE_BREAK, TYPE_MATCH_ROUND, TY
 const EVENT_FLL = 0;
 
 const LEAVE_BLANKS = 0;
-const USE_SURROGATES = 1;
+const USE_SURROGATES = 1;	
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates", "Use stand-ins"];
 
-const SCHEDULER_VERSION = "2.0.1";
+const SCHEDULER_VERSION = "2.0.2";
 
 var TEAM_UID_COUNTER = 0;
 
