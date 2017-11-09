@@ -350,8 +350,10 @@ function sortThingsOut(event) {
 			if (event.allSessions[j].type == TYPE_JUDGING && event.teams[i].excludeJudging) 
 				event.teams[i].schedule.push(new Instance(event.allSessions[j].uid));
 		event.teams[i].schedule.sort(function(a,b) {
-			if (getSession(a.session_uid).type.priority == getSession(b.session_uid).type.priority)
-				return getSession(a.session_uid).start - getSession(b.session_uid).start
+			if (getSession(a.session_uid).type.priority == getSession(b.session_uid).type.priority) {
+				if (getSession(a.session_uid).start == getSession(b.session_uid).start) return a.session_uid - b.session_uid;
+				return getSession(a.session_uid).start - getSession(b.session_uid).start;
+			}
 			return getSession(a.session_uid).type.priority - getSession(b.session_uid).type.priority;
 		});
 	}

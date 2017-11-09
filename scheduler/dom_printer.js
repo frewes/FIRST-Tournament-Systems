@@ -6,6 +6,7 @@ function printToDom(event) {
 	var results=$("#results");
 	evaluate(event);
 	results.empty();
+	sortThingsOut(tournament);
 	toggleLockedMode();
 	if (event.allSessions[0].schedule.length == 0) {
     	$("#words")[0].style.color = "black";
