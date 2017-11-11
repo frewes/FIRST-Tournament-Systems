@@ -11,6 +11,7 @@
 
     <!-- Custom styles for this template -->
     <link href="scheduler.css" rel="stylesheet">
+    <link href="../css/octicons.css" rel="stylesheet">
 
 </head>
 
@@ -22,16 +23,24 @@
 </blockquote>
 </span>
 <form class="form-inline my-2 my-lg-0">
-    <label for="adv-toggle">Advanced: </label>
+    <label for="adv-toggle">Advanced:&nbsp;</label>
     <label class="switch">
         <input id="adv-toggle" type="checkbox" onchange="toggleAdvMode()">
         <span class="slider round"></span></label>
-        <a class="nav-item nav-link" href="javascript:void(0)" onclick="clickSave()">
-            <span class="glyphicon glyphicon-save"></span>Save</a>
-            <a id="saveLink" style="display:none">Download</a>
-        <a class="nav-item nav-link" href="javascript:void(0)" onclick="clickLoad()">
-            <span class="glyphicon glyphicon-open"></span> Load</a>
-            <input type="file" id="loadFileInput" hidden onchange="loadFromFile(this)" accept=".schedule">
+    <div class="dropdown">
+      <a class="nav-item nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="../resources/octicons/info.svg"></img></a>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="https://github.com/frewes/FIRST-Tournament-Systems/wiki/FLL-Scheduler-How-To" target="_blank">User manual</a>
+        <a class="dropdown-item" href="https://github.com/frewes/FIRST-Tournament-Systems/issues" target="_blank">Report a bug</a>
+        <a class="dropdown-item" href="mailto:fredrik.westling@gmail.com?Subject=FLL%20scheduler" target="_blank">Contact developer</a>
+      </div>
+    </div>
+    <a class="nav-item nav-link" href="javascript:void(0)" onclick="clickSave()">
+        <img src="../resources/octicons/cloud-download.svg"></img></a>
+        <a id="saveLink" style="display:none">Download</a>
+    <a class="nav-item nav-link" href="javascript:void(0)" onclick="clickLoad()">
+        <img src="../resources/octicons/cloud-upload.svg"></img></a>
+        <input type="file" id="loadFileInput" hidden onchange="loadFromFile(this)" accept=".schedule">
 </form>
 </nav>
 <nav class="nav navbar nav-tabs nav-justified" id="myTab" role="tablist">
