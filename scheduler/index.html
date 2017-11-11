@@ -54,7 +54,7 @@
 <div class="tab-content" id="nav-tabContent">
   <div class="tab-pane fade show active" id="nav-event" role="tabpanel" aria-labelledby="nav-event-tab">
     <table class="roundtable">
-        <tr><td>Number of days:&nbsp;</td><td><input class="non-cosmetic form-control" type=number id="nDays" value=1 min=1 max=5 onchange="tourn_ui.changeNDays()"></td></tr>
+        <tr><td><div data-toggle="tooltip" data-placement="top" title="Change the number of days. If you increase the number of days, a night is automatically added to Breaks. If you decrease the number of days, breaks in the removed days are deleted and matches/judging in the removed days is automatically moved to earlier.">Number of days:&nbsp;</div></td><td><input class="non-cosmetic form-control" type=number id="nDays" value=1 min=1 max=5 onchange="tourn_ui.changeNDays()"></td></tr>
         <tr><td colspan=2><button disabled class="cosmetic btn" onclick="openDayModal()" data-toggle="modal" data-target="#smallModal">Edit day names</button></td></tr>
     </table>
     <table class="roundtable">
@@ -65,8 +65,8 @@
         </tr>
     </table>
     <table class="roundtable">
-        <tr><td>Min. travel (mins):</td><td><input class="non-cosmetic form-control" type=number id="minTravel" value=10 min=1 max=999 onchange="tourn_ui.changeMinTravel()"></td></tr>
-        <tr class="advanced"><td>Extra time (mins):</td><td><input class="non-cosmetic form-control" type=number id="extraTime" value=5 min=1 max=120 onchange="tourn_ui.changeExtraTime()"></td></tr>
+        <tr><td><div data-toggle="tooltip" data-placement="top" title="Specifies the minimum amount of time a team must be given between sessions. Use this to ensure teams have time to get from judging to matches and vice versa. If the schedule is particularly tight, and is having difficulty in generating, you can lower this number to increase the probability of success.">Min. travel (mins):</div></td><td><input class="non-cosmetic form-control" type=number id="minTravel" value=10 min=1 max=999 onchange="tourn_ui.changeMinTravel()"></td></tr>
+        <tr class="advanced"><td><div data-toggle="tooltip" data-placement="top" title="Universally specifies the amount of time (in minutes) to be allocated in the case of extra time (for individual sessions or teams).">Extra time (mins):</div></td><td><input class="non-cosmetic form-control" type=number id="extraTime" value=5 min=1 max=120 onchange="tourn_ui.changeExtraTime()"></td></tr>
     </table>
 
   </div>
@@ -216,6 +216,10 @@
 <script src="../js/vfs_fonts.js"></script>
 
 <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    });
+
     if (window.File && window.FileReader && window.Blob) {
         console.log("File operations supported");
     } else {
