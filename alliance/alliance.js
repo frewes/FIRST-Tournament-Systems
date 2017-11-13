@@ -6,7 +6,7 @@ var tournament;
 
 function Event() {
     this.mode = MODE_SETUP;
-    this.version = "0.3";
+    this.version = "0.4.0";
     this.teams = new Array(30);
     for (var i = 0; i < this.teams.length; i++) {
         this.teams[i] = new Team((i+1),(i+1),"Team "+(i+1));
@@ -20,6 +20,7 @@ function Event() {
     this.matches = new Array();
     this.title = "FTC National 2017";
     this.logo = "../resources/firstlogo";
+    this.backwards = false;
     console.log(this);
 }
 
@@ -37,12 +38,19 @@ var DOM_Objects = {
 
 function update() {
     var nAlliances = DOM_Objects.nAlliances.value;
+    var nTeams = DOM_Objects.nTeamsPerAlliance.value;
+    //Add/remove alliances as required.
     while (tournament.alliances.length < nAlliances)
-        tournament.alliances.push(new Alliance(tournament.alliances.length+1,3));
+        tournament.alliances.push(new Alliance(tournament.alliances.length+1,nTeams));
     while (tournament.alliances.length > nAlliances)
         tournament.alliances.splice(tournament.alliances.length-1,1);
-    DOM_Objects.nAlliances.value = tournament.alliances.length;
-    console.log(tournament);
+    // Adjust nTeams for each alliance
+    for (var i = 0; i < tournament.alliances.length; i++) {
+        while (tournament.alliances[i].teams.length < nTeams)
+            tournament.alliances[i].teams.push(null);
+        while (tournament.alliances[i].teams.length > nTeams)
+            tournament.alliances[i].teams.splice(tournament.alliances[i].teams.length-1,1);
+    }
 }
 
 function Alliance(seed, nTeams) {
@@ -106,11 +114,21 @@ function loadSetup() {
     tournament.mode = MODE_SETUP;
     $("#nav-setup-tab").tab('show');
 
-    DOM_Objects.logo.src = tournament.logo;
-    DOM_Objects.nAlliances.value = tournament.alliances.length;
-    DOM_Objects.nTeamsPerAlliance.value = tournament.alliances[0].teams.length;
+    // DOM_Objects.logo.src = tournament.logo;
+    // DOM_Objects.nAlliances.value = tournament.alliances.length;
+    // DOM_Objects.nTeamsPerAlliance.value = tournament.alliances[0].teams.length;
 
-    // $("input").change(function() {update();});
+    // Reset everything
+    for (var i = 0; i < tournament.alliances.length; i++) {
+        tournament.alliances[i] = new Alliance((i+1),tournament.alliances[i].teams.length);
+        tournament.alliances[i].teams[0] = tournament.teams[i];
+        tournament.alliances[i].selected = false;
+    }
+    for (var i = 0; i < tournament.teams.length; i++) {
+        tournament.teams[i].refused = false;
+        tournament.teams[i].selected = false;
+    }
+    $("input").change(function() {update();});
 }
 
 function loadSelection(startIdx) {
@@ -270,7 +288,16 @@ function acceptSelectedTeam() {
     }
     alliance.teams[alliance.teams.indexOf(null)] = team;
     console.log(tournament);
-    loadSelection(tournament.alliances.indexOf(getSelectedAlliance()));
+    var nextIdx = tournament.alliances.indexOf(getSelectedAlliance())+1;
+    if (tournament.backwards) nextIdx -= 2;
+    if (nextIdx >= tournament.alliances.length) {
+        if ($("input[name=methodRadio]:checked").val() == "serpentine") {
+            nextIdx--;
+            tournament.backwards = !tournament.backwards;
+        } else nextIdx = 0;
+    }
+    if (nextIdx == -1) nextIdx = 0;
+    loadSelection(nextIdx);
 }
 
 
