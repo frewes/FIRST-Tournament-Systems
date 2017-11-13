@@ -1,0 +1,15 @@
+.keystone {
+    background-color:green;
+}
+
+.defImage {
+    background-image: url(ftc.jpg);
+}
+
+
+.title {
+    width:100%;
+    text-align:center;
+    color:#222222;
+    font-size: 4em;
+}
