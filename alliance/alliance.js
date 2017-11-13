@@ -6,7 +6,7 @@ var tournament;
 
 function Event() {
     this.mode = MODE_SETUP;
-    this.version = "0.4.0";
+    this.version = "0.5.0";
     this.teams = new Array(30);
     for (var i = 0; i < this.teams.length; i++) {
         this.teams[i] = new Team((i+1),(i+1),"Team "+(i+1));
@@ -40,8 +40,10 @@ function update() {
     var nAlliances = DOM_Objects.nAlliances.value;
     var nTeams = DOM_Objects.nTeamsPerAlliance.value;
     //Add/remove alliances as required.
-    while (tournament.alliances.length < nAlliances)
+    while (tournament.alliances.length < nAlliances) {
         tournament.alliances.push(new Alliance(tournament.alliances.length+1,nTeams));
+        tournament.alliances[tournament.alliances.length-1].teams[0] = availableList(tournament.alliances.length-2)[0];
+    }
     while (tournament.alliances.length > nAlliances)
         tournament.alliances.splice(tournament.alliances.length-1,1);
     // Adjust nTeams for each alliance

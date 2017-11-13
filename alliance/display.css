@@ -13,3 +13,29 @@
     color:#222222;
     font-size: 4em;
 }
+
+.alliances table{
+	font-size: 2em;
+}
+
+.sel {
+	color: red;
+}
+.ref {
+	color: grey;
+	text-decoration: line-through;
+}
+
+table.roundtable{
+     display: inline-table;
+    /*position: absolute;*/
+    top: 0;
+}
+
+td.team {
+	font-size: 1.5em;
+}
+
+.roundtable td {
+    padding-right: 20px;
+}
