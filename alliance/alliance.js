@@ -6,7 +6,7 @@ var tournament;
 
 function Event() {
     this.mode = MODE_SETUP;
-    this.version = "0.5.0";
+    this.version = "0.5.1";
     this.teams = new Array(30);
     for (var i = 0; i < this.teams.length; i++) {
         this.teams[i] = new Team((i+1),(i+1),"Team "+(i+1));
@@ -318,27 +318,22 @@ function closeTitleModal() {
     $("#title")[0].innerHTML = tournament.title;
 }
 
-function sequence() {
-
-}
-
 function openTeamImportModal() {
     $("#lg-modal-body").empty();
     $("#lg-modal-footer").empty();
     $("#lg-modal-title")[0].innerHTML = "Team rank, number, name";
     $("#lg-modal-body").append($("<p>One line per team.</p>"))
-    $("#lg-modal-body").append($("<p><button class=\"btn\" onclick=\"sequence()\">Rank sequentially</button></p>"));
     var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"6\"></textarea>");
     for (var i = 0; i < tournament.teams.length; i++)
-        x.append((i+1) + "\n");
+        x.append(tournament.teams[i].rank + "\n");
     $("#lg-modal-body").append(x);
     var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"6\"></textarea>");
     for (var i = 0; i < tournament.teams.length; i++)
-        x.append((i+1) + "\n");
+        x.append(tournament.teams[i].number + "\n");
     $("#lg-modal-body").append(x);
     var x = $("<textarea rows=\""+tournament.teams.length+"\" cols=\"60\"></textarea>");
     for (var i = 0; i < tournament.teams.length; i++)
-        x.append("Team " + (i+1) + "\n");
+        x.append(tournament.teams[i].name + "\n");
     $("#lg-modal-body").append(x);
     $("#lg-modal-body").append(x);
     $("#lg-modal-footer").append($("<button onclick=\"closeTeamImportModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
@@ -347,7 +342,22 @@ function openTeamImportModal() {
 
 function closeTeamImportModal() {
     var inputs = $("#lg-modal-body>textarea");
-    tournament.mode = MODE_SELECTION;
+
+    var ranks = inputs[0].value.split("\n");
+    while (ranks[ranks.length-1] == "") ranks.splice(ranks.length-1,1);
+    var nums = inputs[1].value.split("\n");
+    while (nums[nums.length-1] == "") nums.splice(nums.length-1,1);
+    var names = inputs[2].value.split("\n");
+    while (names[names.length-1] == "") names.splice(names.length-1,1);
+
+    while (nums.length < names.length) nums.push(""+(nums.length+1));
+    while (nums.length > names.length) nums.splice(nums.length-1,1);
+    while (ranks.length < names.length) ranks.push(""+(ranks.length+1));
+    while (ranks.length > names.length) ranks.splice(ranks.length-1,1);
+
+    tournament.teams = [];
+    for (var i = 0; i < names.length; i++)
+        tournament.teams.push(new Team(ranks[i],nums[i],names[i]));
 }
 
 
