@@ -13,7 +13,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.1.2";
+const SCHEDULER_VERSION = "2.1.3";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -28,7 +28,6 @@ function EventParameters(type,name,nTeams,nDays,minTravel,extraTime) {
 	this.version = SCHEDULER_VERSION;
 	this.startDate = new Date().toDateInputValue();
 	this.teamnum_counter = 1;
-	this.start_time_offset = 0; // Set to number of minutes to start if wanted
 	var year = this.startDate.split("-")[0];
 	this.name = (name)?name:(year+" FLL Tournament");
 	if (!nTeams) var nTeams=24;
@@ -38,7 +37,7 @@ function EventParameters(type,name,nTeams,nDays,minTravel,extraTime) {
 	this.teams = [];
 	this.days = [];
 	this.method="random";
-	this.logos = ["flllogo.jpg","gamelogo.jpg","mqlogo.png","firstlogo.png"];
+	this.logos = ["../resources/flllogo.jpg","../resources/gamelogo.jpg","../resources/mqlogo.png","../resources/firstlogo.png"];
 	this.errors = Infinity;
 	if (!nDays) var nDays = 1
 	while (this.days.length < nDays) this.days.push("Day " + (this.days.length+1));
@@ -213,6 +212,14 @@ function load(json) {
 	if (cmpVersions(""+evt.version, "2.0")) {
 		evt.type = EVENT_FLL;
 	}
+	if (cmpVersions(""+evt.version, "2.1.2")) {
+		for (var i = 0; i < evt.logos.length; i++) {
+			if (evt.logos[i].startsWith("data")) continue;
+			evt.logos[i] = "../resources/"+evt.logos[i];
+			// evt.logos = ["../resources/flllogo.jpg","../resources/gamelogo.jpg","../resources/mqlogo.png","../resources/firstlogo.png"];
+		}
+	}
+
 	evt.version = SCHEDULER_VERSION;
 	// Convert types to literal TYPE objects for later comparisons
 	for (var i = 0; i < evt.allSessions.length; i++) {
@@ -254,27 +261,3 @@ function minTravelTime(team) {
 	}
 	return time;
 }
-
-Date.prototype.toDateInputValue = (function() {
-    var local = new Date(this);
-    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
-    return local.toJSON().slice(0,10);
-});
-
-//https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number, LeJared
-function cmpVersions (a, b) {
-    var i, diff;
-    var regExStrip0 = /(\.0+)+$/;
-    var segmentsA = a.replace(regExStrip0, '').split('.');
-    var segmentsB = b.replace(regExStrip0, '').split('.');
-    var l = Math.min(segmentsA.length, segmentsB.length);
-
-    for (i = 0; i < l; i++) {
-        diff = parseInt(segmentsA[i], 10) - parseInt(segmentsB[i], 10);
-        if (diff) {
-            return diff;
-        }
-    }
-    return segmentsA.length - segmentsB.length;
-}
-

@@ -124,49 +124,22 @@ function autosave() {
 	localStorage.setItem("schedule", json);
 }
 
-var saveFile = null;
-function saveToFile(filename, content) {
-	if (filename.startsWith("null.")) return;
-	var data = new Blob([content], {type: 'text/plain'});
-    if (saveFile !== null) {
-      window.URL.revokeObjectURL(saveFile); //Prevents memory leaks on multiple saves.
-    }
-    saveFile = window.URL.createObjectURL(data);
-    saveLink = $("#saveLink")[0];
-    saveLink.download = filename;
-    saveLink.href = saveFile;
-    saveLink.click();
-}
-
-function loadFromFile(evt) {
-	//https://www.html5rocks.com/en/tutorials/file/dndfiles/
-	// ^ Explains how to read files as binary, text, etc.
-    var reader = new FileReader();
-    reader.onload = function(e) {
-		console.log("Loaded: ");
-		console.log(e.target.result);
-		// Should probably check that this 'looks' like a schedule file.  check field names, number of fields, etc.
-		// Step 1: Delete everything in the UI.
-		var uids = [];
-		for (var i = 0; i < tourn_ui.allPanels.length; i++) {
-			uids.push(tourn_ui.allPanels[i].session.uid);
-		}
-		for (var i = 0; i < uids.length; i++) {
-			deleteParams(uids[i]);
-		}
-		//Step 2: Replace tourn_ui.params and tourn_ui
-        tournament = load(e.target.result);
-        tourn_ui = new EventPanel(tournament);
-		toggleAdvMode();
-        printToDom(tournament);
-    }
-    if (evt.files[0]) {
-        reader.readAsText(evt.files[0]);
-    }
-	printToDom(tournament);
+function loadFile(content) {
+	// Should probably check that this 'looks' like a schedule file.  check field names, number of fields, etc.
+	
+	// Step 1: Delete everything in the UI.
+	var uids = [];
+	for (var i = 0; i < tourn_ui.allPanels.length; i++) {
+		uids.push(tourn_ui.allPanels[i].session.uid);
+	}
+	for (var i = 0; i < uids.length; i++) {
+		deleteParams(uids[i]);
+	}
+	//Step 2: Replace tourn_ui.params and tourn_ui
+    tournament = load(content);
+    tourn_ui = new EventPanel(tournament);
 	toggleAdvMode();
-	alert ("Loaded " + evt.files[0].name + "!");
-
+    printToDom(tournament);
 }
 
 function getPanel(uid) {
@@ -452,7 +425,7 @@ function minsToDate(x) {
 
 function minsToTime(x) {
 	if (x == null) return null;
-	x = (x%(24*60)) + tournament.start_time_offset;
+	x = (x%(24*60));
 	var h = Math.floor(x/60);
 	var m = (x%60);
 	var zh = (h < 10) ? "0" : "";
@@ -472,7 +445,7 @@ function minsToDT(x,sep) {
 function dtToMins(d,t) {
 	if (t == "") return null;
     var res = t.split(":");
-    return d*(60*24) + parseInt(res[0])*60 + parseInt(res[1]) - tournament.start_time_offset;
+    return d*(60*24) + parseInt(res[0])*60 + parseInt(res[1]);
 }
 
 function openTitleModal() {
