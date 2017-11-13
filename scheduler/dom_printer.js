@@ -7,29 +7,26 @@ function printToDom(event) {
 	evaluate(event);
 	results.empty();
 	sortThingsOut(event);
-	console.log(event)
 	toggleLockedMode();
-	if (event.allSessions[0].schedule.length == 0) {
+	if (event.status == STATUS_OVERTIME) {
+    	$("#words")[0].style.color = "orange";
+        $("#words")[0].innerHTML = "Some sessions will finish late.  Please review parameters.";
+        $("#exportBtns").attr("hidden","hidden");
+	} else if (event.status == STATUS_FAILURE) {
+		var str = (event.errors == 1) ? " error" : " errors";
+		$("#words")[0].style.color = "red";
+		$("#words")[0].innerHTML = event.errors + str + ".  Try again, or adjust your parameters.";
+		$("#exportBtns").attr("hidden","hidden");
+	} else if (event.status == STATUS_SUCCESS) {
+        $("#words")[0].style.color = "green";
+        $("#words")[0].innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed. <br>NB: PDFs are not currently supported in Internet Explorer, but you can still use the tables.";
+        $("#exportBtns").removeAttr("hidden");
+    } else {
     	$("#words")[0].style.color = "black";
         $("#words")[0].innerHTML = "Press the above button to attempt to generate a schedule using the given parameters.";
         $("#exportBtns").attr("hidden","hidden");
 		return;
-	}
-    if (event.errors == null || event.errors > 0) {
-        var str = (event.errors == 1) ? " error" : " errors";
-        if (event.errors == Infinity || event.errors == null) {
-	    	$("#words")[0].style.color = "orange";
-	        $("#words")[0].innerHTML = "Some sessions will finish late.  Please review parameters.";
-        } else {
-	    	$("#words")[0].style.color = "red";
-	        $("#words")[0].innerHTML = event.errors + str + ".  Try again, or adjust your parameters.";
-	    }
-        $("#exportBtns").attr("hidden","hidden");
-    } else {
-        $("#words")[0].style.color = "green";        
-        $("#words")[0].innerHTML = "Schedule generated successfully.  The below tables can be copied into spreadsheets, or you can view or download pre-formatted PDF's using either of the buttons below.  Please note that View PDFs may not work correctly if you have ad blocker installed. <br>NB: PDFs are not currently supported in Internet Explorer, but you can still use the tables.";
-        $("#exportBtns").removeAttr("hidden");
-    }
+	} 
 
 	var judge_row = $("<div>");
 	var match_row = $("<div>");
@@ -179,15 +176,6 @@ function drop(evt,uid,i,t) {
     	alert ("These two teams cannot swap");
     	return;
     }
-    console.log("From ("+from_uid+","+from_i+","+from_t+")");
-    console.log(from_instance);
-    console.log(from_team);
-    console.log("To ("+uid+","+i+","+t+")");
-    console.log(to_instance);
-    console.log(to_team);
-
-    // from_instance.teams[from_instance.teams.indexOf(from_team.uid)] = to_team.uid;
-    // to_instance.teams[to_instance.teams.indexOf(to_team.uid)] = from_team.uid;
     from_instance.teams[from_t] = to_team.uid;
     to_instance.teams[t] = from_team.uid;
     var fromToRemove = null;

@@ -8,12 +8,18 @@ const TYPES = [TYPE_JUDGING, TYPE_MATCH_FILLER, TYPE_BREAK, TYPE_MATCH_ROUND, TY
 
 const EVENT_FLL = 0;
 
+const STATUS_EMPTY = 0;
+const STATUS_OVERTIME = 1;
+const STATUS_INPROGRESS = 2;
+const STATUS_FAILURE = 3;
+const STATUS_SUCCESS = 4;
+
 const LEAVE_BLANKS = 0;
 const USE_SURROGATES = 1;	
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.1.3";
+const SCHEDULER_VERSION = "2.1.4";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -25,6 +31,7 @@ function SessionType(uid,name,priority) {
 function EventParameters(type,name,nTeams,nDays,minTravel,extraTime) {
 	this.UID_counter = 1;
 	this.type = EVENT_FLL;
+	this.status = STATUS_EMPTY;
 	this.version = SCHEDULER_VERSION;
 	this.startDate = new Date().toDateInputValue();
 	this.teamnum_counter = 1;
@@ -217,6 +224,19 @@ function load(json) {
 			if (evt.logos[i].startsWith("data")) continue;
 			evt.logos[i] = "../resources/"+evt.logos[i];
 			// evt.logos = ["../resources/flllogo.jpg","../resources/gamelogo.jpg","../resources/mqlogo.png","../resources/firstlogo.png"];
+		}
+	}
+	if (cmpVersions(""+evt.version, "2.1.4")) {
+		if (evt.allSessions[0].schedule.length == 0) {
+			evt.status = STATUS_EMPTY;
+		} else {
+			if (event.errors == Infinity || event.errors == null) {
+				evt.status = STATUS_OVERTIME;
+			} else if (evt.errors == 0) {
+				evt.status = STATUS_SUCCESS;
+			} else {
+				evt.status = STATUS_FAILURE;
+			}
 		}
 	}
 

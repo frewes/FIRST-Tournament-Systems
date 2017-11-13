@@ -35,9 +35,11 @@ EventParameters:
 function schedule(event) {
 	var sessions = buildAllTables(event);
 	if (sessions) {
+		event.status = STATUS_OVERTIME;
 		alert (sessions + " won't finish in time. Please adjust parameters");
 		return false;
 	} else {
+		event.status = STATUS_INPROGRESS;
 		initialFill(event);
 		swapFill(event);
 		sortThingsOut(event);
@@ -46,12 +48,13 @@ function schedule(event) {
 }
 
 function emptySchedule(event) {
+	event.status = STATUS_EMPTY;
+	event.errors = Infinity;
 	for (var i = 0; i < event.allSessions.length; i++) event.allSessions[i].schedule = [];
 	for (var i = 0; i < event.teams.length; i++) {
 		event.teams[i].schedule = [];
 		event.teams[i].isSurrogate = false;
 	}
-	event.errors = Infinity;
 }
 
 /**
@@ -150,7 +153,6 @@ function tableSession(event, session, numOffset) {
     	roundsSinceExtra += Math.floor(Math.random()*L);
     	flag = true;
     }
-    console.log("Extra time" + (10+event.extraTime));
     var extraRounds = 0;
     if (session.type == TYPE_BREAK) everyN = Infinity;
     for (var i = 0; i < L; i++) {
@@ -306,6 +308,13 @@ function swapFillSession(event, session, teams) {
 }
 
 function evaluate(event) {
+	if (event.status == STATUS_OVERTIME) {
+		event.errors = Infinity;
+		return;
+	} else if (event.status == STATUS_EMPTY) {
+		event.errors = null;
+		return;
+	}
 	event.errors = 0;
 	// Add errors for each session (errors due to empty spots)
 	for (var i = 0; i < event.allSessions.length; i++) {
@@ -320,13 +329,13 @@ function evaluate(event) {
 	// Adelaide Ken bug: Teams getting assigned weirdly. Count the number of these errors.
 	for (var i = 0 ; i < event.teams.length ; i++) {
 		for (var j = 0; j < event.teams[i].schedule.length; j++) {
-			// console.log(event.teams[i].schedule[j].teams.indexOf(event.teams[i].uid));
 			if (event.teams[i].schedule[j].teams.indexOf(event.teams[i].uid) == -1) {
-				// alert("Error found!");
 				event.errors++;
 			}
 		}
 	}
+	if (event.errors == 0) event.status = STATUS_SUCCESS;
+	else event.status = STATUS_FAILURE;
 
 	// // Now, add errors due to teams having an incorrect number of instances
 	// for (var i = 0 ; i < event.teams.length ; i++) {
@@ -345,6 +354,7 @@ function sortThingsOut(event) {
 		}
 		return a.type.priority - b.type.priority;
 	});
+	if (event.status != STATUS_SUCCESS && event.status != STATUS_FAILURE) return;
 	for (var i = 0; i < event.teams.length; i++) {
 		for (var j = 0; j < event.allSessions.length; j++) 
 			if (event.allSessions[j].type == TYPE_JUDGING && event.teams[i].excludeJudging) 
@@ -460,13 +470,10 @@ function hasDone(team, uid) {
 
 function applies(brk,session) {
 	if (brk.appliesTo.length == 0) {
-		// console.log(brk.name + " =A= " + session.name);
 		return true;
 	}
 	if (brk.appliesTo.indexOf(session.uid) != -1) {
-		// console.log(brk.name + " =B= " + session.name);
 		return true;
 	}
-	// console.log(brk.name + " =C= " + session.name + ": ");	
 	return false;
 }
