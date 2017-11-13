@@ -13,7 +13,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.1.1";
+const SCHEDULER_VERSION = "2.1.2";
 
 var TEAM_UID_COUNTER = 0;
 

@@ -211,6 +211,7 @@ function toggleLockedMode() {
 function unlock() {
 	if (confirm("Delete schedule?")) {
 		emptySchedule(tournament);
+		toggleLockedMode();
 		printToDom(tournament);
 	}
 }
