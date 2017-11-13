@@ -306,9 +306,24 @@ function changeLogo() {
 function setTeams() {
 }
 
-function changeTitle() {
-    var safe = timerObj.title;
-    timerObj.title = prompt("Enter title here", timerObj.title);
-    if (timerObj.title == null) timerObj.title = safe;
-    document.getElementById("title").innerHTML = timerObj.title;
+// function changeTitle() {
+//     var safe = timerObj.title;
+//     timerObj.title = prompt("Enter title here", timerObj.title);
+//     if (timerObj.title == null) timerObj.title = safe;
+//     document.getElementById("title").innerHTML = timerObj.title;
+// }
+
+function openTitleModal() {
+    $("#sm-modal-body").empty();
+    $("#sm-modal-footer").empty();
+    $("#sm-modal-title")[0].innerHTML = "Event Title";
+    $("#sm-modal-body").append($("<input type=\"text\" class=\"form-control\" value=\""+timerObj.title+"\"><br>"));
+    $("#sm-modal-footer").append($("<button onclick=\"closeTitleModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#sm-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+}
+
+function closeTitleModal() {
+    var input = $("#sm-modal-body>input")[0];
+    timerObj.title = input.value;
+    $("#title")[0].innerHTML = timerObj.title;
 }
