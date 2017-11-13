@@ -8,10 +8,7 @@
     <title>FTC Scoring</title>
     <!-- Bootstrap core CSS -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap theme -->
-<!--     <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
- -->
-    <!-- Custom styles for this template -->
+    <!-- Custom styles -->
     <link href="alliance.css" rel="stylesheet">
 
 </head>
@@ -21,7 +18,7 @@
     <nav class="navbar">
 	  <span class="navbar-brand mb-0 h1"><blockquote class="blockquote">
 	  <p class="mb-0">Alliance Selection</p>
-	  <footer class="blockquote-footer" id="version-footer">Version 0.2</footer>
+	  <footer class="blockquote-footer" id="version-footer"></footer>
 	</blockquote>
 	</span>
         <button onclick="openDisplay()" class="btn btn-info" href="#">Open Display</button>
@@ -93,35 +90,18 @@
 			<div class="tab-pane fade show" id="nav-select" role="tabpanel" aria-labelledby="nav-select-tab">
 				<h1>Selection</h1>
 				<label for="allianceSelect">Alliance</label>
-				<select class="form-control" id="allianceSelect">
-					<option selected>Choose...</option>
-				</select>
+				<select class="form-control" id="allianceSelect"></select>
 				<hr>
 				<div id="selectedAlliance" class="row">
-					<div class="col-lg-6">
-						<h5>Current teams</h5>
-						<form>
-							<span class="team-number captain">111</span>, <span class="team-name captain">Team 1</span>
-							<button class="btn btn-danger btn-sm">Remove</button>
-						</form>
-						<form>
-							<span class="team-number">222</span>, <span class="team-name">Team 2</span>
-							<button class="btn btn-danger btn-sm">Remove</button>
-						</form>
-						<form>
-							<span class="team-number">333</span>, <span class="team-name">Team 3</span>
-							<button class="btn btn-danger btn-sm">Remove</button>
-						</form>
-					</div>
-					<div class="col-lg-6">
+					<div class="col-lg-6"></div>
+					<div class="col-lg-6" style="display:none">
 						<h5>Add team</h5>
 						<label for="teamSelect">Team</label>
-						<select class="form-control" id="teamSelect">
-							<option selected>Choose...</option>
-							<option value="1">One</option>
-							<option value="2">Two</option>
-							<option value="3">Three</option>
+						<select class="form-control" id="teamSelect" onchange="selectTeam(this)">
+							<option value="-1" selected></option>
 						</select>
+						<button id="refuseBtn" class="btn btn-danger" onclick="refuseSelectedTeam()">Refuse</button>
+						<button id="acceptBtn" class="btn btn-success" onclick="acceptSelectedTeam()">Accept</button>
 					</div>
 				</div>
 				<hr>
