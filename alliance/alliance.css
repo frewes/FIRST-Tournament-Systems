@@ -1,4 +1,10 @@
+.captain {
+    color: red;
+}
 
+.team-number {
+    font-weight: bold;
+}
 
 body {
   padding-top: 50px;

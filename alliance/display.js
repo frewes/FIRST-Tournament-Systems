@@ -8,15 +8,9 @@ window.onload = function() {
 function updateDisplay() {
     getalliance();
     if (alliance == null) return;
-    document.getElementById("tournName").innerHTML = alliance.title;
+    $("#tournName")[0].innerHTML = alliance.title;
 }
 
 function getalliance() {
-    ///* Using localStorage 
-    alliance = JSON.parse(localStorage.getItem("alliance"));
-    //*/
-    //Using Ajax
-//    $.ajax("alliance_obj.json",success: function(result) {
-//        alliance = JSON.parse(this.responseText);        
-//    });
+    alliance = JSON.parse(localStorage.getItem("alliances"));
 }
