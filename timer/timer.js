@@ -281,14 +281,6 @@ function updateScore() {
     timerObj.blueScore = document.getElementById('bscore').value;
 }
 
-function secsToTime(s) {
-    var mins = Math.floor(s/60);
-    var secs = s%60;
-    var minString = (mins<10) ? "0"+mins : mins;
-    var secString = (secs<10) ? "0"+secs : secs;
-    return minString+":"+secString;
-}
-
 function setKeystone() {
     timerObj.dispWindow = "keystone";
 //    display.document.getElementsById('body').className = "keystone";
