@@ -6,7 +6,7 @@ var tournament;
 
 function Event() {
     this.mode = MODE_SETUP;
-    this.version = "0.6.0";
+    this.version = "0.6.1";
     this.teams = new Array(30);
     for (var i = 0; i < this.teams.length; i++) {
         this.teams[i] = new Team((i+1),(i+1),"Team "+(i+1));
@@ -72,23 +72,8 @@ function Team(rank,number,name) {
     this.refused = false;
 }
 
-function Match(name, type, red, blue, bye) {
-    this.name = name;
-    this.type = type;
-    this.red = red;
-    this.blue = blue;
-    this.bye = bye;
-}
-
 Alliance.prototype.toString = function () {return 'Alliance ' + this.seed;}
 Team.prototype.toString = function () {return this.number + ", " + this.name;}
-Match.prototype.toString = function () {
-    if (this.bye) return this.name + ": " + this.red + " (BYE)";
-    if (this.red == null && this.blue == null) return this.name + ": __ v __";
-    if (this.red == null) return this.name + ": __ v " + this.blue; 
-    if (this.blue == null) return this.name + ": " + this.red + " v __"; 
-    return this.name + ": " + this.red + " v " + this.blue;
-}
 
 window.onload = function () {
     tournament = new Event();

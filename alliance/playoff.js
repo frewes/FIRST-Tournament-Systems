@@ -3,6 +3,33 @@ const MATCH_QF = {priority:1,n:4,prefix:"QF"};
 const MATCH_SF = {priority:2,n:2,prefix:"SF"};
 const MATCH_F = {priority:3,n:1,prefix:"F"};
 
+const WIN_NONE = 0;
+const WIN_RED = 1;
+const WIN_BLUE = 2;
+
+function Match(name, type, red, blue, bye) {
+    this.name = name;
+    this.type = type;
+    this.red = red;
+    this.blue = blue;
+    this.bye = bye;
+    this.redWins = 0;
+    this.blueWins = 0;
+    this.winner = WIN_NONE;
+}
+
+Match.prototype.toString = function () {
+    if (this.bye) return this.name + ": " + this.red + " (BYE)";
+    if (this.red == null && this.blue == null) return this.name + ": __ v __";
+    if (this.red == null) return this.name + ": __ v " + this.blue; 
+    if (this.blue == null) return this.name + ": " + this.red + " v __"; 
+    return this.name + ": " + this.red + " v " + this.blue;
+}
+
+
+// Order of teams to play, starting at Round of Sixteen
+const ORDER = [0,15,7,8,3,12,4,11,1,14,6,9,2,13,5,10];
+
 function loadPlayoff() {
     tournament.mode = MODE_PLAYOFF;
     $("#nav-playoff-tab").tab('show');
@@ -14,31 +41,28 @@ function generateMatches() {
     // Create matches
     tournament.matches = [];
     var minMode = -1;
-    var nByes = 0;
-    if (tournament.alliances.length > MATCH_ROS.n) {
+    if (tournament.alliances.length > MATCH_ROS.n)
         minMode = MATCH_ROS;
-        nByes = 16-Math.floor(tournament.alliances.length);
-    } else if (tournament.alliances.length > MATCH_QF.n) {
+    else if (tournament.alliances.length > MATCH_QF.n)
         minMode = MATCH_QF; 
-        nByes = 8-Math.floor(tournament.alliances.length);
-    } else if (tournament.alliances.length > MATCH_SF.n) {
+    else if (tournament.alliances.length > MATCH_SF.n)
         minMode = MATCH_SF; 
-        nByes = 4-Math.floor(tournament.alliances.length);
-    } else minMode = MATCH_F; 
-
-    var offset = 0;
-    while (nByes-- > 0) {
-        tournament.matches.push(new Match(minMode.prefix, minMode, tournament.alliances[offset], null, true));
-        offset++;
-    }
+    else minMode = MATCH_F; 
 
     // Add all of current matches.
-    var j = tournament.alliances.length-1;
-    for (var i = offset; i < minMode.n; i++) {
-        tournament.matches.push(new Match(minMode.prefix,minMode,tournament.alliances[i],tournament.alliances[j--],false));
+    var match;
+    var count = 0;
+    for (var i = 0; i < ORDER.length; i++) {
+    	if (ORDER[i] >= minMode.n*2) continue;
+    	if ((count++)%2 == 0) {
+    		match = new Match(minMode.prefix, minMode, tournament.alliances[ORDER[i]], null, false);
+		} else {
+			if (ORDER[i] >= tournament.alliances.length) match.bye = true;
+			else match.blue = tournament.alliances[ORDER[i]];
+			tournament.matches.push(match);
+		}
     }
-    tournament.matches = tournament.matches.concat(tournament.matches.splice(1,1));
-
+    
     for (var i = 0; i < tournament.matches.length; i++) {
         tournament.matches[i].name += "-"+(i+1);
     }
@@ -55,7 +79,59 @@ function generateMatches() {
             tournament.matches.push(new Match(MATCH_F.prefix+"-"+(i+1),MATCH_F,null,null,false));
 
     console.log(tournament.matches);
+    advanceTeams();
     updateMatchList();
+}
+
+function advanceTeams() {
+	var ros = getAllMatches(MATCH_ROS);
+	var qf = getAllMatches(MATCH_QF);
+	var sf = getAllMatches(MATCH_SF);
+	var f = getAllMatches(MATCH_F);
+	console.log(qf);
+	for (var i = 0; i < ros.length; i++) {
+		var match = ros[i];
+		var next = qf[Math.floor(i/2)];
+		if (next.red != null && next.blue != null) continue;
+		if ((match.winner == WIN_RED) || (match.winner == WIN_NONE && match.bye)) {
+			if (i%2 == 0) next.red = match.red;
+			else next.blue = match.red;
+		} else if (match.winner == WIN_BLUE) {
+			if (i%2 == 0) next.red = match.blue;
+			else next.blue = match.blue;
+		}
+	}
+	for (var i = 0; i < qf.length; i++) {
+		var match = qf[i];
+		var next = sf[Math.floor(i/2)];
+		if (next.red != null && next.blue != null) continue;
+		if ((match.winner == WIN_RED) || (match.winner == WIN_NONE && match.bye)) {
+			if (i%2 == 0) next.red = match.red;
+			else next.blue = match.red;
+		} else if (match.winner == WIN_BLUE) {
+			if (i%2 == 0) next.red = match.blue;
+			else next.blue = match.blue;
+		}
+	}
+	for (var i = 0; i < sf.length; i++) {
+		var match = sf[i];
+		var next = f[Math.floor(i/2)];
+		if (next.red != null && next.blue != null) continue;
+		if ((match.winner == WIN_RED) || (match.winner == WIN_NONE && match.bye)) {
+			if (i%2 == 0) next.red = match.red;
+			else next.blue = match.red;
+		} else if (match.winner == WIN_BLUE) {
+			if (i%2 == 0) next.red = match.blue;
+			else next.blue = match.blue;
+		}
+	}
+}
+
+function getAllMatches(type) {
+	var list = [];
+	for (var i = 0; i < tournament.matches.length; i++) 
+		if (tournament.matches[i].type.priority == type.priority) list.push(tournament.matches[i]);
+	return list;
 }
 
 function updateMatchList() {
