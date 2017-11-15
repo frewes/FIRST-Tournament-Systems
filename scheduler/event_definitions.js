@@ -19,7 +19,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.1.6";
+const SCHEDULER_VERSION = "2.1.7";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -230,7 +230,7 @@ function load(json) {
 		if (evt.allSessions[0].schedule.length == 0) {
 			evt.status = STATUS_EMPTY;
 		} else {
-			if (event.errors == Infinity || event.errors == null) {
+			if (evt.errors == Infinity || evt.errors == null) {
 				evt.status = STATUS_OVERTIME;
 			} else if (evt.errors == 0) {
 				evt.status = STATUS_SUCCESS;
