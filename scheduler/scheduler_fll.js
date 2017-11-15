@@ -412,10 +412,12 @@ function timeInc(event,time,len,s) {
 
 // Checks if two session overlap at all
 function overlaps(a,b) {
-	if (a.start == b.start || a.end == b.end) return true;
-	if (a.start < b.start && a.end > b.start) return true;
-	if (b.start < a.start && b.end > a.start) return true;
-	return false;
+    var actualEndA = a.schedule[a.schedule.length-1].time + a.length;
+    var actualEndB = b.schedule[b.schedule.length-1].time + b.length;
+    if (a.start == b.start || actualEndA == actualEndB) return true;
+    if (a.start < b.start && actualEndA > b.start) return true;
+    if (b.start < a.start && actualEndB > a.start) return true;
+    return false;
 }
 
 /**
