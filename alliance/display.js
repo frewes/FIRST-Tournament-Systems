@@ -8,6 +8,10 @@ const MATCH_QF = {priority:1,n:4,prefix:"QF"};
 const MATCH_SF = {priority:2,n:2,prefix:"SF"};
 const MATCH_F = {priority:3,n:1,prefix:"F"};
 
+const WIN_NONE = 0;
+const WIN_RED = 1;
+const WIN_BLUE = 2;
+
 var tournament;
 
 window.onload = function() {
@@ -93,7 +97,7 @@ function updateSelectionDisplay() {
 function updatePlayoffDisplay() {
     // $("#playofflogo")[0].src = tournament.logo;
     $("#playoff").empty();
-    var table = $("<table class='table playoffTable'>");
+    var table = $("<table class='table playoffTable h-75'>");
     var rows = [];
     for (var i = 0 ; i < 32; i++ ) rows[i] = $("<tr>");
 
@@ -107,26 +111,36 @@ function updatePlayoffDisplay() {
         rows[r].append(matchCell(ros[i],3));
         r+=3;
     }
+    for (var i = 1 ; i < 32; i++ ) rows[i].append($("<td></td>"));
+    for (var i = 1 ; i < 32; i++ ) rows[i].append($("<td></td>"));
+
     var r = 0;
     for (var i = 0; i < qf.length; i++) {
+        for (var j = 0; j < 2; j++) rows[r++].append($("<td>"));
+        rows[r].append(matchCell(qf[i],5));
+        r+=5;
         rows[r++].append($("<td>"));
-        rows[r].append(matchCell(qf[i],7));
-        r+=7;
     }
+    for (var i = 1 ; i < 32; i++ ) rows[i].append($("<td></td>"));
+    for (var i = 1 ; i < 32; i++ ) rows[i].append($("<td></td>"));
     var r = 0;
     for (var i = 0; i < sf.length; i++) {
-        rows[r++].append($("<td>"));
-        rows[r].append(matchCell(sf[i],15));
-        r+=15;
+        for (var j = 0; j < 6; j++) rows[r++].append($("<td>"));
+        rows[r].append(matchCell(sf[i],5));
+        r+=5;
+        for (var j = 0; j < 5; j++) rows[r++].append($("<td>"));
     }
+    for (var i = 1 ; i < 32; i++ ) rows[i].append($("<td></td>"));
+    for (var i = 1 ; i < 32; i++ ) rows[i].append($("<td></td>"));
     var r = 0;
     for (var i = 0; i < f.length; i++) {
-        rows[r++].append($("<td>"));
-        rows[r].append(matchCell(f[i],31));
-        r+=31;
+        for (var j = 0; j < 14; j++) rows[r++].append($("<td>"));
+        rows[r].append(matchCell(f[i],5));
+        r+=5;
+        for (var j = 0; j < 11; j++) rows[r++].append($("<td>"));
     }
 
-    for (var i = 0 ; i < 32; i++ ) table.append($(rows[i]));
+    for (var i = 1 ; i < 32; i++ ) table.append($(rows[i]));
     $("#playoff").append(table);
 }
 
@@ -145,14 +159,24 @@ function matchCell(match,span) {
     var red = match.red;
     var blue = match.blue;
 
-    var cell = $("<td style='vertical-align:middle' rowspan='"+span+"'></td>");
-    if (red != null) cell.append($("<span class='playoffRed'>Alliance " + red.seed + "</span>"));
-    // else cell.append($(""));
-    if (red != null && blue != null) cell.append($("<br>"));
-    if (blue != null) cell.append($("<span class='playoffBlue'>Alliance " + blue.seed + "</span>"));
-    if (red == null && blue == null) cell.append($("<span class='playoffUnfilled'>---</span><br><span class='playoffUnfilled'>---</span>"));
-    // else cell.append($("<td></td>"));
+    var cell = $("<td class='match' style='' rowspan='"+span+"'></td>");
+    if (red == null && blue == null) {
+        cell.append($("<span class='playoffUnfilled'>---</span><br><span class='playoffUnfilled'>---</span>"));
+        return cell;
+    }
 
+    if (red != null) cell.append($("<span class='playoffRed'>Alliance " + red.seed + "</span>"));
+    for (var i = 0; i < match.redWins; i++) cell.append($("<span class='playoffRed'>&nbsp;<img src='../resources/octicons/star'></span>"));
+    // else cell.append($(""));
+    // if (red != null && blue != null || match.bye)
+    cell.append($("<br>"));
+    if (blue != null) cell.append($("<span class='playoffBlue'>Alliance " + blue.seed + "</span>"));
+    else if (match.bye) cell.append("<span>BYE</span>");
+    else cell.append($("<span>---</span>"));
+    for (var i = 0; i < match.blueWins; i++) cell.append($("<span class='playoffBlue'>&nbsp;<img src='../resources/octicons/star'></span>"));
+    // else cell.append($("<td></td>"));
+    if (match.winner == WIN_RED) cell.addClass('winRed');
+    if (match.winner == WIN_BLUE) cell.addClass('winBlue');
     return cell;
 }
 
