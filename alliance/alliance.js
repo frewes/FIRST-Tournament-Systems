@@ -6,7 +6,7 @@ var tournament;
 
 function Event() {
     this.mode = MODE_SETUP;
-    this.version = "0.7.1";
+    this.version = "0.7.2";
     this.teams = new Array(30);
     for (var i = 0; i < this.teams.length; i++) {
         this.teams[i] = new Team((i+1),(i+1),"Team "+(i+1));
@@ -19,7 +19,7 @@ function Event() {
     }
     this.matches = new Array();
     this.title = "FTC National 2017";
-    this.logo = "../resources/firstlogo";
+    this.logo = "../resources/firstlogo.png";
     this.backwards = false;
     console.log(this);
 }
