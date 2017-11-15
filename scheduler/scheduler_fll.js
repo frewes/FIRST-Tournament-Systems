@@ -93,11 +93,14 @@ function buildAllTables(event) {
 		}
 	}
 	var end = -Infinity;
-	var offset = 0;
+    var offset = 0;
+    var locOffset = 0;
 	for (var i = 0; i < event.allSessions.length; i++) {
 		if (event.allSessions[i].type != TYPE_MATCH_ROUND) continue;
 		if (event.allSessions[i].start < end) event.allSessions[i].start = end;
-		end = tableSession(event,event.allSessions[i],offset);
+	    end = tableSession(event,event.allSessions[i],offset,locOffset);
+	    if (event.allSessions[i].schedule[event.allSessions[i].schedule.length-1].loc == 0) locOffset = 1;
+	    else locOffset = 0;
 		offset += event.allSessions[i].schedule.length;
 		if (event.allSessions[i].type != TYPE_BREAK && end > event.allSessions[i].end) {
 			if (willWork) willWork = willWork+", "+event.allSessions[i].name; 
@@ -105,12 +108,15 @@ function buildAllTables(event) {
 		}
 	}
 	var end = -Infinity;
-	var offset = 0;
+    var offset = 0;
+    var locOffset = 0;
 	for (var i = 0; i < event.allSessions.length; i++) {
 		if (event.allSessions[i].type != TYPE_MATCH_ROUND_PRACTICE) continue;
 		if (event.allSessions[i].start < end) event.allSessions[i].start = end;
-		end = tableSession(event,event.allSessions[i],offset);
-		offset += event.allSessions[i].schedule.length;
+	    end = tableSession(event,event.allSessions[i],offset,locOffset);
+	    offset += event.allSessions[i].schedule.length;
+	    if (event.allSessions[i].schedule[event.allSessions[i].schedule.length-1].loc == 0) locOffset = 1;
+	    else locOffset = 0; 
 		if (event.allSessions[i].type != TYPE_BREAK && end > event.allSessions[i].end) {
 			if (willWork) willWork = willWork+", "+event.allSessions[i].name; 
 			else willWork = event.allSessions[i].name;			
@@ -125,8 +131,9 @@ function buildAllTables(event) {
     @return Returns the time the schedule is finished (i.e. the end
     time of the last event)
 */
-function tableSession(event, session, numOffset) {
-	if (!numOffset) numOffset = 0;
+function tableSession(event, session, numOffset, locD) {
+    if (!numOffset) numOffset = 0;
+    if (!locD) locD = 0;
 	var teams = [];
 	for (var i = 0; i < event.teams.length; i++) 
 		if (session.type != TYPE_JUDGING || !event.teams[i].excludeJudging) teams.push(event.teams[i]);
@@ -157,7 +164,7 @@ function tableSession(event, session, numOffset) {
     if (session.type == TYPE_BREAK) everyN = Infinity;
     for (var i = 0; i < L; i++) {
         var d = Math.floor(session.nLocs/session.nSims);
-        var locOffset = (i%d)*session.nSims;
+        var locOffset = ((i+locD)%d)*session.nSims;
         if (i < L-1) { 
 	        session.schedule[i] = new Instance(session.uid,i+1+numOffset,now,new Array(session.nSims),locOffset);
 	        now = timeInc(event,now,session.length+session.buffer,session);
