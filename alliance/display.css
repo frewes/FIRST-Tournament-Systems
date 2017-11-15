@@ -39,3 +39,8 @@ td.team {
 .roundtable td {
     padding-right: 20px;
 }
+
+.playoffTable td {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
