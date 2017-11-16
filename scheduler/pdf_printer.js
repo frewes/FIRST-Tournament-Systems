@@ -34,6 +34,11 @@ function makePDFs(tournament, download) {
         prefix=prompt("File name prefix", tournament.name.replace(/ /g,"-"));
         if (prefix == null) return;
     }
+    for (var i = 0; i < tournament.teams.length; i++) {
+        if (tournament.teams[i].name.length > 12) STYLEDICT.teamEntry.fontSize = 10;
+        if (tournament.teams[i].name.length > 16) STYLEDICT.teamEntry.fontSize = 9;
+        if (tournament.teams[i].name.length > 20) STYLEDICT.teamEntry.fontSize = 8;
+    }
     PDFifySession(tournament,TYPE_JUDGING,download,prefix);
     PDFifySession(tournament,TYPE_MATCH_ROUND,download,prefix);
     PDFifySession(tournament,TYPE_MATCH_ROUND_PRACTICE,download,prefix);
@@ -182,7 +187,7 @@ function sessionPage(doc, session, applyingBreaks) {
             var tId = schedule[i].teams[team];
             var tNum = getTeam(tId).number;
             var tName = getTeam(tId).name;
-            row.push({text:tNum+surrogate+"\n"+tName,alignment:'center'});
+            row.push({text:tNum+surrogate+"\n"+tName,style: 'teamEntry'});
 		}
 		while (diff-- > 0) row.push({});
         t.body.push(row);
@@ -347,7 +352,8 @@ STYLEDICT = {
     tablebody: {fontSize: 8,alignment:'center'},
     extraTime: {alignment: 'center',color: 'red'},
     tablehead: {fontSize: 10,bold: true,alignment:'center'},
-    breakrow: {bold: true,alignment:'center',fillColor: '#eeeeee'}
+    breakrow: {bold: true,alignment:'center',fillColor: '#eeeeee'},
+    teamEntry:{alignment:'center',fontSize:12}
 };
 
 IMAGEDICT = {
