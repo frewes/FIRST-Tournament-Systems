@@ -1,12 +1,14 @@
 const TYPE_JUDGING = new SessionType(16,"Judging", 8);
+const TYPE_INSPECTION = new SessionType(24,"Inspection", 12);
 const TYPE_MATCH_ROUND = new SessionType(32,"Rounds", 16);
 const TYPE_MATCH_ROUND_PRACTICE = new SessionType(33,"Practice Rounds", 128);
 const TYPE_MATCH_FILLER = new SessionType(48,"Matches", 32);
 const TYPE_MATCH_FILLER_PRACTICE = new SessionType(49,"Practice Matches", 129);
 const TYPE_BREAK = new SessionType(64,"Breaks", 0);
-const TYPES = [TYPE_JUDGING, TYPE_MATCH_FILLER, TYPE_BREAK, TYPE_MATCH_ROUND, TYPE_MATCH_ROUND_PRACTICE];
+const TYPES = [TYPE_JUDGING, TYPE_INSPECTION, TYPE_MATCH_FILLER, TYPE_BREAK, TYPE_MATCH_ROUND, TYPE_MATCH_ROUND_PRACTICE];
 
 const EVENT_FLL = 0;
+const EVENT_FTC = 1;
 
 const STATUS_EMPTY = 0;
 const STATUS_OVERTIME = 1;
@@ -30,13 +32,13 @@ function SessionType(uid,name,priority) {
 
 function EventParameters(type,name,nTeams,nDays,minTravel,extraTime) {
 	this.UID_counter = 1;
-	this.type = EVENT_FLL;
+	this.type = type;
 	this.status = STATUS_EMPTY;
 	this.version = SCHEDULER_VERSION;
 	this.startDate = new Date().toDateInputValue();
 	this.teamnum_counter = 1;
 	var year = this.startDate.split("-")[0];
-	this.name = (name)?name:(year+" FLL Tournament");
+	this.name = (name)?name:(year+((type == EVENT_FLL)?" FLL Tournament":" FTC Tournament"));
 	if (!nTeams) var nTeams=24;
 	this.minTravel = (minTravel)?minTravel:10;
 	this.extraTime = (extraTime)?extraTime:5;
@@ -45,6 +47,10 @@ function EventParameters(type,name,nTeams,nDays,minTravel,extraTime) {
 	this.days = [];
 	this.method="random";
 	this.logos = ["../resources/flllogo.jpg","../resources/gamelogo.jpg","../resources/mqlogo.png","../resources/firstlogo.png"];
+	if (this.type == EVENT_FTC) {
+		this.logos[0] = "../resources/ftclogo.jpg";
+		this.logos[1] = "../resources/ftcgamelogo.jpg";
+	}
 	this.errors = Infinity;
 	if (!nDays) var nDays = 1
 	while (this.days.length < nDays) this.days.push("Day " + (this.days.length+1));
@@ -72,9 +78,12 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		var count = 1; 
 		for (var i = 0; i < tournament.allSessions.length; i++) if (tournament.allSessions[i].type == this.type) count++;
 		if (this.type == TYPE_JUDGING) this.name = "Judging " + count;
+		if (this.type == TYPE_INSPECTION) this.name = "Inspection " + count;
 		if (this.type == TYPE_MATCH_ROUND) this.name = "Round " + count;
 		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.name = "Practice Round " + count;
 		if (this.type == TYPE_BREAK) this.name = "Break " + count;
+		if (this.type == TYPE_MATCH_FILLER) this.name = "Qualifying Session " + count;
+		if (this.type == TYPE_MATCH_FILLER_PRACTICE) this.name = "Practice Session " + count;
 	}
 	if (start) this.start = start;
 	else this.start = (this.type==TYPE_BREAK)?(12*60):(10*60);
@@ -85,22 +94,31 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	if (nSims) this.nSims = nSims;
 	else {
 		if (this.type == TYPE_JUDGING) this.nSims = nLocs;
+		if (this.type == TYPE_INSPECTION) this.nSims = nLocs;
 		if (this.type == TYPE_MATCH_ROUND) this.nSims = 2;
 		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.nSims = 2;
+		if (this.type == TYPE_MATCH_FILLER) this.nSims = 4;
+		if (this.type == TYPE_MATCH_FILLER_PRACTICE) this.nSims = 4;
 		if (this.type == TYPE_BREAK) this.nSims = tournament.teams.length;
 	}
 	if (length) this.length = length;
 	else {
 		if (this.type == TYPE_JUDGING) this.length = 10;
+		if (this.type == TYPE_INSPECTION) this.length = 10;
 		if (this.type == TYPE_MATCH_ROUND) this.length = 4;
 		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.length = 4;
+		if (this.type == TYPE_MATCH_FILLER) this.length = 6;
+		if (this.type == TYPE_MATCH_FILLER_PRACTICE) this.length = 6;
 		if (this.type == TYPE_BREAK) this.length = (this.end-this.start);
 	}
 	if (buffer) this.buffer = buffer;
 	else {
 		if (this.type == TYPE_JUDGING) this.buffer = 5;
+		if (this.type == TYPE_INSPECTION) this.buffer = 5;
 		if (this.type == TYPE_MATCH_ROUND) this.buffer = 4;
 		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.buffer = 4;
+		if (this.type == TYPE_MATCH_FILLER) this.buffer = 4;
+		if (this.type == TYPE_MATCH_FILLER_PRACTICE) this.buffer = 4;
 		if (this.type == TYPE_BREAK) this.buffer = 0;
 	}
 	this.locations = locs || [];
@@ -111,8 +129,9 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	this.extraTimeFirst = false; // Should the first round be a little longer?
 	this.extraTimeEvery = null; // Extra time every N rounds
 	if (this.type == TYPE_MATCH_ROUND) this.fillerPolicy = USE_SURROGATES;
-	if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.fillerPolicy = USE_SURROGATES;
+	else if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.fillerPolicy = USE_SURROGATES;
 	else if (this.type == TYPE_MATCH_FILLER) this.fillerPolicy = USE_SURROGATES;
+	else if (this.type == TYPE_MATCH_FILLER_PRACTICE) this.fillerPolicy = USE_SURROGATES;
 	else this.fillerPolicy = LEAVE_BLANKS; // How to fill in empty spots in non-round-number instances.
 	this.appliesTo = []; // Which sessions a break applies to
 
@@ -141,6 +160,12 @@ function loadPresetFLL() {
 	addJudging("Research Project Judging",600,1020,3,3,10,5);
 	addBreak("Lunch");
 	toggleAdvMode();
+}
+
+function loadPresetFTC() {
+	addInspection("Robot Inspection",540,720,2,2,10,5);
+	addJudging("Judging",540,720,3,3,10,5);
+	addMatchFiller("Matches",720,990,4,4,6,4);
 }
 
 function deleteParams(id) {

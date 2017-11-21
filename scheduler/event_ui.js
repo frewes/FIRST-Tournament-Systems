@@ -22,9 +22,15 @@ function EventPanel(params) {
 		this.allPanels.push(p);
 		if (p.session.type == TYPE_JUDGING)
 			p.docObj.insertBefore("#addJudgeBtn");
+		else if (p.session.type == TYPE_INSPECTION)
+			p.docObj.insertBefore("#addInspectionBtn");
 		else if (p.session.type == TYPE_MATCH_ROUND)
 			p.docObj.insertBefore("#addRoundBtn");
 		else if (p.session.type == TYPE_MATCH_ROUND_PRACTICE)
+			p.docObj.insertBefore("#addPracticeBtn");
+		else if (p.session.type == TYPE_MATCH_FILLER)
+			p.docObj.insertBefore("#addMatchBtn");
+		else if (p.session.type == TYPE_MATCH_FILLER_PRACTICE)
 			p.docObj.insertBefore("#addPracticeBtn");
 		else if (p.session.type == TYPE_BREAK)
 			p.docObj.insertBefore("#addBreakBtn");
@@ -120,8 +126,12 @@ function generate() {
 }
 
 function autosave() {
+	// console.log("Autosaved!");
 	var json = save();
-	localStorage.setItem("schedule", json);
+	var name = "schedule"
+	if (tournament.type == EVENT_FLL) name = "fll-"+name;
+	else if (tournament.type == EVENT_FTC) name = "ftc-"+name;
+	localStorage.setItem(name, json);
 }
 
 function loadFile(content) {
@@ -249,8 +259,8 @@ function SessionPanel(session) {
 		$("div", x).append(this.simInput);
 		this.docObj.append(x);
 	}
-	if (this.session.type == TYPE_MATCH_FILLER) {
-		var x = $("<tr><td>Instances per team:</td><td><div></div></td></tr>");
+	if (this.session.type == TYPE_MATCH_FILLER || this.session.type == TYPE_MATCH_FILLER_PRACTICE) {
+		var x = $("<tr><td>Matches per team:</td><td><div></div></td></tr>");
 		$("div", x).append(this.instanceInput);
 		this.docObj.append(x);
 	}
@@ -260,6 +270,10 @@ function SessionPanel(session) {
 		var x = $("<tr><td># tables:</td><td><div></div></td></tr>");
 	else if (this.session.type == TYPE_MATCH_ROUND_PRACTICE)
 		var x = $("<tr><td># tables:</td><td><div></div></td></tr>");
+	else if (this.session.type == TYPE_MATCH_FILLER)
+		var x = $("<tr><td># fields:</td><td><div></div></td></tr>");
+	else if (this.session.type == TYPE_MATCH_FILLER_PRACTICE)
+		var x = $("<tr><td># fields:</td><td><div></div></td></tr>");
 	else if (this.session.type == TYPE_BREAK)
 		var x = null;
 	else 
@@ -337,10 +351,14 @@ function SessionPanel(session) {
 		while (this.session.locations.length < this.session.nLocs) {
 			if (this.session.type == TYPE_JUDGING)
 				this.session.locations.push("Room "+ (this.session.locations.length+1));
-			else if (this.session.type == TYPE_MATCH_ROUND)
-				this.session.locations.push("Table "+ (this.session.locations.length+1));				
-			else if (this.session.type == TYPE_MATCH_ROUND_PRACTICE)
-				this.session.locations.push("Table "+ (this.session.locations.length+1));				
+			else if (this.session.type == TYPE_MATCH_ROUND || this.session.type == TYPE_MATCH_ROUND_PRACTICE)
+				this.session.locations.push("Table "+ (this.session.locations.length+1));
+			else if (this.session.type == TYPE_MATCH_FILLER || this.session.type == TYPE_MATCH_FILLER_PRACTICE) {
+				var field = (this.session.nLocs > 4)?"Field " + (Math.floor(this.session.locations.length/4)+1):"";
+				var col = (this.session.locations.length%4 > 1)?"Blue ":"Red "; 
+				this.session.locations.push(field+ " " + col + " "+ ((this.session.locations.length%2)+1));
+			} else if (this.session.type == TYPE_INSPECTION)
+				this.session.locations.push("Inspector "+ (this.session.locations.length+1));
 			else this.session.locations.push("All areas");
 		}
 		while (this.session.locations.length > this.session.nLocs) {
@@ -387,6 +405,15 @@ function addJudging(name,start,end,nSims,nLocs,length,buffer,locs) {
 	toggleAdvMode();
 }
 
+function addInspection(name,start,end,nSims,nLocs,length,buffer,locs) {
+	var s = new SessionParameters(TYPE_INSPECTION,name,start,end,nSims,nLocs,length,buffer,locs);
+	tourn_ui.params.allSessions.push(s);
+	var p = new SessionPanel(s);
+	tourn_ui.allPanels.push(p);
+	p.docObj.insertBefore("#addInspectionBtn")
+	toggleAdvMode();
+}
+
 function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
 	var s = new SessionParameters(TYPE_MATCH_ROUND,name,start,end,nSims,nLocs,length,buffer,locs);
@@ -400,6 +427,25 @@ function addRound(name,start,end,nSims,nLocs,length,buffer,locs) {
 function addPractice(name,start,end,nSims,nLocs,length,buffer,locs) {
 	// alert("Hello");
 	var s = new SessionParameters(TYPE_MATCH_ROUND_PRACTICE,name,start,end,nSims,nLocs,length,buffer,locs);
+	tourn_ui.params.allSessions.push(s);
+	var p = new SessionPanel(s);
+	tourn_ui.allPanels.push(p);
+	p.docObj.insertBefore("#addPracticeBtn")
+	toggleAdvMode();
+}
+
+function addMatchFiller(name,start,end,nSims,nLocs,length,buffer,locs) {
+	var s = new SessionParameters(TYPE_MATCH_FILLER,name,start,end,nSims,nLocs,length,buffer,locs);
+	tourn_ui.params.allSessions.push(s);
+	var p = new SessionPanel(s);
+	tourn_ui.allPanels.push(p);
+	p.docObj.insertBefore("#addMatchBtn")
+	toggleAdvMode();
+}
+
+function addPracticeFiller(name,start,end,nSims,nLocs,length,buffer,locs) {
+	// alert("Hello");
+	var s = new SessionParameters(TYPE_MATCH_FILLER_PRACTICE,name,start,end,nSims,nLocs,length,buffer,locs);
 	tourn_ui.params.allSessions.push(s);
 	var p = new SessionPanel(s);
 	tourn_ui.allPanels.push(p);
