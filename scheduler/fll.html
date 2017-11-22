@@ -233,11 +233,14 @@
     else console.log("Local storage not supported, autosave will not work....");
 
     // Legacy
-    if (localStorage.getItem("fll-schedule"))
+    if (localStorage.getItem("fll-schedule")) {
+      console.log("Loaded FLL-SCHEDULE");
       var storage = localStorage.getItem("fll-schedule");
-    else if (localStorage.getItem("schedule"))
+    }
+    else if (localStorage.getItem("schedule")) {
+      console.log("Loaded SCHEDULE");
       var storage = localStorage.getItem("schedule");
-
+    }
 
     if (storage && confirm("Looks like you have a previous schedule!  Load this one rather than a default?")) {
         var tournament = load(storage);

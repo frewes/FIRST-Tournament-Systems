@@ -89,9 +89,9 @@ function generateTable(session) {
 }
 
 function generateIndivTable(event) {
-	var result = $("<div class=\"container-fluid indiv\">");
+	var result = $("<div class=\"container-fluid indiv table-responsive\">");
 	result.append($("<h4>Individual Schedules</h4>"));
-	var table = $("<table class=\"table resultTable table-responsive\">");
+	var table = $("<table class=\"table resultTable \">");
 	var header = "<thead><tr><th colspan=2>Team</th>";
 	event.teams.sort(function(a,b) {
 		return a.uid - b.uid;
