@@ -206,13 +206,14 @@ function initialFill(event) {
 	shuffle(oneSetOfTeams);
 	for (var i = 0; i < event.allSessions.length; i++) {
 		var teams = [];
-		for (var j = 0; j < event.allSessions[i].instances; j++) 
+		for (var j = 0; j < event.allSessions[i].instances; j++) {
+	        if (event.method == "block") {
+	            for (var j = 0; j < event.allSessions[i].nSims*2; j++)
+	                oneSetOfTeams.push(oneSetOfTeams.shift());
+	        } else shuffle(oneSetOfTeams);
 			for (var k = 0; k < oneSetOfTeams.length; k++) 
 				if (event.allSessions[i].type != TYPE_JUDGING || !oneSetOfTeams[k].excludeJudging) teams.push(oneSetOfTeams[k]);
-        if (event.method == "block") {
-            for (var j = 0; j < event.allSessions[i].nSims*2; j++)
-                teams.push(teams.shift());
-        } else shuffle(teams);
+		}
 		fillSession(event,event.allSessions[i],teams);
 	}
 }
