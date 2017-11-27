@@ -330,7 +330,7 @@ function SessionPanel(session) {
 		this.locsInput[0].value = this.session.nLocs;
 		this.simInput[0].value = this.session.nSims;
 		this.instanceInput[0].value = this.session.instances;
-		this.firstExtraInput[0].checked = this.session.extraTimeFirst;
+		this.firstExtraInput[0].children[0].checked = this.session.extraTimeFirst;
 		this.nExtraInput[0].value = this.session.extraTimeEvery;
 		this.policyInput[0].value = this.session.fillerPolicy;
 		autosave();
@@ -364,7 +364,7 @@ function SessionPanel(session) {
 		while (this.session.locations.length > this.session.nLocs) {
 			this.session.locations.splice(this.session.locations.length-1,1);
 		}
-		this.session.extraTimeFirst = this.firstExtraInput[0].checked;
+		this.session.extraTimeFirst = this.firstExtraInput[0].children[0].checked;
 		this.session.extraTimeEvery = parseInt(this.nExtraInput[0].value);
 		this.session.fillerPolicy = this.policyInput[0].value;
 		autosave();

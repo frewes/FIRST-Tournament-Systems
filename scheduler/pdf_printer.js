@@ -104,17 +104,12 @@ function PDFifySession(event, type, download,prefix) {
     var doc = new PdfDoc(event);
     for (var i = 0; i < event.allSessions.length; i++) {
         if (event.allSessions[i].type != type) continue;
-        var applyingBreaks = [];
-        for (var j = 0; j < event.allSessions.length; j++) {
-            if (event.allSessions[j].type == TYPE_BREAK && applies(event.allSessions[j],event.allSessions[i]))
-                if (overlaps(event.allSessions[j],event.allSessions[i])) applyingBreaks.push(event.allSessions[j]);
-        }
         try {
             if (event.allSessions[i].nLocs > 4) {
                 doc.pageOrientation='landscape';
                 doc.background = landscapeBackground;
             }
-            sessionPage(doc, event.allSessions[i],applyingBreaks);
+            sessionPage(doc, event.allSessions[i],genSessionTable(event, event.allSessions[i]));
         } catch (err) {
             alert("Error: " + err.message);
         }
@@ -130,72 +125,43 @@ function PDFifySession(event, type, download,prefix) {
     }
 }
 
-function sessionPage(doc, session, applyingBreaks) {
+function sessionPage(doc, session, data) {
 	// headers are automatically repeated if the table spans over multiple pages
 	// you can declare how many rows should be treated as headers
     var t = {headerRows: 1,dontBreakRows: true};
     t.widths = new Array(session.nLocs+2);
     var w = 515/(session.nLocs+2);
-    for (var i = 0; i < session.nLocs+2; i++) {
-        t.widths[i] = (i<2) ? 'auto':'*';
-    }
+    for (var i = 0; i < session.nLocs+2; i++) t.widths[i] = (i<2) ? 'auto':'*';
     t.widths[0] = w;
-    t.body = new Array(1);
+    t.body = [];
     //Header row
-    t.body[0] = new Array(2);
-    t.body[0][0] = {text:"#",alignment:'center'};
-    t.body[0][1] = {text:"Time",alignment:'center'};
-    for (var i = 0; i < session.nLocs; i++) {
-    	var loc = session.locations[i];
-        t.body[0][i+2] = {text:loc,alignment:'center'};
-    }
-    var schedule = session.schedule.slice();
-    for (var i = 0; i < applyingBreaks.length; i++) {
-        schedule.push(new Instance(applyingBreaks[i].uid,"",applyingBreaks[i].start,null));
-    }
-    schedule.sort(function(a,b) {
-        return a.time - b.time;
-    });
+    var header = [];
+    for (var i = 0; i < data[0].length; i++) header.push({text:data[0][i],alignment:'center'});
+    t.body.push(header);
+
     // All individual rows
-	for (var i = 0; i < schedule.length; i++) {
-		var instance = schedule[i];
+	for (var i = 1; i < data.length; i++) {
 		var row = [];
-		if (instance.extra) {
-			row.push({text:instance.num+"",style:'extraTime'});
-			row.push({text:minsToDT(instance.time,"\n")+"",style:'extraTime'});
-		} else {
-			row.push({text:instance.num+"",alignment:'center'});
-			row.push({text:minsToDT(instance.time,"\n")+"",alignment:'center'});
-		}
-        if (getSession(schedule[i].session_uid).type == TYPE_BREAK) {
-            row.push({colSpan:session.nLocs,style:'breakrow',text:""+getSession(schedule[i].session_uid).name});
+        row.push({text:data[i][0],alignment:'center'});
+        row.push({text:data[i][1],alignment:'center'});
+        if (data[i][2].startsWith("colSpan")) {
+            cols = data[i][2].split(' ')[1];
+            row.push({colSpan:cols,style:'breakrow',text:""+data[i][2].split(' ')[2]});
             t.body.push(row);
             continue;
         }
-
         var diff = session.nLocs;
-        for (var dummy = 0; dummy < instance.loc; dummy++) {
-        	diff--;
-            row.push({});
+        for (var j = 2; j < data[i].length; j++) {
+            if (data[i][j] == "") row.push({}); 
+            else row.push({text:data[i][j],style: 'teamEntry'});
         }
-		for (var team = 0; team < instance.teams.length; team++) {
-			diff--;
-			var deets="event,"+session.uid+","+i+","+team;
-			var surrogate = "";
-			if ((instance.teams.length - team) <= instance.surrogates) surrogate = "*";
-			if ((instance.teams.length - team) <= instance.surrogates) usesSurrogates = true;
-            var tId = schedule[i].teams[team];
-            var tNum = getTeam(tId).number;
-            var tName = getTeam(tId).name;
-            row.push({text:tNum+surrogate+"\n"+tName,style: 'teamEntry'});
-		}
-		while (diff-- > 0) row.push({});
         t.body.push(row);
     }
+    console.log(t);
     doc.content.push({text: session.name + " Schedule", style:'header2',margin:[0,10]});
     doc.content.push({table: t,layout: 'lightHorizontalLines'});
     if (usesSurrogates && session.fillerPolicy == USE_SURROGATES)
-    	    doc.content.push({text:"\n* Surrogate team; results not counted",alignment:'center'});
+	    doc.content.push({text:"\n* Surrogate team; results not counted",alignment:'center'});
 
     doc.content.push({text: " ", pageBreak:'after'});
     return doc;

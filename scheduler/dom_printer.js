@@ -42,45 +42,34 @@ function printToDom(event) {
 }
 
 function generateTable(session) {
+	var data = genSessionTable(tournament, session);
 	var result = $("<div class=\"session\">");
 	result.append($("<h4>"+session.name+"</h4>"));
 	var table = $("<table class=\"table resultTable table-responsive\">");
-	var header = "<thead><tr><th>#</th><th>Time</th>";
-	for (var i = 0; i < session.locations.length; i++)
-		header += "<th>"+session.locations[i]+"</th>";
+	var header = "<thead><tr>";
+	for (var i = 0; i < data[0].length; i++) header += "<th>"+data[0][i]+"</th>";
 	header += "</tr></thead>";
 	table.append($(header));
-
 	var tbody = $("<tbody>");
-	for (var i = 0; i < session.schedule.length; i++) {
-		var instance = session.schedule[i];
+	for (var i = 1; i < data.length; i++) {
 		var row = $("<tr>");
-		if (instance.extra) {
-			row.append("<td class=\"extra-time\">"+instance.num+"</td>");
-			row.append("<td class=\"extra-time\">"+minsToDT(instance.time)+"</td>");
-		} else {
-			row.append("<td>"+instance.num+"</td>");
-			row.append("<td>"+minsToDT(instance.time)+"</td>");
+		row.append($("<td>"+data[i][0]+"</td>"));
+		row.append($("<td>"+data[i][1]+"</td>"));
+		if (data[i][2].startsWith("colSpan")) {
+			cols = data[i][2].split(' ')[1];
+			row.append($("<td colspan='"+cols+"' class='breakrow'>"+data[i][2].split(' ')[2]+"</td>"));
+			tbody.append(row);
+			continue;
 		}
-
-        var diff = session.nLocs;
-        for (var dummy = 0; dummy < instance.loc; dummy++) {
-        	diff--;
-            row.append($("<td>"));
-        }
-
-		for (var t = 0; t < instance.teams.length; t++) {
-			diff--;
-			var deets="event,"+session.uid+","+i+","+t;
-			var surrogate = "";
-			if ((instance.teams.length - t) <= instance.surrogates) surrogate = "*";
-			if ((instance.teams.length - t) <= instance.surrogates) usesSurrogates = true;
-			if (instance.teams[t] == NOT_YET_ADDED)
-				row.append($("<td class=\"table-team unfilled\" ondrop=\"drop("+deets+")\" ondragstart=\"drag("+deets+")\" ondragover=\"allowDrop("+deets+")\">--"+surrogate+"</td>"));
-			else 
-				row.append($("<td class=\"table-team\" ondrop=\"drop("+deets+")\" ondragover=\"allowDrop("+deets+")\" ondragstart=\"drag("+deets+")\">"+getTeam(instance.teams[t]).number+surrogate+"</td>"));
+		var team = 0;
+		for (var j = 2; j < data[i].length; j++) {
+			if (data[i][j] == "") row.append($("<td>")); 
+			else {
+				var deets="event,"+session.uid+","+(i-1)+","+(team++);
+				var cell = "<td class='table-team' ondrop='drop("+deets+")' ondragover='allowDrop("+deets+")' ondragstart='drag("+deets+")'>";
+				row.append($(cell+data[i][j].split("\n")[0]+"</td>"));
+			}
 		}
-		while (diff-- > 0) row.append($("<td>"));
 		tbody.append(row);
 	}
 	table.append(tbody);

@@ -21,7 +21,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.2.1";
+const SCHEDULER_VERSION = "2.2.2";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -305,4 +305,58 @@ function minTravelTime(team) {
 		}
 	}
 	return time;
+}
+
+function genSessionTable(event, session) {
+	var table = [];
+    var applyingBreaks = [];
+    for (var j = 0; j < event.allSessions.length; j++) {
+        if (event.allSessions[j].type == TYPE_BREAK && applies(event.allSessions[j],session))
+            if (overlaps(event.allSessions[j],session)) applyingBreaks.push(event.allSessions[j]);
+    }
+    var schedule = session.schedule.slice();
+    for (var i = 0; i < applyingBreaks.length; i++) {
+        schedule.push(new Instance(applyingBreaks[i].uid,"",applyingBreaks[i].start,null));
+    }
+    schedule.sort(function(a,b) {
+        return a.time - b.time;
+    });
+	// Header
+	var header = ["#", "Time"];
+	for (var i = 0; i < session.locations.length; i++)
+		header.push(session.locations[i]);
+	table.push(header);
+	// Body
+	for (var i = 0; i < schedule.length; i++) {
+		var instance = schedule[i];
+		var row = [];
+		row.push(instance.num+"");
+		if (instance.extra)
+			row.push(minsToDT(instance.time)+"+");
+		else
+			row.push(minsToDT(instance.time)+"");
+        if (getSession(schedule[i].session_uid).type == TYPE_BREAK) {
+            row.push("colSpan "+session.nLocs+" "+getSession(schedule[i].session_uid).name);
+            table.push(row);
+            continue;
+        }
+        var diff = session.nLocs;
+        for (var dummy = 0; dummy < instance.loc; dummy++) {
+        	diff--;
+            row.push("");
+        }		
+		for (var t = 0; t < instance.teams.length; t++) {
+			diff--;
+			var surrogate = "";
+			if ((instance.teams.length - t) <= instance.surrogates) surrogate = "*";
+			if ((instance.teams.length - t) <= instance.surrogates) usesSurrogates = true;
+			if (instance.teams[t] == NOT_YET_ADDED)
+				row.push("--"+surrogate+"");
+			else 
+				row.push(getTeam(instance.teams[t]).number+surrogate+"\n"+getTeam(instance.teams[t]).name);
+		}
+		while (diff-- > 0) row.push("");
+		table.push(row);
+	}
+	return table;
 }
