@@ -21,7 +21,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.2.5";
+const SCHEDULER_VERSION = "2.2.6";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -93,8 +93,8 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	else this.nLocs = (this.type==TYPE_BREAK)?1:4;
 	if (nSims) this.nSims = nSims;
 	else {
-		if (this.type == TYPE_JUDGING) this.nSims = nLocs;
-		if (this.type == TYPE_INSPECTION) this.nSims = nLocs;
+		if (this.type == TYPE_JUDGING) this.nSims = this.nLocs;
+		if (this.type == TYPE_INSPECTION) this.nSims = this.nLocs;
 		if (this.type == TYPE_MATCH_ROUND) this.nSims = 2;
 		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.nSims = 2;
 		if (this.type == TYPE_MATCH_FILLER) this.nSims = 4;
@@ -106,7 +106,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 		if (this.type == TYPE_JUDGING) this.length = 10;
 		if (this.type == TYPE_INSPECTION) this.length = 10;
 		if (this.type == TYPE_MATCH_ROUND) this.length = 4;
-		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.length = 4;
+		if (this.type == TYPE_MATCH_ROUND_PRACTICE) this.length = 4;	
 		if (this.type == TYPE_MATCH_FILLER) this.length = 6;
 		if (this.type == TYPE_MATCH_FILLER_PRACTICE) this.length = 6;
 		if (this.type == TYPE_BREAK) this.length = (this.end-this.start);
