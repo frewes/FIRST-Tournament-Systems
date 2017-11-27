@@ -144,9 +144,9 @@ function sessionPage(doc, session, data) {
 		var row = [];
         row.push({text:data[i][0],alignment:'center'});
         row.push({text:data[i][1],alignment:'center'});
-        if (data[i][2].startsWith("colSpan")) {
-            cols = data[i][2].split(' ')[1];
-            row.push({colSpan:cols,style:'breakrow',text:""+data[i][2].split(' ')[2]});
+        if (data[i][2].startsWith("colspan")) {
+            cols = data[i][2].split('::')[1];
+            row.push({colSpan:cols,style:'breakrow',text:""+data[i][2].split('::')[2]});
             t.body.push(row);
             continue;
         }
@@ -160,7 +160,7 @@ function sessionPage(doc, session, data) {
     console.log(t);
     doc.content.push({text: session.name + " Schedule", style:'header2',margin:[0,10]});
     doc.content.push({table: t,layout: 'lightHorizontalLines'});
-    if (usesSurrogates && session.fillerPolicy == USE_SURROGATES)
+    if (session.usesSurrogates && session.fillerPolicy == USE_SURROGATES)
 	    doc.content.push({text:"\n* Surrogate team; results not counted",alignment:'center'});
 
     doc.content.push({text: " ", pageBreak:'after'});
@@ -172,87 +172,29 @@ function PDFifyAllTeams(event,download,prefix) {
 	doc.pageOrientation='landscape';
     doc.background = landscapeBackground;
     doc.content.push({text: "All Team Schedule", style:'header2',margin:[0,10]});
-    var N = 0;
-    for (var i = 0; i < event.allSessions.length; i++){
-    	if (event.allSessions[i].type != TYPE_BREAK) N++;
-    }
-    N = (N+1)*2+1;
-    if (usesSurrogates) N += 2;
+    var data = genIndivTable(tournament, true);
+    var N = data[3].length;
     var t = {headerRows: 2,dontBreakRows: true,keepWithHeaderRows: 1};
-    t.widths = new Array(N);
+    t.widths = [];
     var w = 600/N;
     for (var i = 0; i < N; i++) {
         t.widths[i] = 'auto';
     }
-    t.body = new Array(2);
-    t.body[0] = [];
-    t.body[0].push({text: "Team",colSpan:2,style:'tablehead'});
-    t.body[0].push({});
-	for (var i = 0; i < event.allSessions.length; i++) { 
-		if (event.allSessions[i].type == TYPE_BREAK) continue;
-        var col = (i%2 == 1) ? 'blue' : 'black';
-		t.body[0].push({text: event.allSessions[i].name,colSpan:2,style:'tablehead',color:col});
-        // t.body[0].push({});
-        t.body[0].push({});
+    t.body = [];
+    for (var k = 0; k < data.length; k++) {
+        t.body[k] = [];
+        curStyle = (k<2)?"tablehead":"tablebody";
+        var col = "blue"
+        for (var i = 0; i < data[k].length; i++) {
+            // Hack way to calculate alternating colours.  TODO: Fix
+            var col = (i%4 > 1) ? 'blue' : 'black';
+            if (k == 0) col = (i%2 == 1) ? 'blue' : 'black';
+            if (data[k][i].startsWith("colspan")) {
+                t.body[k].push({colSpan:data[k][i].split("::")[1], text:data[k][i].split("::")[2],color:col,style:curStyle});
+                for (var dummy = 1; dummy < data[k][i].split("::")[1]; dummy++) t.body[k].push({});
+            } else t.body[k].push({text:data[k][i]+"",color:col,style:curStyle});
+        }
     }
-    t.body[0].push({text: " "});
-    t.body[1] = [];
-    t.body[1].push({text: "#",style:'tablehead'});
-    t.body[1].push({text: "Name",style:'tablehead'});
-	if (usesSurrogates) {
-		t.body[0].push({text: "Surrogate",colSpan:2,style:'tablehead',color:col});
-        // t.body[0].push({});
-        t.body[0].push({});
-	}
-	for (var i = 0; i < event.allSessions.length; i++) { 
-		if (event.allSessions[i].type == TYPE_BREAK) continue;
-        var col = (i%2 == 1) ? 'blue' : 'black';
-        // t.body[1].push({text: "#",style:'tablehead', color:col});
-        t.body[1].push({text: "Time",style:'tablehead', color:col});
-        t.body[1].push({text: "Loc",style:'tablehead', color:col});
-    }
-    t.body[1].push({text: "Min travel time",style:'tablehead'});
-	if (usesSurrogates) {
-	    // t.body[1].push({text: "#",style:'tablehead'});
-	    t.body[1].push({text: "Time",style:'tablehead'});
-	    t.body[1].push({text: "Loc",style:'tablehead'});
-	}
-
-	for (var i = 0; i < event.teams.length; i++) {
-		var row = new Array();
-		var team = event.teams[i];
-		row.push({text: team.number+"", style:'tablebody'});
-		row.push({text: team.name+"", style:'tablebody'});
-		for (var j = 0; j < team.schedule.length; j++) {
-            var col = (j%2 == 1) ? 'blue' : 'black';
-			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
-			if (team.schedule[j].teams && (team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
-            if (!team.schedule[j].teams) {
-                // row.push({text:""});
-                row.push({text:""});
-                row.push({text:""});
-            } else {
-               	// row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
-               	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
-               	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]+"", style:'tablebody', color:col});
-            }
-		}
-		row.push({text: minTravelTime(team)+"", style:'tablebody', color:col});
-		for (var j = 0; j < team.schedule.length; j++) {
-            var col = (j%2 == 1) ? 'blue' : 'black';
-            if (!team.schedule[j].teams) continue;
-			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
-           	// row.push({text: team.schedule[j].num+"", style:'tablebody', color:col});
-           	row.push({text: minsToDT(team.schedule[j].time,"\n")+"", style:'tablebody', color:col});
-           	row.push({text: getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]+"", style:'tablebody', color:col});
-		}
-		if (usesSurrogates && !team.isSurrogate) {
-			// row.push({});
-			row.push({});
-			row.push({});
-		}
-		t.body.push(row);
-	}
 	doc.content.push({table: t, layout: 'lightHorizontalLines'});
     console.log(doc);
     if (download) pdfMake.createPdf(doc).download((prefix+"-individual-schedule.pdf").replace(/ /g, '-'));

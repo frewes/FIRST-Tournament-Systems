@@ -21,7 +21,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.2.2";
+const SCHEDULER_VERSION = "2.2.3";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -134,7 +134,7 @@ function SessionParameters(type,name,start,end,nSims,nLocs,length,buffer,locs) {
 	else if (this.type == TYPE_MATCH_FILLER_PRACTICE) this.fillerPolicy = USE_SURROGATES;
 	else this.fillerPolicy = LEAVE_BLANKS; // How to fill in empty spots in non-round-number instances.
 	this.appliesTo = []; // Which sessions a break applies to
-
+	this.usesSurrogates = false;
 }
 
 function TeamParameters(number,name) {
@@ -264,6 +264,20 @@ function load(json) {
 			}
 		}
 	}
+	if (cmpVersions(""+evt.version, "2.2.3")) {
+		for (var k = 0; k < evt.allSessions.length; k++)  {
+			evt.allSessions[k].usesSurrogates = false;
+			var schedule = evt.allSessions[k].schedule;	
+			for (var i = 0; i < schedule.length; i++) {
+				var instance = schedule[i];
+				if (instance.teams == null) continue;
+				for (var t = 0; t < instance.teams.length; t++) {
+					if ((instance.teams.length - t) <= instance.surrogates) evt.allSessions[k].usesSurrogates = true;
+				}
+			}
+		}
+
+	}
 
 	evt.version = SCHEDULER_VERSION;
 	// Convert types to literal TYPE objects for later comparisons
@@ -336,7 +350,7 @@ function genSessionTable(event, session) {
 		else
 			row.push(minsToDT(instance.time)+"");
         if (getSession(schedule[i].session_uid).type == TYPE_BREAK) {
-            row.push("colSpan "+session.nLocs+" "+getSession(schedule[i].session_uid).name);
+            row.push("colspan::"+session.nLocs+"::"+getSession(schedule[i].session_uid).name);
             table.push(row);
             continue;
         }
@@ -349,13 +363,85 @@ function genSessionTable(event, session) {
 			diff--;
 			var surrogate = "";
 			if ((instance.teams.length - t) <= instance.surrogates) surrogate = "*";
-			if ((instance.teams.length - t) <= instance.surrogates) usesSurrogates = true;
 			if (instance.teams[t] == NOT_YET_ADDED)
 				row.push("--"+surrogate+"");
 			else 
 				row.push(getTeam(instance.teams[t]).number+surrogate+"\n"+getTeam(instance.teams[t]).name);
 		}
 		while (diff-- > 0) row.push("");
+		table.push(row);
+	}
+	return table;
+}
+
+function genIndivTable(event, compact) {	
+	event.teams.sort(function(a,b) {
+		return a.uid - b.uid;
+	});
+	var table = [];
+	var usesSurrogates = false;
+	for (var k = 0; k < event.allSessions.length; k++)
+		if (event.allSessions[k].usesSurrogates) usesSurrogates = true;
+
+	table[0] = ["colspan::2::Team"];
+	for (var i = 0; i < event.allSessions.length; i++) { 
+		if (event.allSessions[i].type == TYPE_BREAK) continue;
+		table[0].push("colspan::"+(compact?2:3)+"::"+event.allSessions[i].name);
+	}
+	table[0].push("Min. Travel time");
+	if (usesSurrogates) table[0].push("colspan::"+(compact?2:3)+"::Surrogate");
+	table[1] = ["#", "Name"];
+	for (var i = 0; i < event.allSessions.length; i++) { 
+		if (event.allSessions[i].type == TYPE_BREAK) continue;
+		if (!compact) table[1].push("#");
+		table[1].push("Time");
+		table[1].push("Loc");
+	}
+	table[1].push("");
+	if (usesSurrogates) {
+		if (!compact) table[1].push("#");
+		table[1].push("Time");
+		table[1].push("Loc");
+	}
+	for (var i = 0; i < event.teams.length; i++) {
+		var row = [];
+		var team = event.teams[i];
+		row.push(""+team.number);
+		row.push(""+team.name);
+		for (var j = 0; j < team.schedule.length; j++) {
+			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
+			if (team.schedule[j].teams && (team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
+			if (!team.schedule[j].teams) {
+				row.push(""); row.push(""); row.push("");
+			} else {
+				if (!compact) row.push(""+team.schedule[j].num);
+				row.push(""+minsToDT(team.schedule[j].time));
+				if (team.schedule[j].loc == -1)
+					row.push("--");
+				else
+					row.push(""+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]);
+			}
+		}
+		row.push(""+minTravelTime(team));
+		var hadASurrogate = false;
+		for (var j = 0; j < team.schedule.length; j++) {
+			if (!team.schedule[j].teams) continue;
+			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue;
+			else {
+				hadASurrogate = true;
+				if (!compact) row.push(""+team.schedule[j].num);
+				row.push(""+minsToDT(team.schedule[j].time));
+				if (team.schedule[j].loc == -1)
+					row.push("--");
+				else
+					row.push(""+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]);
+			}
+		}
+		if (!hadASurrogate && usesSurrogates) {
+			if (!compact) row.push("");
+			row.push("");
+			row.push("");
+		}
 		table.push(row);
 	}
 	return table;

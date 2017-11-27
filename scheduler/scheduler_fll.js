@@ -50,7 +50,10 @@ function schedule(event) {
 function emptySchedule(event) {
 	event.status = STATUS_EMPTY;
 	event.errors = Infinity;
-	for (var i = 0; i < event.allSessions.length; i++) event.allSessions[i].schedule = [];
+	for (var i = 0; i < event.allSessions.length; i++) {
+		event.allSessions[i].schedule = [];
+		event.allSessions[i].usesSurrogates = false;
+	}
 	for (var i = 0; i < event.teams.length; i++) {
 		event.teams[i].schedule = [];
 		event.teams[i].isSurrogate = false;
@@ -381,6 +384,7 @@ function sortThingsOut(event) {
 		var lastInst = session.schedule[session.schedule.length-1];
 		while (lastInst.teams.length < session.nSims) {
 			lastInst.surrogates++;
+			session.usesSurrogates = true;
 			var found = false;
 			shuffle(event.teams);
 			for (var t = 0; t < event.teams.length; t++) {

@@ -1,4 +1,3 @@
-var usesSurrogates = false;
 
 var colClass = "col-md-4";
 
@@ -55,9 +54,9 @@ function generateTable(session) {
 		var row = $("<tr>");
 		row.append($("<td>"+data[i][0]+"</td>"));
 		row.append($("<td>"+data[i][1]+"</td>"));
-		if (data[i][2].startsWith("colSpan")) {
-			cols = data[i][2].split(' ')[1];
-			row.append($("<td colspan='"+cols+"' class='breakrow'>"+data[i][2].split(' ')[2]+"</td>"));
+		if (data[i][2].startsWith("colspan")) {
+			cols = data[i][2].split('::')[1];
+			row.append($("<td colspan='"+cols+"' class='breakrow'>"+data[i][2].split('::')[2]+"</td>"));
 			tbody.append(row);
 			continue;
 		}
@@ -78,72 +77,29 @@ function generateTable(session) {
 }
 
 function generateIndivTable(event) {
+	var data = genIndivTable(tournament, false);
 	var result = $("<div class=\"container-fluid indiv table-responsive\">");
 	result.append($("<h4>Individual Schedules</h4>"));
 	var table = $("<table class=\"table resultTable \">");
-	var header = "<thead><tr><th colspan=2>Team</th>";
-	event.teams.sort(function(a,b) {
-		return a.uid - b.uid;
-	});
-	for (var i = 0; i < event.allSessions.length; i++) { 
-		if (event.allSessions[i].type == TYPE_BREAK) continue;
-		header += "<th colspan=3>"+event.allSessions[i].name+"</th>";
+	for (var k = 0; k < 2; k++) {
+		var header = "<thead><tr>";
+		for (var i = 0; i < data[k].length; i++) {
+			if (data[k][i].startsWith("colspan")) {
+				header += "<th colspan="+data[k][i].split("::")[1]+">"+data[k][i].split("::")[2]+"</th>";
+			} else header += "<th>"+data[k][i]+"</th>";
+		}
+		header += "</tr></thead>";
+		table.append($(header));
 	}
-	header += "<th>Min. Travel time</th>";
-	if (usesSurrogates) header += "<th colspan=3>Surrogate</th>";
-	header += "</tr></thead>";
-	table.append($(header));
-	var header = "<thead><tr><th>#</th><th>Time</th>";
-	for (var i = 0; i < event.allSessions.length; i++) { 
-		if (event.allSessions[i].type == TYPE_BREAK) continue;
-		header += "<th>#</th>";
-		header += "<th>Time</th>";
-		header += "<th>Loc</th>";
-	}
-	header += "<th></th>";
-	if (usesSurrogates) {
-		header += "<th>#</th>";
-		header += "<th>Time</th>";
-		header += "<th>Loc</th>";		
-	}
-	header += "</tr></thead>";
-	table.append($(header));
-
 	var tbody = $("<tbody>");
-	for (var i = 0; i < event.teams.length; i++) {
-		var row = $("<tr>");
-		var team = event.teams[i];
-		row.append($("<td>"+team.number+"</td><td>"+team.name+"</td>"));
-		for (var j = 0; j < team.schedule.length; j++) {
-			if (getSession(team.schedule[j].session_uid).type == TYPE_BREAK) continue;
-			if (team.schedule[j].teams && (team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) <= team.schedule[j].surrogates) continue; // Surrogate
-			if (!team.schedule[j].teams) {
-				row.append($("<td></td>"));
-				row.append($("<td></td>"));
-				row.append($("<td></td>"));
-			} else {
-				row.append($("<td>"+team.schedule[j].num+"</td>"));
-				row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
-				if (team.schedule[j].loc == -1)
-					row.append($("<td>--</td>"));
-				else
-					row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]+"</td>"));
-			}
+	for (var k = 2; k < data.length; k++) {
+		var row = "<tr>";
+		for (var i = 0; i < data[k].length; i++) {
+			if (data[k][i].startsWith("colspan")) {
+				row += "<td colspan="+data[k][i].split("::")[1]+">"+data[k][i].split("::")[2]+"</td>";
+			} else row += "<td>"+data[k][i]+"</td>";
 		}
-		row.append($("<td>"+minTravelTime(team)+"</td>"));
-		for (var j = 0; j < team.schedule.length; j++) {
-			if (!team.schedule[j].teams) continue;
-			if ((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates) continue; // Not a surrogate
-			else {
-				row.append($("<td>"+team.schedule[j].num+"</td>"));
-				row.append($("<td>"+minsToDT(team.schedule[j].time)+"</td>"));
-				if (team.schedule[j].loc == -1)
-					row.append($("<td>--</td>"));
-				else
-					row.append($("<td>"+getSession(team.schedule[j].session_uid).locations[team.schedule[j].teams.indexOf(team.uid)+team.schedule[j].loc]+"</td>"));
-			}
-		}
-		tbody.append(row);
+		tbody.append($(row));
 	}
 	table.append(tbody);
 	result.append(table);
