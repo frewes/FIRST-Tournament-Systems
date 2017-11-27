@@ -21,7 +21,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.2.3";
+const SCHEDULER_VERSION = "2.2.4";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -386,16 +386,19 @@ function genIndivTable(event, compact) {
 	table[0] = ["colspan::2::Team"];
 	for (var i = 0; i < event.allSessions.length; i++) { 
 		if (event.allSessions[i].type == TYPE_BREAK) continue;
-		table[0].push("colspan::"+(compact?2:3)+"::"+event.allSessions[i].name);
+		for (var j = 0 ; j < event.allSessions[i].instances; j++) 
+			table[0].push("colspan::"+(compact?2:3)+"::"+event.allSessions[i].name);
 	}
 	table[0].push("Min. Travel time");
 	if (usesSurrogates) table[0].push("colspan::"+(compact?2:3)+"::Surrogate");
 	table[1] = ["#", "Name"];
 	for (var i = 0; i < event.allSessions.length; i++) { 
 		if (event.allSessions[i].type == TYPE_BREAK) continue;
-		if (!compact) table[1].push("#");
-		table[1].push("Time");
-		table[1].push("Loc");
+		for (var j = 0 ; j < event.allSessions[i].instances; j++) {
+			if (!compact) table[1].push("#");
+			table[1].push("Time");
+			table[1].push("Loc");
+		}
 	}
 	table[1].push("");
 	if (usesSurrogates) {
