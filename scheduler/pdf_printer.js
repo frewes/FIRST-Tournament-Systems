@@ -176,10 +176,11 @@ function PDFifyAllTeams(event,download,prefix) {
     var N = data[3].length;
     var t = {headerRows: 2,dontBreakRows: true,keepWithHeaderRows: 1};
     t.widths = [];
-    var w = 600/N;
+    var w = 500/N;
     for (var i = 0; i < N; i++) {
-        t.widths[i] = 'auto';
+        t.widths[i] = w;
     }
+    t.widths[1] = '*';
     t.body = [];
     for (var k = 0; k < data.length; k++) {
         t.body[k] = [];
@@ -195,7 +196,7 @@ function PDFifyAllTeams(event,download,prefix) {
             } else t.body[k].push({text:data[k][i]+"",color:col,style:curStyle});
         }
     }
-	doc.content.push({table: t, layout: 'lightHorizontalLines'});
+	doc.content.push({table: t, layout: 'lightHorizontalLines',alignment:'center'});
     console.log(doc);
     if (download) pdfMake.createPdf(doc).download((prefix+"-individual-schedule.pdf").replace(/ /g, '-'));
     else pdfMake.createPdf(doc).open();    

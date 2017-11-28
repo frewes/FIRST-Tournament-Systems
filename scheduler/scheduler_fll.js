@@ -141,8 +141,10 @@ function tableSession(event, session, numOffset, locD) {
 	for (var i = 0; i < event.teams.length; i++) 
 		if (session.type != TYPE_JUDGING || !event.teams[i].excludeJudging) teams.push(event.teams[i]);
     var now = session.start;
-    var L = Math.ceil((teams.length*session.instances) / session.nSims);
-    var lastNTeams = ((teams.length*session.instances) % session.nSims);
+    // var L = Math.ceil((teams.length*session.instances) / session.nSims);
+    var L = Math.ceil(teams.length / session.nSims);
+    // var lastNTeams = ((teams.length*session.instances) % session.nSims);
+    var lastNTeams = (teams.length % session.nSims);
     lastNTeams = (lastNTeams==0) ? session.nSims : lastNTeams;
     session.schedule = new Array(L);
     
@@ -165,10 +167,10 @@ function tableSession(event, session, numOffset, locD) {
     }
     var extraRounds = 0;
     if (session.type == TYPE_BREAK) everyN = Infinity;
-    for (var i = 0; i < L; i++) {
+    for (var i = 0; i < (L*session.instances); i++) {
         var d = Math.floor(session.nLocs/session.nSims);
         var locOffset = ((i+locD)%d)*session.nSims;
-        if (i < L-1) { 
+        if ((i%L) < L-1) { 
 	        session.schedule[i] = new Instance(session.uid,i+1+numOffset,now,new Array(session.nSims),locOffset);
 	        now = timeInc(event,now,session.length+session.buffer,session);
 	        roundsSinceExtra++;
@@ -383,23 +385,25 @@ function sortThingsOut(event) {
 	for (var i = 0; i < event.allSessions.length; i++) {
 		var session = event.allSessions[i];
 		if (session.fillerPolicy != USE_SURROGATES) continue;
-		var lastInst = session.schedule[session.schedule.length-1];
-		while (lastInst.teams.length < session.nSims) {
-			lastInst.surrogates++;
-			session.usesSurrogates = true;
-			var found = false;
-			shuffle(event.teams);
-			for (var t = 0; t < event.teams.length; t++) {
-				if (canDo(event,event.teams[t],lastInst) && !getTeam(event.teams[t].uid).isSurrogate) {
-					lastInst.teams.push(event.teams[t].uid);
-					getTeam(event.teams[t].uid).schedule.push(lastInst);
-					getTeam(event.teams[t].uid).isSurrogate = true;
-					found = true;
-					break;
+		for (var j = 0; j < session.schedule.length; j++) {
+			var instance = session.schedule[j];
+			while (instance.teams.length < session.nSims) {
+				instance.surrogates++;
+				session.usesSurrogates = true;
+				var found = false;
+				shuffle(event.teams);
+				for (var t = 0; t < event.teams.length; t++) {
+					if (canDo(event,event.teams[t],instance) && !getTeam(event.teams[t].uid).isSurrogate) {
+						instance.teams.push(event.teams[t].uid);
+						getTeam(event.teams[t].uid).schedule.push(instance);
+						getTeam(event.teams[t].uid).isSurrogate = true;
+						found = true;
+						break;
+					}
 				}
+				if (!found) console.log("NO SURROGATE FOUND");
+				if (!found) instance.teams.push(NOT_YET_ADDED);
 			}
-			if (!found) console.log("NO SURROGATE FOUND");
-			if (!found) lastInst.teams.push(NOT_YET_ADDED);
 		}
 	}
 }
