@@ -21,7 +21,7 @@ const USE_SURROGATES = 1;
 const USE_STANDINS = 2;
 const POLICIES = ["Leave blanks", "Use surrogates"];
 
-const SCHEDULER_VERSION = "2.2.7";
+const SCHEDULER_VERSION = "2.2.8";
 
 var TEAM_UID_COUNTER = 0;
 
@@ -288,9 +288,10 @@ function load(json) {
 			else if (s.type.name == TYPES[j].name) s.type = TYPES[j];
 		}
 	}
-	// Fix UID counters
+	// Fix UIDs (it doesn't matter that UIDs are the same as they were when saved, as long as they're all unique)
+	TEAM_UID_COUNTER = 0;
 	for (var i = 0; i < evt.teams.length; i++) {
-		if (evt.teams[i].uid >= TEAM_UID_COUNTER) TEAM_UID_COUNTER = evt.teams[i].uid+1;
+		evt.teams[i].uid = TEAM_UID_COUNTER++
 	}
 	toggleAdvMode();
 	console.log(evt);

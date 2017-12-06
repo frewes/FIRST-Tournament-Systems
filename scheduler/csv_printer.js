@@ -1,8 +1,12 @@
 function exportBL(event) {
-	saveToFile(prompt("Enter filename", tourn_ui.params.name.replace(/ /g, '_'))+".csv",saveToCSV(event));
+	saveToFile(prompt("Enter filename", tourn_ui.params.name.replace(/ /g, '_'))+".csv",saveToBL(event));
 }
 
-function saveToCSV(event) {
+function exportFTC(event) {
+	saveToFTC(event);
+}
+
+function saveToBL(event) {
 	var csv = "Version Number,1\n";
 	csv += "Block Format,1\n";
 	csv += "Number of Teams,"+event.teams.length+"\n";
@@ -143,4 +147,26 @@ Date.daysBetween = function( date1, date2 ) {
     
   // Convert back to days and return
   return Math.round(difference_ms/one_day); 
+}
+
+function saveToFTC(event) {
+	//matches.txt:
+	//phase?|1|no.|0||red1|red2|0|blu1|blu2|0|0|0|0|false|false|false|0|0|0|false|false|false|sur1|sur2|sur3|sur4|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0
+	//1|1|7|0||6|2|0|1|7|0|0|0|0|false|false|false|0|0|0|false|false|false|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0
+	matches="";
+	schedule = allTypes(event,TYPE_MATCH_FILLER)[0].schedule;
+	for (var i = 0 ; i < schedule.length; i++) {
+		matches+="1|1|"+(i+1)+"|0||";
+		matches+=getTeam(schedule[i].teams[0]).number+"|"+getTeam(schedule[i].teams[1]).number+"|0|";
+		matches+=getTeam(schedule[i].teams[2]).number+"|"+getTeam(schedule[i].teams[3]).number+"|0|";
+		matches+="0|0|0|false|false|false|0|0|0|false|false|false";
+		matches+=(schedule[i].surrogates>=4)?"|1":"|0";
+		matches+=(schedule[i].surrogates>=3)?"|1":"|0";
+		matches+="|0";
+		matches+=(schedule[i].surrogates>=2)?"|1":"|0";
+		matches+=(schedule[i].surrogates>=1)?"|1":"|0";
+		matches+="|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0\n";
+	}
+	console.log(matches);
+	saveToFile("matches.txt",matches);
 }
