@@ -181,6 +181,7 @@ function updateTeams() {
 //    display.document.getElementById('b2').innerHTML = document.getElementById('blue2').value;
 }
 
+// Res-Q
 function updateScoresheet() {
     //Calculate red and blue score
     //Store red and blue score in the timer obj
@@ -190,70 +191,135 @@ function updateScoresheet() {
     // $("#redAutoLarge").is(":checked") // Checkbox input
     // $("input[name=redAutoParked1]:checked").val() // Radio input
     // -- RED Score -- //
-    red += ($("#redAutoBeacons").val())*30;
-    if ($("#redAutoLarge").is(":checked")) red += 5;
-    red += ($("#redAutoCenter").val())*15;
-    red += ($("#redAutoCorner").val())*5;
-    var parked = $("input[name=redAutoParked1]:checked").val();
-    if (parked == "center") red += 5;
-    else if (parked == "compcenter") red += 10;
-    else if (parked == "corner") red += 5;
-    else if (parked == "compcorner") red += 10;
-    parked = $("input[name=redAutoParked2]:checked").val();
-    if (parked == "center") red += 5;
-    else if (parked == "compcenter") red += 10;
-    else if (parked == "corner") red += 5;
-    else if (parked == "compcorner") red += 10;
-    red += ($("#redTeleBeacons").val())*10;
-    red += ($("#redTeleCenterParticles").val())*5;
-    red += ($("#redTeleCornerParticles").val())*1;
-    var cap = $("input[name=redEnd]:checked").val();
-    if (cap == "low") red += 10;
-    else if (cap == "high") red += 20;
-    else if (cap == "cap") red += 40; 
-    red += ($("#bluePenMajor").val())*40;
-    red += ($("#bluePenMinor").val())*10;
+    // red += ($("#redAutoBeacons").val())*30;
+    // if ($("#redAutoLarge").is(":checked")) red += 5;
+    // red += ($("#redAutoCenter").val())*15;
+    // red += ($("#redAutoCorner").val())*5;
+    // var parked = $("input[name=redAutoParked1]:checked").val();
+    // if (parked == "center") red += 5;
+    // else if (parked == "compcenter") red += 10;
+    // else if (parked == "corner") red += 5;
+    // else if (parked == "compcorner") red += 10;
+    // parked = $("input[name=redAutoParked2]:checked").val();
+    // if (parked == "center") red += 5;
+    // else if (parked == "compcenter") red += 10;
+    // else if (parked == "corner") red += 5;
+    // else if (parked == "compcorner") red += 10;
+    // red += ($("#redTeleBeacons").val())*10;
+    // red += ($("#redTeleCenterParticles").val())*5;
+    // red += ($("#redTeleCornerParticles").val())*1;
+    // var cap = $("input[name=redEnd]:checked").val();
+    // if (cap == "low") red += 10;
+    // else if (cap == "high") red += 20;
+    // else if (cap == "cap") red += 40; 
+    // red += ($("#bluePenMajor").val())*40;
+    // red += ($("#bluePenMinor").val())*10;
 
-    // -- BLUE Score -- //
-    blue += ($("#blueAutoBeacons").val())*30;
-    if ($("#blueAutoLarge").is(":checked")) blue += 5;
-    blue += ($("#blueAutoCenter").val())*15;
-    blue += ($("#blueAutoCorner").val())*5;
-    var parked = $("input[name=blueAutoParked1]:checked").val();
-    if (parked == "center") blue += 5;
-    else if (parked == "compcenter") blue += 10;
-    else if (parked == "corner") blue += 5;
-    else if (parked == "compcorner") blue += 10;
-    parked = $("input[name=blueAutoParked2]:checked").val();
-    if (parked == "center") blue += 5;
-    else if (parked == "compcenter") blue += 10;
-    else if (parked == "corner") blue += 5;
-    else if (parked == "compcorner") blue += 10;
-    blue += ($("#blueTeleBeacons").val())*10;
-    blue += ($("#blueTeleCenterParticles").val())*5;
-    blue += ($("#blueTeleCornerParticles").val())*1;
-    var cap = $("input[name=blueEnd]:checked").val();
-    if (cap == "low") blue += 10;
-    else if (cap == "high") blue += 20;
-    else if (cap == "cap") blue += 40; 
-    blue += ($("#redPenMajor").val())*40;
-    blue += ($("#redPenMinor").val())*10;    
+    // // -- BLUE Score -- //
+    // blue += ($("#blueAutoBeacons").val())*30;
+    // if ($("#blueAutoLarge").is(":checked")) blue += 5;
+    // blue += ($("#blueAutoCenter").val())*15;
+    // blue += ($("#blueAutoCorner").val())*5;
+    // var parked = $("input[name=blueAutoParked1]:checked").val();
+    // if (parked == "center") blue += 5;
+    // else if (parked == "compcenter") blue += 10;
+    // else if (parked == "corner") blue += 5;
+    // else if (parked == "compcorner") blue += 10;
+    // parked = $("input[name=blueAutoParked2]:checked").val();
+    // if (parked == "center") blue += 5;
+    // else if (parked == "compcenter") blue += 10;
+    // else if (parked == "corner") blue += 5;
+    // else if (parked == "compcorner") blue += 10;
+    // blue += ($("#blueTeleBeacons").val())*10;
+    // blue += ($("#blueTeleCenterParticles").val())*5;
+    // blue += ($("#blueTeleCornerParticles").val())*1;
+    // var cap = $("input[name=blueEnd]:checked").val();
+    // if (cap == "low") blue += 10;
+    // else if (cap == "high") blue += 20;
+    // else if (cap == "cap") blue += 40; 
+    // blue += ($("#redPenMajor").val())*40;
+    // blue += ($("#redPenMinor").val())*10;    
 
     timerObj.redScore = red;
     timerObj.blueScore = blue;
     document.getElementById('rscore').value = red;
     document.getElementById('bscore').value = blue;
 }
+// Res-Q
+// function updateScoresheet() {
+//     //Calculate red and blue score
+//     //Store red and blue score in the timer obj
+//     var red = 0;
+//     var blue = 0;
+//     // $("#redAutoBeacons").val() // Number input
+//     // $("#redAutoLarge").is(":checked") // Checkbox input
+//     // $("input[name=redAutoParked1]:checked").val() // Radio input
+//     // -- RED Score -- //
+//     red += ($("#redAutoBeacons").val())*30;
+//     if ($("#redAutoLarge").is(":checked")) red += 5;
+//     red += ($("#redAutoCenter").val())*15;
+//     red += ($("#redAutoCorner").val())*5;
+//     var parked = $("input[name=redAutoParked1]:checked").val();
+//     if (parked == "center") red += 5;
+//     else if (parked == "compcenter") red += 10;
+//     else if (parked == "corner") red += 5;
+//     else if (parked == "compcorner") red += 10;
+//     parked = $("input[name=redAutoParked2]:checked").val();
+//     if (parked == "center") red += 5;
+//     else if (parked == "compcenter") red += 10;
+//     else if (parked == "corner") red += 5;
+//     else if (parked == "compcorner") red += 10;
+//     red += ($("#redTeleBeacons").val())*10;
+//     red += ($("#redTeleCenterParticles").val())*5;
+//     red += ($("#redTeleCornerParticles").val())*1;
+//     var cap = $("input[name=redEnd]:checked").val();
+//     if (cap == "low") red += 10;
+//     else if (cap == "high") red += 20;
+//     else if (cap == "cap") red += 40; 
+//     red += ($("#bluePenMajor").val())*40;
+//     red += ($("#bluePenMinor").val())*10;
+
+//     // -- BLUE Score -- //
+//     blue += ($("#blueAutoBeacons").val())*30;
+//     if ($("#blueAutoLarge").is(":checked")) blue += 5;
+//     blue += ($("#blueAutoCenter").val())*15;
+//     blue += ($("#blueAutoCorner").val())*5;
+//     var parked = $("input[name=blueAutoParked1]:checked").val();
+//     if (parked == "center") blue += 5;
+//     else if (parked == "compcenter") blue += 10;
+//     else if (parked == "corner") blue += 5;
+//     else if (parked == "compcorner") blue += 10;
+//     parked = $("input[name=blueAutoParked2]:checked").val();
+//     if (parked == "center") blue += 5;
+//     else if (parked == "compcenter") blue += 10;
+//     else if (parked == "corner") blue += 5;
+//     else if (parked == "compcorner") blue += 10;
+//     blue += ($("#blueTeleBeacons").val())*10;
+//     blue += ($("#blueTeleCenterParticles").val())*5;
+//     blue += ($("#blueTeleCornerParticles").val())*1;
+//     var cap = $("input[name=blueEnd]:checked").val();
+//     if (cap == "low") blue += 10;
+//     else if (cap == "high") blue += 20;
+//     else if (cap == "cap") blue += 40; 
+//     blue += ($("#redPenMajor").val())*40;
+//     blue += ($("#redPenMinor").val())*10;    
+
+//     timerObj.redScore = red;
+//     timerObj.blueScore = blue;
+//     document.getElementById('rscore').value = red;
+//     document.getElementById('bscore').value = blue;
+// }
 
 function resetScoresheet() {
+    $("red-scoresheet input").property("value",0);
+    $("blue-scoresheet input").property("value",0);
+/* // Res-Q
     $("#redAutoBeacons").val(0);
     $("#redAutoCenter").val(0);
     $("#redAutoCorner").val(0);
     $("#redTeleBeacons").val(0);
     $("#redTeleCenterParticles").val(0);
     $("#redTeleCornerParticles").val(0);
-    $("#redPenMajor").val(0);
-    $("#redPenMinor").val(0);
 
     $("#blueAutoBeacons").val(0);
     $("#blueAutoCenter").val(0);
@@ -261,8 +327,7 @@ function resetScoresheet() {
     $("#blueTeleBeacons").val(0);
     $("#blueTeleCenterParticles").val(0);
     $("#blueTeleCornerParticles").val(0);
-    $("#bluePenMajor").val(0);
-    $("#bluePenMinor").val(0);
+
 
     $("#defParkr1").prop("checked",true);
     $("#defParkr2").prop("checked",true);
@@ -273,6 +338,12 @@ function resetScoresheet() {
 
     $("#redAutoLarge").prop("checked",false);
     $("#blueAutoLarge").prop("checked",false);
+*/
+
+    // $("#redPenMajor").val(0);
+    // $("#redPenMinor").val(0);
+    // $("#bluePenMajor").val(0);
+    // $("#bluePenMinor").val(0);
     updateScoresheet();
 }
 
