@@ -169,4 +169,14 @@ function saveToFTC(event) {
 	}
 	console.log(matches);
 	saveToFile("matches.txt",matches);
+
+	teams="";
+	for (var i = 0; i < event.teams.length; i++) {
+		// 1|1|Team 1| | | | |false|true|0
+		teams+="1|"+event.teams[i].number+"|";
+		teams+=event.teams[i].name+"|";
+		teams+=" | | | |false|true|0\n";
+	}
+	saveToFile("teams.txt",teams);
+	// schedule.txt may be necessary, judging and inspections might be necessary, we'll see
 }
