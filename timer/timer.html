@@ -9,29 +9,28 @@
     <!-- Bootstrap core CSS -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap theme -->
-    <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
-
+<!--     <link href="../css/bootstrap-theme.min.css" rel="stylesheet">
+ -->
     <!-- Custom styles for this template -->
     <link href="timer.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
 </head>
 
 <body>
     
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-dark bg-dark fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a onclick="openDisplay()" class="navbar-brand" href="#">Display</a>
+                <a onclick="openDisplay()" class="navbar-brand" href="#">Open Display</a>
             </div>
         </div>
     </nav>
     
     <div class="container">
         <div class="text-main">
-            <div id="title" class="title">Asia Pacific Invitational 2017</div>
-            <button onclick="changeTitle()" class="btn-link">Change</button>
+	  <div id="title" class="cosmetic title" data-toggle="modal" data-target="#smallModal" onclick="openTitleModal()">FTC National 2017</div>
+	    <button onclick="openTitleModal()" data-toggle="modal" data-target="#smallModal" class="btn btn-sm">Change event name</button>
             <h1>Match timer</h1>
             <table style="display:inline-block">
                 <th></th>
@@ -90,186 +89,164 @@
       <br>
       <br>
       <div class="row">
-	<div class="col-md-6 red-scoresheet">
-	  <h2>Red</h2>
-	  <h4>Autonomous Period</h4>
-	  <table width="100%" style="margin:0;text-align:center">
-	    <tr>
-	      <td style="text-align:right"># beacons &nbsp</td>
-	      <td><input style="text-align:center" type="number" min="0" max="4" id="redAutoBeacons" value="0"> </td>
-	    </tr><tr>
-	      <td style="text-align:right">Large ball removed &nbsp</td>
-	      <td><label><input type="checkbox" id="redAutoLarge"></label></td>
-	    </tr><tr>
-	      <td></td>
-	      <td>Center</td>
-	      <td>Corner</td>
-	    </tr><tr>
-	      <td style="text-align:right"># particles &nbsp</td>
-	      <td><input style="text-align:center" type="number" min="0" max="99" id="redAutoCenter" value="0"></td>
-	      <td><input style="text-align:center" type="number" min="0" max="99" id="redAutoCorner" value="0"></td>
-	    </tr><tr>
-	      <td></td>
-	      <td style="text-align:center">Robot 1 &nbsp</td>
-	      <td style="text-align:center">Robot 2 &nbsp</td>
-	    </tr><tr>
-	      <td style="text-align:right">Not parked &nbsp</td>
-	      <td><label><input type="radio" name="redAutoParked1" value="not" checked="checked" id="defParkr1"></label></td>
-	      <td><label><input type="radio" name="redAutoParked2" value="not" checked="checked" id="defParkr2"></label></td>
-	    </tr><tr>
-	      <td style="text-align:right">On center &nbsp</td>
-	      <td><label><input type="radio" name="redAutoParked1" value="center"></label></td>
-	      <td><label><input type="radio" name="redAutoParked2" value="center"></label></td>
-	    </tr><tr>
-	      <td style="text-align:right">Completely on center &nbsp</td>
-	      <td><label><input type="radio" name="redAutoParked1" value="compcenter"></label></td>
-	      <td><label><input type="radio" name="redAutoParked2" value="compcenter"></label></td>
-	    </tr><tr>
-	      <td style="text-align:right">On corner &nbsp</td>
-	      <td><label><input type="radio" name="redAutoParked1" value="corner"></label></td>
-	      <td><label><input type="radio" name="redAutoParked2" value="corner"></label></td>
-	    </tr><tr>
-	      <td style="text-align:right">Completely on corner &nbsp</td>
-	      <td><label><input type="radio" name="redAutoParked1" value="compcorner"></label></td>
-	      <td><label><input type="radio" name="redAutoParked2" value="compcorner"></label></td>
-	    </tr>
-	  </table>
-	  <br>
-	  <h4>Teleop Period</h4>
-	  <table width="100%" style="margin:0">
-	    <tr>
-	      <td></td>
-	      <td></td>
-	      <td></td>
-	      <td>Center</td>
-	      <td>Corner</td>
-	    </tr><tr>
-	      <td style="text-align:right"># beacons&nbsp</td>
-	      <td><input type="number" min="0" max="4" id="redTeleBeacons" value="0"></td>
-	      <td style="text-align:right"># particles&nbsp</td>
-	      <td><input type="number" min="0" max="99" id="redTeleCenterParticles" value="0"></td>
-	      <td><input type="number" min="0" max="99" id="redTeleCornerParticles" value="0"></td>
-	    </tr>
-	  </table>
-	  <br>
-	  <h4>Endgame Period</h4>
-	  <table width="100%" style="margin:0;text-align:center">
-	    <tr>
-	      <td></td>
-	      <td>Not</td>
-	      <td>Low</td>
-	      <td>High</td>
-	      <td>Capping</td>
-	    </tr><tr>
-	      <td>Cap ball</td>
-	      <td><label><input type="radio" name="redEnd" value="not" checked="checked" id="defEndr"></label></td>
-	      <td><label><input type="radio" name="redEnd" value="low"></label></td>
-	      <td><label><input type="radio" name="redEnd" value="high"></label></td>
-	      <td><label><input type="radio" name="redEnd" value="cap"></label></td>
-	    </tr>
-	  </table>
-	  <br>
-	  <h4>Penalties</h4>
-	  <table width="100%" style="margin:0">
-	    <tr>
-	      <td style="text-align:right"># Major &nbsp</td>
-	      <td><input type="number" id="redPenMajor" min="0" max="99" value="0"></td>
-	      <td style="text-align:right"># Minor &nbsp</td>
-	      <td><input type="number" id="redPenMinor" min="0" max="99" value="0"></td>
-	    </tr>
-	  </table>
-	  <br>
-	</div>
-	<div class="col-md-6 blue-scoresheet">
-	  <h2>Blue</h2>
-	  <h4>Autonomous Period</h4>
-	  <table width="100%" style="margin:0;text-align:center">
-	    <tr>
-	      <td style="text-align:right"># beacons &nbsp</td>
-	      <td><input style="text-align:center" type="number" min="0" max="4" id="blueAutoBeacons" value="0"> </td>
-	    </tr><tr>
-	      <td style="text-align:right">Large ball removed &nbsp</td>
-	      <td><label><input type="checkbox" id="blueAutoLarge"></label></td>
-	    </tr><tr>
-	      <td></td>
-	      <td>Center</td>
-	      <td>Corner</td>
-	    </tr><tr>
-	      <td style="text-align:right"># particles &nbsp</td>
-	      <td><input style="text-align:center" type="number" min="0" max="99" id="blueAutoCenter" value="0"></td>
-	      <td><input style="text-align:center" type="number" min="0" max="99" id="blueAutoCorner" value="0"></td>
-	    </tr><tr>
-	      <td></td>
-	      <td style="text-align:center">Robot 1 &nbsp</td>
-	      <td style="text-align:center">Robot 2 &nbsp</td>
-	    </tr><tr>
-	      <td style="text-align:right">Not parked &nbsp</td>
-	      <td><label><input type="radio" name="blueAutoParked1" value="not" checked="checked" id="defParkb1"></label></td>
-	      <td><label><input type="radio" name="blueAutoParked2" value="not" checked="checked" id="defParkb2"></label></td>
-	    </tr><tr>
-	      <td style="text-align:right">On center &nbsp</td>
-	      <td><label><input type="radio" name="blueAutoParked1" value="center"></label></td>
-	      <td><label><input type="radio" name="blueAutoParked2" value="center"></label></td>
-	    </tr><tr>
-	      <td style="text-align:right">Completely on center &nbsp</td>
-	      <td><label><input type="radio" name="blueAutoParked1" value="compcenter"></label></td>
-	      <td><label><input type="radio" name="blueAutoParked2" value="compcenter"></label></td>
-	    </tr><tr>
-	      <td style="text-align:right">On corner &nbsp</td>
-	      <td><label><input type="radio" name="blueAutoParked1" value="corner"></label></td>
-	      <td><label><input type="radio" name="blueAutoParked2" value="corner"></label></td>
-	    </tr><tr>
-	      <td style="text-align:right">Completely on corner &nbsp</td>
-	      <td><label><input type="radio" name="blueAutoParked1" value="compcorner"></label></td>
-	      <td><label><input type="radio" name="blueAutoParked2" value="compcorner"></label></td>
-	    </tr>
-	  </table>
-	  <br>
-	  <h4>Teleop Period</h4>
-	  <table width="100%" style="margin:0">
-	    <tr>
-	      <td></td>
-	      <td></td>
-	      <td></td>
-	      <td>Center</td>
-	      <td>Corner</td>
-	    </tr><tr>
-	      <td style="text-align:right"># beacons&nbsp</td>
-	      <td><input type="number" min="0" max="4" id="blueTeleBeacons" value="0"></td>
-	      <td style="text-align:right"># particles&nbsp</td>
-	      <td><input type="number" min="0" max="99" id="blueTeleCenterParticles" value="0"></td>
-	      <td><input type="number" min="0" max="99" id="blueTeleCornerParticles" value="0"></td>
-	    </tr>
-	  </table>
-	  <br>
-	  <h4>Endgame Period</h4>
-	  <table width="100%" style="margin:0;text-align:center">
-	    <tr>
-	      <td></td>
-	      <td>Not</td>
-	      <td>Low</td>
-	      <td>High</td>
-	      <td>Capping</td>
-	    </tr><tr>
-	      <td>Cap ball</td>
-	      <td><label><input type="radio" name="blueEnd" value="not" checked="checked" id="defEndb"></label></td>
-	      <td><label><input type="radio" name="blueEnd" value="low"></label></td>
-	      <td><label><input type="radio" name="blueEnd" value="high"></label></td>
-	      <td><label><input type="radio" name="blueEnd" value="cap"></label></td>
-	    </tr>
-	  </table>
-	  <br>
-	  <h4>Penalties</h4>
-	  <table width="100%" style="margin:0">
-	    <tr>
-	      <td style="text-align:right"># Major &nbsp</td>
-	      <td><input type="number" id="bluePenMajor" min="0" max="99" value="0"></td>
-	      <td style="text-align:right"># Minor &nbsp</td>
-	      <td><input type="number" id="bluePenMinor" min="0" max="99" value="0"></td>
-	    </tr>
-	  </table>
-	  <br>
-	</div>
+		<div class="col-md-6 red-scoresheet">
+		  <h2 class="score-red">Red</h2>
+		  <h4 class="score-title">Autonomous Period</h4>
+		  <table width="100%" style="margin:0;text-align:right">
+		    <tr>
+		    	<td></td>
+		    	<td></td>
+		      <td style="text-align:right">Single Jewel Remaining &nbsp;</td>
+		      <td><input style="text-align:center" type="number" min="0" max="4" id="redSingleJewel" value="0"> </td>
+		    </tr><tr>
+		    	<td></td>
+		    	<td></td>
+		      <td style="text-align:right">Glyphs in Cryptobox &nbsp;</td>
+		      <td><input style="text-align:center" type="number" min="0" max="24" id="redAutoGlyphs" value="0"> </td>
+		    </tr><tr>
+		    	<td></td>
+		    	<td></td>
+		      <td style="text-align:right">Cryptobox Keys &nbsp;</td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="redAutoKeys" value="0"> </td>
+		    </tr><tr>
+		    	<td></td>
+		    	<td></td>
+		      <td style="text-align:right">Robots in Safe Zone &nbsp;</td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="redSafeZone" value="0"> </td>
+		    </tr>
+		  </table>
+		  <br>
+		  <h4 class="score-title">Driver Controlled Period</h4>
+		  <table width="100%" style="margin:0">
+		    <tr>
+		      <td class="score-header">Glyphs</td>
+		      <td colspan="3" class="score-header">Completed</td>
+		    </tr><tr>
+		      <td>Scored</td>
+		      <td>Rows</td>
+		      <td>Columns</td>
+		      <td>Ciphers</td>
+		    </tr><tr>
+		      <td><input style="text-align:center" type="number" min="0" max="24" id="redScored" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="8" id="redRows" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="10" id="redColumns" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="redCiphers" value="0"> </td>
+		    </tr>
+		  </table>
+		  <br>
+		  <h4 class="score-title">End Game Period</h4>
+		  <table width="100%" style="margin:0;text-align:center">
+		  	<tr>
+		  		<td colspan="4" class="score-header">Relics</td>
+		  	</tr>
+		    <tr>
+		      <td>Zone 1</td>
+		      <td>Zone 2</td>
+		      <td>Zone 3</td>
+		      <td>Upright</td>
+		    </tr><tr>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="redZone1" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="redZone2" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="redZone3" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="redUpright" value="0"> </td>
+		    </tr><tr>
+		    	<td></td>
+		    	<td></td>
+		    	<td>Robots Balanced</td>
+			    <td><input style="text-align:center" type="number" min="0" max="2" id="redBalanced" value="0"> </td>
+		    </tr>
+		  </table>
+		  <br>
+		  <h4 class="score-title">Penalties</h4>
+		  <table width="100%" style="margin:0">
+		    <tr>
+		      <td style="text-align:right"># Major &nbsp;</td>
+		      <td><input type="number" id="redPenMajor" min="0" max="99" value="0"></td>
+		      <td style="text-align:right"># Minor &nbsp;</td>
+		      <td><input type="number" id="redPenMinor" min="0" max="99" value="0"></td>
+		    </tr>
+		  </table>
+		  <br>
+		</div>
+		<div class="col-md-6 blue-scoresheet">
+		  <h2 class="score-blue">Blue</h2>
+		  <h4 class="score-title">Autonomous Period</h4>
+		  <table width="100%" style="margin:0;text-align:right">
+		    <tr>
+		    	<td></td>
+		    	<td></td>
+		      <td style="text-align:right">Single Jewel Remaining &nbsp;</td>
+		      <td><input style="text-align:center" type="number" min="0" max="4" id="blueSingleJewel" value="0"> </td>
+		    </tr><tr>
+		    	<td></td>
+		    	<td></td>
+		      <td style="text-align:right">Glyphs in Cryptobox &nbsp;</td>
+		      <td><input style="text-align:center" type="number" min="0" max="24" id="blueAutoGlyphs" value="0"> </td>
+		    </tr><tr>
+		    	<td></td>
+		    	<td></td>
+		      <td style="text-align:right">Cryptobox Keys &nbsp;</td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="blueAutoKeys" value="0"> </td>
+		    </tr><tr>
+		    	<td></td>
+		    	<td></td>
+		      <td style="text-align:right">Robots in Safe Zone &nbsp;</td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="blueSafeZone" value="0"> </td>
+		    </tr>
+		  </table>
+		  <br>
+		  <h4 class="score-title">Driver Controlled Period</h4>
+		  <table width="100%" style="margin:0">
+		    <tr>
+		      <td class="score-header">Glyphs</td>
+		      <td colspan=3 class="score-header">Completed</td>
+		    </tr><tr>
+		      <td>Scored</td>
+		      <td>Rows</td>
+		      <td>Columns</td>
+		      <td>Ciphers</td>
+		    </tr><tr>
+		      <td><input style="text-align:center" type="number" min="0" max="24" id="blueScored" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="8" id="blueRows" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="10" id="blueColumns" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="blueCiphers" value="0"> </td>
+		    </tr>
+		  </table>
+		  <br>
+		  <h4 class="score-title">End Game Period</h4>
+		  <table width="100%" style="margin:0;text-align:center">
+		  	<tr>
+		  		<td colspan="4" class="score-header">Relics</td>
+		  	</tr>
+		    <tr>
+		      <td>Zone 1</td>
+		      <td>Zone 2</td>
+		      <td>Zone 3</td>
+		      <td>Upright</td>
+		    </tr><tr>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="blueZone1" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="blueZone2" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="blueZone3" value="0"> </td>
+		      <td><input style="text-align:center" type="number" min="0" max="2" id="blueUpright" value="0"> </td>
+		    </tr><tr>
+		    	<td></td>
+		    	<td></td>
+		    	<td>Robots Balanced</td>
+			    <td><input style="text-align:center" type="number" min="0" max="2" id="blueBalanced" value="0"> </td>
+		    </tr>
+		  </table>
+		  <br>
+		  <h4 class="score-title">Penalties</h4>
+		  <table width="100%" style="margin:0">
+		    <tr>
+		      <td style="text-align:right"># Major &nbsp;</td>
+		      <td><input type="number" id="bluePenMajor" min="0" max="99" value="0"></td>
+		      <td style="text-align:right"># Minor &nbsp;</td>
+		      <td><input type="number" id="bluePenMinor" min="0" max="99" value="0"></td>
+		    </tr>
+		  </table>
+		  <br>
+		</div>
       </div>
       <br>
       <button id="scoreReset" onclick="resetScoresheet()" class="control btn-lg btn-warning">Reset Score</button>
@@ -278,9 +255,47 @@
       <div class="starter-template" id="results"></div>
     </div>
     
+     <div id="smallModal" class="modal fade" role="dialog">
+	    <div class="modal-dialog modal-sm" role="document">
+	        <!-- Modal content-->
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4 class="modal-title" id="sm-modal-title"></h4>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                  <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body" id="sm-modal-body">
+	            </div>
+	            <div class="modal-footer" id="sm-modal-footer">
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div id="largeModal" class="modal fade" role="dialog">
+	    <div class="modal-dialog modal-lg" role="document">
+	        <!-- Modal content-->
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4 class="modal-title" id="lg-modal-title"></h4>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                  <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body" id="lg-modal-body">
+	            </div>
+	            <div class="modal-footer" id="lg-modal-footer">
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
 </body>
     
 <script src="timer.js" type="text/javascript"></script>
+<script src="../js/utilities.js"></script>
+<script src="../js/jquery-3.2.1.slim.min.js"></script>
+<script src="../js/popper.min.js"></script>
 <script src="../js/bootstrap.min.js"></script>
 <script>
   $("input").on("click",function() {

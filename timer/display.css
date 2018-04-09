@@ -64,6 +64,7 @@ button.control {
 }
 
 .title {
+    width:100%;
     text-align:center;
     color:azure;
     font-size: 4em;

@@ -53,3 +53,27 @@ label{
     border-style: solid;
     border-color: blue;
 }
+
+.score-header {
+    background-color: #bbbbbb;
+    text-align: center;
+    border-style: solid;
+    border-color: white;
+    border-width: 4px;
+}
+
+.score-title {
+    background-color: #777;
+    color: white;
+    font-size:1em;
+}
+
+.score-red {
+    background-color: red;
+    color: white;
+}
+
+.score-blue {
+    background-color: blue;
+    color: white;
+}

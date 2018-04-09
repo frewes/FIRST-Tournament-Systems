@@ -1,0 +1,171 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>FTC Scoring</title>
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="alliance.css" rel="stylesheet">
+
+</head>
+
+<body>
+    
+    <nav class="navbar">
+	  <span class="navbar-brand mb-0 h1"><blockquote class="blockquote">
+	  <p class="mb-0">Alliance Selection</p>
+	  <footer class="blockquote-footer" id="version-footer"></footer>
+	</blockquote>
+	</span>
+        <button onclick="openDisplay()" class="btn btn-info" href="#">Open Display</button>
+	<form class="form-inline my-2 my-lg-0">
+	    <div class="dropdown">
+	      <a class="nav-item nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="../resources/octicons/info.svg"></img></a>
+	      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+	        <a class="dropdown-item" href="#" onclick="alert('Not yet written');">User manual</a>
+	        <a class="dropdown-item" href="https://github.com/frewes/FIRST-Tournament-Systems/issues" target="_blank">Report a bug</a>
+	        <a class="dropdown-item" href="mailto:fredrik.westling@gmail.com?Subject=FLL%20scheduler" target="_blank">Contact developer</a>
+	      </div>
+	    </div>
+	    <a class="nav-item nav-link" href="javascript:void(0)" onclick="clickSave()">
+	        <img src="../resources/octicons/cloud-download.svg"></img></a>
+	        <a id="saveLink" style="display:none">Download</a>
+	    <a class="nav-item nav-link" href="javascript:void(0)" onclick="clickLoad()">
+	        <img src="../resources/octicons/cloud-upload.svg"></img></a>
+	        <input type="file" id="loadFileInput" hidden onchange="loadFromFile(this)" accept=".schedule">
+	</form>
+	</nav>
+
+	<div class="container">
+		<div class="jumbotron" style="text-align: center">
+			<h3 id="title" class="cosmetic" data-toggle="modal" data-target="#smallModal" onclick="openTitleModal()">FTC National 2017</h3>
+            <div class="thumbnail">
+                <img class="img-responsive" id="logoThumb" src="../resources/firstlogo.png" height="100" alt="Logo" onclick='$("#logoFile").click()'>
+                <input class="cosmetic form-control" id="logoFile" type="file" onchange="changeLogo()" style="display:none">
+            </div>
+            <hr>
+			<nav class="nav navbar nav-tabs nav-justified" id="myTab" role="tablist">
+				<a class="nav-item nav-link active" id="nav-setup-tab" href="#nav-setup" role="tab" aria-controls="nav-setup" aria-selected="true">Setup <img src="../resources/octicons/triangle-right.svg"></a>
+				<a disabled class="nav-item nav-link" id="nav-select-tab" href="#nav-select" role="tab" aria-controls="nav-select" aria-selected="false">Selection <img src="../resources/octicons/triangle-right.svg"></a>
+				<a disabled class="nav-item nav-link" id="nav-playoff-tab" href="#nav-playoff" role="tab" aria-controls="nav-playoff" aria-selected="false">Playoff <img src="../resources/octicons/triangle-right.svg"></a>
+			</nav>
+			<div class="tab-content" id="nav-tabContent">
+				<div class="tab-pane fade show active" id="nav-setup" role="tabpanel" aria-labelledby="nav-setup-tab">
+					<h1>Setup</h1>
+					<button class="btn btn-info" onclick="openTeamImportModal()" data-toggle="modal" data-target="#largeModal">Edit teams</button>
+					<br>
+					<br>
+					<form class="form-inline">
+						<div class="row">
+							<div class="form-group col-xs-6">
+								<label for="nAlliances">Number of alliances</label>
+								<input type="number" class="form-control" id="nAlliances" value="8">
+							</div>
+							<div class="form-group col-xs-6">
+								<label for="nTeamsPerAlliance">Number of teams per alliance</label>
+								<input type="number" class="form-control" id="nTeamsPerAlliance" value="3">
+							</div>
+						</div>
+					</form>
+					<div class="form-check form-check-inline">
+						<label class="form-check-label">
+							<input checked class="form-check-input" type="radio" name="methodRadio" id="methodDirect" value="direct"> Direct
+						</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<label class="form-check-label">
+							<input class="form-check-input" type="radio" name="methodRadio" id="methodSerpentine" value="serpentine"> Serpentine
+						</label>
+					</div>
+					<div id="alliancePreview">
+					</div>
+					<hr>
+	                <button class="btn btn-success" onclick="loadSelection()">Next</button>
+				</div>
+
+			<div class="tab-pane fade show" id="nav-select" role="tabpanel" aria-labelledby="nav-select-tab">
+				<h1>Selection</h1>
+				<label for="allianceSelect">Alliance</label>
+				<select class="form-control" id="allianceSelect"></select>
+				<hr>
+				<div id="selectedAlliance" class="row">
+					<div class="col-lg-6"></div>
+					<div class="col-lg-6" style="display:none">
+						<h5>Add team</h5>
+						<label for="teamSelect">Team</label>
+						<select class="form-control" id="teamSelect" onchange="selectTeam(this)">
+							<option value="-1" selected></option>
+						</select>
+						<button id="refuseBtn" class="btn btn-danger" onclick="refuseSelectedTeam()">Refuse</button>
+						<button id="acceptBtn" class="btn btn-success" onclick="acceptSelectedTeam()">Accept</button>
+					</div>
+				</div>
+				<hr>
+                <button class="btn btn-danger" onclick="loadSetup()">Back</button>
+                <button class="btn btn-success" onclick="loadPlayoff()">Next</button>
+			</div>
+
+			<div class="tab-pane fade show" id="nav-playoff" role="tabpanel" aria-labelledby="nav-playoff-tab">
+				<h1>Playoffs</h1>
+				<label for="matchSelect">Match</label>
+				<select class="form-control" id="matchSelect">
+					<option selected>Choose...</option>
+				</select>
+				<hr>
+				<div id="selectedMatch" class="row">
+					<div class="col-lg-6"></div>
+					<div class="col-lg-6"></div>
+				</div>
+				<hr>
+                <button class="btn btn-danger" onclick="loadSelection()">Back</button>
+			</div>
+		</div>
+	</div>
+
+	 <div id="smallModal" class="modal fade" role="dialog">
+	    <div class="modal-dialog modal-sm" role="document">
+	        <!-- Modal content-->
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4 class="modal-title" id="sm-modal-title"></h4>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                  <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body" id="sm-modal-body">
+	            </div>
+	            <div class="modal-footer" id="sm-modal-footer">
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<div id="largeModal" class="modal fade" role="dialog">
+	    <div class="modal-dialog modal-lg" role="document">
+	        <!-- Modal content-->
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h4 class="modal-title" id="lg-modal-title"></h4>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                  <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body" id="lg-modal-body">
+	            </div>
+	            <div class="modal-footer" id="lg-modal-footer">
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</body>
+    
+<script src="../js/jquery-3.2.1.slim.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="alliance.js" type="text/javascript"></script>
+<script src="selection.js" type="text/javascript"></script>
+<script src="playoff.js" type="text/javascript"></script>
+</html>

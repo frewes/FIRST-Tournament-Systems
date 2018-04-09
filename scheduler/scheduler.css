@@ -1,3 +1,13 @@
+.thumbnail img {
+    /*width:200px;*/
+    height:200px;
+}
+
+.navbar-left img {
+    /*width:200px;*/
+    height:60px;
+}
+
 /* Style the list */
 ul.tab {
     list-style-type: none;
@@ -31,7 +41,7 @@ ul.tab li a:focus, .active {background-color: #ccc;}
 /* Style the tab content */
 .tabcontent {
     display: none;
-    padding: 6px 12px;
+    padding: 12px;
     border: 1px solid #ccc;
     border-top: none;
     -webkit-animation: fadeEffect 0.25s;
@@ -71,20 +81,25 @@ body {
 }
 
 .indiv{
-    display:inline-table;
-    padding: 4px;
+    /*display:inline-table;*/
+    /*padding: 4px;*/
     
 }
 
+.breakrow {
+  background-color: #f2f2f2;
+}
+
 .indiv th{
-    padding:4px;
-    border: solid #CCCCCC 1px;
+    /*padding:4px;*/
+    text-align: center;
+    /*border: solid #CCCCCC 1px;*/
 }
 
 .indiv td{
-    padding: 2px;
+    /*padding: 2px;*/
     text-align: center;
-    border: solid #CCCCCC 1px;
+    /*border: solid #CCCCCC 1px;*/
     
 }
 
@@ -96,11 +111,12 @@ body {
 .session td:nth-child(2) {background-color: #f2f2f2}
 .session th {background-color: #f2f2f2}
 
-tr:hover td {
+.indiv tr:hover td {
     background-color: #c5c5c5 !important
 }
-
-
+.session tr:hover td {
+    background-color: #c5c5c5 !important
+}
 
 table.roundtable{
      display: inline-block;
@@ -118,4 +134,81 @@ table.roundtable{
 
 .title input {
     text-align: center;
+}
+
+.unfilled {
+    color:blue;
+}
+
+.extra-time {
+    color:red;
+}
+
+
+input[readonly].form-control{
+  background-color:transparent;
+  border: 0;
+  box-shadow:none;
+  font-color:black;
+}
+
+
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #aaa;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(18px);
+  -ms-transform: translateX(18px);
+  transform: translateX(18px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }

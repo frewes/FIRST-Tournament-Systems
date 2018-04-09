@@ -50,6 +50,8 @@ window.onload = function () {
 
 //        localStorage.timer = timerObj;
     }, 50);
+    $(".red-scoresheet input").change(updateScoresheet);
+    $(".blue-scoresheet input").change(updateScoresheet);
 }
 
 function registerPress(key) {
@@ -106,6 +108,7 @@ function startTimer() {
         playSound(START_SOUND);
     }
     timerObj.timer = setInterval(timerInterval, 1000);
+
 }
 
 function playSound(file) {
@@ -181,112 +184,133 @@ function updateTeams() {
 //    display.document.getElementById('b2').innerHTML = document.getElementById('blue2').value;
 }
 
+// Res-Q
 function updateScoresheet() {
     //Calculate red and blue score
     //Store red and blue score in the timer obj
     var red = 0;
     var blue = 0;
-    // $("#redAutoBeacons").val() // Number input
-    // $("#redAutoLarge").is(":checked") // Checkbox input
-    // $("input[name=redAutoParked1]:checked").val() // Radio input
     // -- RED Score -- //
-    red += ($("#redAutoBeacons").val())*30;
-    if ($("#redAutoLarge").is(":checked")) red += 5;
-    red += ($("#redAutoCenter").val())*15;
-    red += ($("#redAutoCorner").val())*5;
-    var parked = $("input[name=redAutoParked1]:checked").val();
-    if (parked == "center") red += 5;
-    else if (parked == "compcenter") red += 10;
-    else if (parked == "corner") red += 5;
-    else if (parked == "compcorner") red += 10;
-    parked = $("input[name=redAutoParked2]:checked").val();
-    if (parked == "center") red += 5;
-    else if (parked == "compcenter") red += 10;
-    else if (parked == "corner") red += 5;
-    else if (parked == "compcorner") red += 10;
-    red += ($("#redTeleBeacons").val())*10;
-    red += ($("#redTeleCenterParticles").val())*5;
-    red += ($("#redTeleCornerParticles").val())*1;
-    var cap = $("input[name=redEnd]:checked").val();
-    if (cap == "low") red += 10;
-    else if (cap == "high") red += 20;
-    else if (cap == "cap") red += 40; 
+    red += ($("#redSingleJewel").val())*30;
+    red += ($("#redAutoGlyphs").val())*15;
+    red += ($("#redAutoKeys").val())*30;
+    red += ($("#redSafeZone").val())*10;
+
+    red += ($("#redScored").val())*2;
+    red += ($("#redRows").val())*10;
+    red += ($("#redColumns").val())*20;
+    red += ($("#redCiphers").val())*30;
+
+    red += ($("#redZone1").val())*10;
+    red += ($("#redZone1").val())*20;
+    red += ($("#redZone1").val())*40;
+    red += ($("#redUpright").val())*15;
+    red += ($("#redBalanced").val())*20;
+
     red += ($("#bluePenMajor").val())*40;
     red += ($("#bluePenMinor").val())*10;
 
-    // -- BLUE Score -- //
-    blue += ($("#blueAutoBeacons").val())*30;
-    if ($("#blueAutoLarge").is(":checked")) blue += 5;
-    blue += ($("#blueAutoCenter").val())*15;
-    blue += ($("#blueAutoCorner").val())*5;
-    var parked = $("input[name=blueAutoParked1]:checked").val();
-    if (parked == "center") blue += 5;
-    else if (parked == "compcenter") blue += 10;
-    else if (parked == "corner") blue += 5;
-    else if (parked == "compcorner") blue += 10;
-    parked = $("input[name=blueAutoParked2]:checked").val();
-    if (parked == "center") blue += 5;
-    else if (parked == "compcenter") blue += 10;
-    else if (parked == "corner") blue += 5;
-    else if (parked == "compcorner") blue += 10;
-    blue += ($("#blueTeleBeacons").val())*10;
-    blue += ($("#blueTeleCenterParticles").val())*5;
-    blue += ($("#blueTeleCornerParticles").val())*1;
-    var cap = $("input[name=blueEnd]:checked").val();
-    if (cap == "low") blue += 10;
-    else if (cap == "high") blue += 20;
-    else if (cap == "cap") blue += 40; 
+    // // -- BLUE Score -- //
+    blue += ($("#blueSingleJewel").val())*30;
+    blue += ($("#blueAutoGlyphs").val())*15;
+    blue += ($("#blueAutoKeys").val())*30;
+    blue += ($("#blueSafeZone").val())*10;
+
+    blue += ($("#blueScored").val())*2;
+    blue += ($("#blueRows").val())*10;
+    blue += ($("#blueColumns").val())*20;
+    blue += ($("#blueCiphers").val())*30;
+
+    blue += ($("#blueZone1").val())*10;
+    blue += ($("#blueZone1").val())*20;
+    blue += ($("#blueZone1").val())*40;
+    blue += ($("#blueUpright").val())*15;
+    blue += ($("#blueBalanced").val())*20;
+
     blue += ($("#redPenMajor").val())*40;
-    blue += ($("#redPenMinor").val())*10;    
+    blue += ($("#redPenMinor").val())*10;
 
     timerObj.redScore = red;
     timerObj.blueScore = blue;
     document.getElementById('rscore').value = red;
     document.getElementById('bscore').value = blue;
 }
+// Res-Q
+// function updateScoresheet() {
+//     //Calculate red and blue score
+//     //Store red and blue score in the timer obj
+//     var red = 0;
+//     var blue = 0;
+//     // $("#redAutoBeacons").val() // Number input
+//     // $("#redAutoLarge").is(":checked") // Checkbox input
+//     // $("input[name=redAutoParked1]:checked").val() // Radio input
+//     // -- RED Score -- //
+//     red += ($("#redAutoBeacons").val())*30;
+//     if ($("#redAutoLarge").is(":checked")) red += 5;
+//     red += ($("#redAutoCenter").val())*15;
+//     red += ($("#redAutoCorner").val())*5;
+//     var parked = $("input[name=redAutoParked1]:checked").val();
+//     if (parked == "center") red += 5;
+//     else if (parked == "compcenter") red += 10;
+//     else if (parked == "corner") red += 5;
+//     else if (parked == "compcorner") red += 10;
+//     parked = $("input[name=redAutoParked2]:checked").val();
+//     if (parked == "center") red += 5;
+//     else if (parked == "compcenter") red += 10;
+//     else if (parked == "corner") red += 5;
+//     else if (parked == "compcorner") red += 10;
+//     red += ($("#redTeleBeacons").val())*10;
+//     red += ($("#redTeleCenterParticles").val())*5;
+//     red += ($("#redTeleCornerParticles").val())*1;
+//     var cap = $("input[name=redEnd]:checked").val();
+//     if (cap == "low") red += 10;
+//     else if (cap == "high") red += 20;
+//     else if (cap == "cap") red += 40; 
+//     red += ($("#bluePenMajor").val())*40;
+//     red += ($("#bluePenMinor").val())*10;
+
+//     // -- BLUE Score -- //
+//     blue += ($("#blueAutoBeacons").val())*30;
+//     if ($("#blueAutoLarge").is(":checked")) blue += 5;
+//     blue += ($("#blueAutoCenter").val())*15;
+//     blue += ($("#blueAutoCorner").val())*5;
+//     var parked = $("input[name=blueAutoParked1]:checked").val();
+//     if (parked == "center") blue += 5;
+//     else if (parked == "compcenter") blue += 10;
+//     else if (parked == "corner") blue += 5;
+//     else if (parked == "compcorner") blue += 10;
+//     parked = $("input[name=blueAutoParked2]:checked").val();
+//     if (parked == "center") blue += 5;
+//     else if (parked == "compcenter") blue += 10;
+//     else if (parked == "corner") blue += 5;
+//     else if (parked == "compcorner") blue += 10;
+//     blue += ($("#blueTeleBeacons").val())*10;
+//     blue += ($("#blueTeleCenterParticles").val())*5;
+//     blue += ($("#blueTeleCornerParticles").val())*1;
+//     var cap = $("input[name=blueEnd]:checked").val();
+//     if (cap == "low") blue += 10;
+//     else if (cap == "high") blue += 20;
+//     else if (cap == "cap") blue += 40; 
+//     blue += ($("#redPenMajor").val())*40;
+//     blue += ($("#redPenMinor").val())*10;    
+
+//     timerObj.redScore = red;
+//     timerObj.blueScore = blue;
+//     document.getElementById('rscore').value = red;
+//     document.getElementById('bscore').value = blue;
+// }
 
 function resetScoresheet() {
-    $("#redAutoBeacons").val(0);
-    $("#redAutoCenter").val(0);
-    $("#redAutoCorner").val(0);
-    $("#redTeleBeacons").val(0);
-    $("#redTeleCenterParticles").val(0);
-    $("#redTeleCornerParticles").val(0);
-    $("#redPenMajor").val(0);
-    $("#redPenMinor").val(0);
-
-    $("#blueAutoBeacons").val(0);
-    $("#blueAutoCenter").val(0);
-    $("#blueAutoCorner").val(0);
-    $("#blueTeleBeacons").val(0);
-    $("#blueTeleCenterParticles").val(0);
-    $("#blueTeleCornerParticles").val(0);
-    $("#bluePenMajor").val(0);
-    $("#bluePenMinor").val(0);
-
-    $("#defParkr1").prop("checked",true);
-    $("#defParkr2").prop("checked",true);
-    $("#defParkb1").prop("checked",true);
-    $("#defParkb2").prop("checked",true);
-    $("#defEndr").prop("checked",true);
-    $("#defEndb").prop("checked",true);
-
-    $("#redAutoLarge").prop("checked",false);
-    $("#blueAutoLarge").prop("checked",false);
+    $(".red-scoresheet input:number").val(0);
+    $(".red-scoresheet input:checkbox").propr("checked",true);
+    $(".blue-scoresheet input:number").val(0);
+    $(".blue-scoresheet input:checkbox").propr("checked",true);
     updateScoresheet();
 }
 
 function updateScore() {
     timerObj.redScore = document.getElementById('rscore').value;
     timerObj.blueScore = document.getElementById('bscore').value;
-}
-
-function secsToTime(s) {
-    var mins = Math.floor(s/60);
-    var secs = s%60;
-    var minString = (mins<10) ? "0"+mins : mins;
-    var secString = (secs<10) ? "0"+secs : secs;
-    return minString+":"+secString;
 }
 
 function setKeystone() {
@@ -306,9 +330,24 @@ function changeLogo() {
 function setTeams() {
 }
 
-function changeTitle() {
-    var safe = timerObj.title;
-    timerObj.title = prompt("Enter title here", timerObj.title);
-    if (timerObj.title == null) timerObj.title = safe;
-    document.getElementById("title").innerHTML = timerObj.title;
+// function changeTitle() {
+//     var safe = timerObj.title;
+//     timerObj.title = prompt("Enter title here", timerObj.title);
+//     if (timerObj.title == null) timerObj.title = safe;
+//     document.getElementById("title").innerHTML = timerObj.title;
+// }
+
+function openTitleModal() {
+    $("#sm-modal-body").empty();
+    $("#sm-modal-footer").empty();
+    $("#sm-modal-title")[0].innerHTML = "Event Title";
+    $("#sm-modal-body").append($("<input type=\"text\" class=\"form-control\" value=\""+timerObj.title+"\"><br>"));
+    $("#sm-modal-footer").append($("<button onclick=\"closeTitleModal()\" class=\"btn btn-default\" data-dismiss=\"modal\">Save</button>"));
+    $("#sm-modal-footer").append($("<button class=\"btn btn-default\" data-dismiss=\"modal\">Close</button>"));
+}
+
+function closeTitleModal() {
+    var input = $("#sm-modal-body>input")[0];
+    timerObj.title = input.value;
+    $("#title")[0].innerHTML = timerObj.title;
 }
