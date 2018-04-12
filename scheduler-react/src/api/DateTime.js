@@ -1,4 +1,4 @@
-export default class DateTime {
+export class DateTime {
     constructor(mins) {
         this.mins = mins;
     }

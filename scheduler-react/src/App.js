@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import BasicInputForm from './inputs/InitForm'
+import BasicInputForm from './ui/InitForm'
 import './App.css';
-import { EventParameters } from "./api/EventParameters";
+import { EventParams } from "./api/EventParams";
+import SessionForm from "./ui/SessionForm";
 
 class App extends Component {
     constructor(props) {
@@ -16,9 +17,11 @@ class App extends Component {
     }
 
     initSchedule(initState) {
+        let E = new EventParams( this.props.version,
+            initState.title, initState.nTeams, initState.startTime, initState.endTime);
+
         this.setState({
-            eventParams: new EventParameters(
-                initState.title, initState.nTeams, initState.startTime, initState.endTime),
+            eventParams: E,
             display: 'Customise'
         });
     }
@@ -50,6 +53,7 @@ class App extends Component {
                 </div>
             );
         } else if (this.state.display === 'Customise') {
+            console.log(this.state.eventParams);
             mainWindow = (
                 <div>
                     <h1 className="App-intro">
@@ -59,6 +63,9 @@ class App extends Component {
                     <br/>
                     <h2>{this.state.eventParams.startTime.time} - {this.state.eventParams.endTime.time}</h2>
                     <br/>
+                    {this.state.eventParams.sessions.map(s =>
+                            <SessionForm key={s._id} session={s}/>)
+                    }
                     <h2>Teams</h2>
                     <br/>
                     <ul>

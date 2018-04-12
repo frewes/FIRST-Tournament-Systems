@@ -1,9 +1,9 @@
 import React from 'react';
-import TextInput from './TextInput'
-import NumberInput from './NumberInput'
-import DateTimeInput from './DateTimeInput'
+import TextInput from '../inputs/TextInput'
+import NumberInput from '../inputs/NumberInput'
+import DateTimeInput from '../inputs/DateTimeInput'
 
-import DateTime from '../api/DateTime'
+import { DateTime } from '../api/DateTime'
 
 export default class BasicInputForm extends React.Component {
     constructor(props) {
