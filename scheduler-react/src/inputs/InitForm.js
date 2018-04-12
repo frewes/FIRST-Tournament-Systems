@@ -3,14 +3,17 @@ import TextInput from './TextInput'
 import NumberInput from './NumberInput'
 import DateTimeInput from './DateTimeInput'
 
+import DateTime from '../api/DateTime'
+
 export default class BasicInputForm extends React.Component {
     constructor(props) {
         super(props);
+        // Default values....
         this.state = {
-            title: '2018 FLL Tournament.',
+            title: '2018 FLL Tournament',
             nTeams: 24,
-            startTime: '09:00',
-            endTime: '17:00'
+            startTime: new DateTime(9*60),
+            endTime: new DateTime(17*60)
         };
 
         this.updateTitle = this.updateTitle.bind(this);
@@ -34,31 +37,25 @@ export default class BasicInputForm extends React.Component {
     }
 
     handleSubmit(event) {
-        alert('An essay was submitted: ' + this.state.value);
+        this.props.onSubmit(this.state);
         event.preventDefault();
     }
 
     render() {
         return (
-            <form onSubmit={this.handleSubmit}>
-                <TextInput label="Title: " value={this.state.title} onChange={this.updateTitle}/>
-                <br/>
-                <h1>{this.state.title}</h1>
-                <br/>
-                <NumberInput label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>
-                <br/>
-                <h1>{this.state.nTeams}</h1>
-                <br/>
-                <DateTimeInput label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
-                <br/>
-                <h1>{this.state.startTime}</h1>
-                <br/>
-                <DateTimeInput label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
-                <br/>
-                <h1>{this.state.endTime}</h1>
-                <br/>
-                <input type="submit" value="Set up schedule" />
-            </form>
+            <div>
+                <form onSubmit={this.handleSubmit}>
+                    <TextInput label="Title: " value={this.state.title} onChange={this.updateTitle}/>
+                    <br/>
+                    <NumberInput label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>
+                    <br/>
+                    <DateTimeInput label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
+                    <br/>
+                    <DateTimeInput label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
+                    <br/>
+                    <input type="submit" value="Set up schedule" />
+                </form>
+            </div>
         );
     }
 }
