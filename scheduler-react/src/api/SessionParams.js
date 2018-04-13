@@ -1,7 +1,7 @@
 // import { TYPES } from './SessionTypes'
 
 export default class SessionParams {
-    constructor(uid, type, name, nLocs, startTime, endTime) {
+    constructor(uid, type, name, nLocs=4, startTime=null, endTime=null) {
         this._id = uid;
         this._type = type;
 

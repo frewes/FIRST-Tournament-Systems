@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import BasicInputForm from './ui/InitForm'
+import InitForm from './ui/InitForm'
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { EventParams } from "./api/EventParams";
-import SessionForm from "./ui/SessionForm";
 import DetailView from "./ui/DetailView";
 
-import { Navbar, Container, Jumbotron, Button } from 'reactstrap';
+import { Navbar, NavbarBrand, Container, Jumbotron, Button, Row, Col } from 'reactstrap';
+import DayScheduleView from "./ui/DayScheduleView";
 
 class App extends Component {
     constructor(props) {
@@ -18,6 +18,7 @@ class App extends Component {
         this.handleCreateButtonClick = this.handleCreateButtonClick.bind(this);
         this.handleLoadButtonClick = this.handleLoadButtonClick.bind(this);
         this.initSchedule= this.initSchedule.bind(this);
+        this.handleScheduleChange = this.handleScheduleChange.bind(this);
     }
 
     initSchedule(initState) {
@@ -27,6 +28,12 @@ class App extends Component {
         this.setState({
             eventParams: E,
             display: 'Customise'
+        });
+    }
+
+    handleScheduleChange(E) {
+        this.setState({
+            eventParams: E
         });
     }
 
@@ -42,60 +49,42 @@ class App extends Component {
         let mainWindow = <h1>An error occurred</h1>;
         if (this.state.display=== 'LoadNew') {
             mainWindow = (
-                <div>
+                <Jumbotron>
                     <Button onClick={this.handleCreateButtonClick}>Create new schedule</Button>&nbsp;
                     <Button onClick={this.handleLoadButtonClick}>Load existing schedule</Button>
-                </div>
+                </Jumbotron>
             );
         } else if (this.state.display === 'Initialise') {
             mainWindow = (
-                <div>
+                <Jumbotron>
                     <h1 className="App-intro">
                         Basic setup
                     </h1>
-                    <BasicInputForm onSubmit={this.initSchedule}/>
-                </div>
+                    <InitForm onSubmit={this.initSchedule}/>
+                </Jumbotron>
             );
         } else if (this.state.display === 'Customise') {
             mainWindow = (
-                <div>
-                    <DetailView event={this.state.eventParams}/>
-                </div>
-            )
-        } else if (this.state.display === 'unused') {
-            console.log(this.state.eventParams);
-            mainWindow = (
-                <Container>
-                    <h1 className="App-intro">
-                        Customise parameters
-                    </h1>
-                    <h1>{this.state.eventParams.title}</h1>
-                    <br/>
-                    <h2>{this.state.eventParams.startTime.time} - {this.state.eventParams.endTime.time}</h2>
-                    <br/>
-                    {this.state.eventParams.sessions.map(s =>
-                        <SessionForm key={s._id} session={s}/>)
-                    }
-                    <h2>Teams</h2>
-                    <br/>
-                    <ul>
-                        {this.state.eventParams.teams.map(team =>
-                            <li key={team.number}>{team.number}: {team.name}</li>
-                        )}
-                    </ul>
-                </Container>
+                <Row>
+                    <Col xs="3">
+                        <DayScheduleView event={this.state.eventParams}/>
+                    </Col>
+                    <Col xs="9">
+                        <Jumbotron>
+                            <DetailView onChange={this.handleScheduleChange} event={this.state.eventParams}/>
+                        </Jumbotron>
+                    </Col>
+                </Row>
+
             )
         }
 
         return (
             <Container className="App">
-                <Navbar light>
-                    <h1>FLL Scheduler</h1>
-                    <h3>Version {this.props.version}</h3>
+                <Navbar color="light" light expand="md">
+                    <NavbarBrand>FLL Scheduler <small>Version {this.props.version}</small></NavbarBrand>
                 </Navbar>
-                <Jumbotron>
-                    {mainWindow}
-                </Jumbotron>
+                {mainWindow}
             </Container>
         );
   }

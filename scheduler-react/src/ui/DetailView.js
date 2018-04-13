@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane} from 'reactstrap';
 
-// import { DateTime } from '../api/DateTime'
 import { TYPES } from '../api/SessionTypes';
+import InitForm from "./InitForm";
 
 export default class DetailView extends React.Component {
     constructor(props) {
@@ -10,8 +10,10 @@ export default class DetailView extends React.Component {
 
         this.toggle = this.toggle.bind(this);
         this.state = {
-            activeTab: '1'
+            activeTab: 'judging'
         };
+
+        this.updateScheduleFromBasics = this.updateScheduleFromBasics.bind(this);
     }
 
     toggle(tab) {
@@ -20,6 +22,16 @@ export default class DetailView extends React.Component {
                 activeTab: tab
             });
         }
+    }
+
+    updateScheduleFromBasics(s) {
+        console.log(s);
+        let E = this.props.event;
+        E.title = s.title;
+        E.nTeams = s.nTeams;
+        E.startTime = s.startTime;
+        E.endTime = s.endTime;
+        this.props.onChange(E);
     }
 
     renderSessions(type) {
@@ -31,32 +43,41 @@ export default class DetailView extends React.Component {
             <Container>
                 <Nav pills>
                     <NavItem>
-                        <NavLink href="#" className={(this.state.activeTab === '1') ? "active" : ""}
-                                 onClick={() => {this.toggle('1')}}>
+                        <NavLink href="#" className={(this.state.activeTab === 'basics') ? "active" : ""}
+                                 onClick={() => {this.toggle('basics')}}>
+                            Basics
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink href="#" className={(this.state.activeTab === 'judging') ? "active" : ""}
+                                 onClick={() => {this.toggle('judging')}}>
                             Judging
                         </NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink href="#" className={this.state.activeTab === '2' ? "active" : ""}
-                                 onClick={() => {this.toggle('2')}}>
-                            Matches
+                        <NavLink href="#" className={this.state.activeTab === 'rounds' ? "active" : ""}
+                                 onClick={() => {this.toggle('rounds')}}>
+                            Rounds
                         </NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink href="#" className={(this.state.activeTab === '3') ? "active" : ""}
-                                 onClick={() => {this.toggle('3')}}>
+                        <NavLink href="#" className={(this.state.activeTab === 'breaks') ? "active" : ""}
+                                 onClick={() => {this.toggle('breaks')}}>
                             Breaks
                         </NavLink>
                     </NavItem>
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
-                    <TabPane tabId="1">
+                    <TabPane tabId="basics">
+                        <InitForm event={this.props.event} onChange={this.updateScheduleFromBasics}/>
+                    </TabPane>
+                    <TabPane tabId="judging">
                         {this.renderSessions(TYPES.JUDGING)}
                     </TabPane>
-                    <TabPane tabId="2">
+                    <TabPane tabId="rounds">
                         {this.renderSessions(TYPES.MATCH_ROUND)}
                     </TabPane>
-                    <TabPane tabId="3">
+                    <TabPane tabId="breaks">
                         {this.renderSessions(TYPES.BREAK)}
                         </TabPane>
                 </TabContent>

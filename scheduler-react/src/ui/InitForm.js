@@ -7,15 +7,15 @@ import { DateTime } from '../api/DateTime'
 import { Container, Form, Button } from 'reactstrap';
 
 
-export default class BasicInputForm extends React.Component {
+export default class InitForm extends React.Component {
     constructor(props) {
         super(props);
         // Default values....
         this.state = {
-            title: '2018 FLL Tournament',
-            nTeams: 24,
-            startTime: new DateTime(9*60),
-            endTime: new DateTime(17*60)
+            title: (this.props.event) ? this.props.event.title : '2018 FLL Tournament',
+            nTeams: (this.props.event) ? this.props.event.nTeams : 24,
+            startTime: (this.props.event) ? this.props.event.startTime: new DateTime(9*60),
+            endTime: (this.props.event) ? this.props.event.endTime : new DateTime(17*60)
         };
 
         this.updateTitle = this.updateTitle.bind(this);
@@ -23,24 +23,43 @@ export default class BasicInputForm extends React.Component {
         this.updateStartTime = this.updateStartTime.bind(this);
         this.updateEndTime = this.updateEndTime.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     updateTitle(newTitle) {
         this.setState({title: newTitle});
+        let data = this.state;
+        data.title = newTitle;
+        this.handleChange(data);
     }
     updateNTeams(newN) {
         this.setState({nTeams: newN});
+        let data = this.state;
+        data.nTeams = newN;
+        this.handleChange(data);
     }
     updateStartTime(newTime) {
         this.setState({startTime: newTime});
+        let data = this.state;
+        data.startTime = newTime;
+        this.handleChange(data);
     }
     updateEndTime(newTime) {
         this.setState({endTime: newTime});
+        let data = this.state;
+        data.endTime = newTime;
+        this.handleChange(data);
     }
 
     handleSubmit(event) {
-        this.props.onSubmit(this.state);
-        event.preventDefault();
+        if (this.props.onSubmit) {
+            this.props.onSubmit(this.state);
+            event.preventDefault();
+        }
+    }
+
+    handleChange(data) {
+        if (this.props.onChange) this.props.onChange(data);
     }
 
     render() {
@@ -48,7 +67,7 @@ export default class BasicInputForm extends React.Component {
             <Container>
                 <Form onSubmit={this.handleSubmit}>
                     <TextInput label="Title: " value={this.state.title} onChange={this.updateTitle}/>
-                    <NumberInput label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>
+                    <NumberInput min="4" label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>
                     <DateTimeInput label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
                     <DateTimeInput label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
                     <Button>Set up schedule</Button>

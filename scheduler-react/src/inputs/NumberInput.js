@@ -22,7 +22,8 @@ export default class NumberInput extends React.Component {
             <FormGroup row>
                 <Label sm={2} for={this.nextUniqueId()}>{this.props.label}</Label>
                 <Col sm={10}>
-                    <Input type="number" id={this.lastUniqueId()} value={this.props.value} onChange={this.handleChange}/>
+                    <Input type="number" min={this.props.min} max={this.props.max} id={this.lastUniqueId()}
+                           value={this.props.value} onChange={this.handleChange}/>
                 </Col>
             </FormGroup>
         );
