@@ -24,4 +24,4 @@ export const TYPES = {
     MATCH_FILLER: new SessionType(48,"Matches", 32, "Qualifying Match", "Field", POLICIES.surrogates),
     MATCH_FILLER_PRACTICE: new SessionType(49,"Practice Matches", 129, "Practice Match", "Field", POLICIES.surrogates),
     BREAK: new SessionType(64,"Breaks", 0, "Break", "Everywhere")
-}
+};

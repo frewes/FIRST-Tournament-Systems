@@ -1,9 +1,14 @@
 import React from 'react';
 
+import { Input, Col, FormGroup, Label } from 'reactstrap';
+import uniqueId from 'react-html-id'
+
 export default class NumberInput extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.handleChange = this.handleChange.bind(this);
+
+        uniqueId.enableUniqueIds(this)
     }
 
     handleChange(event) {
@@ -14,10 +19,12 @@ export default class NumberInput extends React.Component {
 
     render() {
         return (
-            <label>
-                {this.props.label}
-                <input type="number" value={this.props.value} onChange={this.handleChange}/>
-            </label>
+            <FormGroup row>
+                <Label sm={2} for={this.nextUniqueId()}>{this.props.label}</Label>
+                <Col sm={10}>
+                    <Input type="number" id={this.lastUniqueId()} value={this.props.value} onChange={this.handleChange}/>
+                </Col>
+            </FormGroup>
         );
     }
 }

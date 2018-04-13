@@ -1,9 +1,14 @@
 import React from 'react';
 
+import { Input, Col, FormGroup, Label } from 'reactstrap';
+import uniqueId from 'react-html-id'
+
 export default class DateTimeInput extends React.Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
+
+        uniqueId.enableUniqueIds(this);
     }
 
     handleChange(event) {
@@ -14,10 +19,13 @@ export default class DateTimeInput extends React.Component {
 
     render() {
         return (
-            <label>
-                {this.props.label}
-                <input type="time" pattern="[0-2][0-9]:[0-5][0-9]" step="900" value={this.props.value.time} onChange={this.handleChange}/>
-            </label>
+            <FormGroup row>
+                <Label sm={2} for={this.nextUniqueId()}>{this.props.label}</Label>
+                <Col sm={10}>
+                    <Input type="time" id={this.lastUniqueId()} pattern="[0-2][0-9]:[0-5][0-9]" step="900"
+                           value={this.props.value.time} onChange={this.handleChange}/>
+                </Col>
+            </FormGroup>
         );
     }
 }

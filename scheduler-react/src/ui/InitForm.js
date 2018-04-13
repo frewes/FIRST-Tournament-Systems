@@ -4,6 +4,8 @@ import NumberInput from '../inputs/NumberInput'
 import DateTimeInput from '../inputs/DateTimeInput'
 
 import { DateTime } from '../api/DateTime'
+import { Container, Form, Button } from 'reactstrap';
+
 
 export default class BasicInputForm extends React.Component {
     constructor(props) {
@@ -43,19 +45,15 @@ export default class BasicInputForm extends React.Component {
 
     render() {
         return (
-            <div>
-                <form onSubmit={this.handleSubmit}>
+            <Container>
+                <Form onSubmit={this.handleSubmit}>
                     <TextInput label="Title: " value={this.state.title} onChange={this.updateTitle}/>
-                    <br/>
                     <NumberInput label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>
-                    <br/>
                     <DateTimeInput label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
-                    <br/>
                     <DateTimeInput label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
-                    <br/>
-                    <input type="submit" value="Set up schedule" />
-                </form>
-            </div>
+                    <Button>Set up schedule</Button>
+                </Form>
+            </Container>
         );
     }
 }

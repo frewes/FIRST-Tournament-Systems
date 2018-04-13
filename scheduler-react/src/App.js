@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import BasicInputForm from './ui/InitForm'
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import { EventParams } from "./api/EventParams";
 import SessionForm from "./ui/SessionForm";
+import DetailView from "./ui/DetailView";
+
+import { Navbar, Container, Jumbotron, Button } from 'reactstrap';
 
 class App extends Component {
     constructor(props) {
@@ -39,8 +43,8 @@ class App extends Component {
         if (this.state.display=== 'LoadNew') {
             mainWindow = (
                 <div>
-                    <button onClick={this.handleCreateButtonClick}>Create new schedule</button>&nbsp;
-                    <button onClick={this.handleLoadButtonClick}>Load existing schedule</button>
+                    <Button onClick={this.handleCreateButtonClick}>Create new schedule</Button>&nbsp;
+                    <Button onClick={this.handleLoadButtonClick}>Load existing schedule</Button>
                 </div>
             );
         } else if (this.state.display === 'Initialise') {
@@ -53,9 +57,15 @@ class App extends Component {
                 </div>
             );
         } else if (this.state.display === 'Customise') {
-            console.log(this.state.eventParams);
             mainWindow = (
                 <div>
+                    <DetailView event={this.state.eventParams}/>
+                </div>
+            )
+        } else if (this.state.display === 'unused') {
+            console.log(this.state.eventParams);
+            mainWindow = (
+                <Container>
                     <h1 className="App-intro">
                         Customise parameters
                     </h1>
@@ -64,27 +74,29 @@ class App extends Component {
                     <h2>{this.state.eventParams.startTime.time} - {this.state.eventParams.endTime.time}</h2>
                     <br/>
                     {this.state.eventParams.sessions.map(s =>
-                            <SessionForm key={s._id} session={s}/>)
+                        <SessionForm key={s._id} session={s}/>)
                     }
                     <h2>Teams</h2>
                     <br/>
                     <ul>
-                    {this.state.eventParams.teams.map(team =>
-                        <li key={team.number}>{team.number}: {team.name}</li>
-                    )}
+                        {this.state.eventParams.teams.map(team =>
+                            <li key={team.number}>{team.number}: {team.name}</li>
+                        )}
                     </ul>
-                </div>
+                </Container>
             )
         }
 
         return (
-          <div className="App">
-            <header className="App-header">
-                <h1 className="App-title">FLL Scheduler</h1>
-                <h3>Version {this.props.version}</h3>
-            </header>
-              {mainWindow}
-          </div>
+            <Container className="App">
+                <Navbar light>
+                    <h1>FLL Scheduler</h1>
+                    <h3>Version {this.props.version}</h3>
+                </Navbar>
+                <Jumbotron>
+                    {mainWindow}
+                </Jumbotron>
+            </Container>
         );
   }
 }

@@ -28,17 +28,23 @@ export class EventParams {
 
     populateFLL() {
         // uid, type, name
-        for (var i = 1; i <= 3; i++) {
+        // "60" assumes a 1 hour lunch break
+        let timeAvailable = this.endTime.mins - this.startTime.mins - 60;
+        let timePerMatch = timeAvailable / (this.teams.length * 3 / 2);
+        let len = Math.ceil(timePerMatch/2);
+        let buf = Math.floor(timePerMatch/2);
+        for (let i = 1; i <= 3; i++) {
             let S = (new SessionParams(i, TYPES.MATCH_ROUND, "Round " + i, 4, this.startTime, this.endTime));
             S.nSims = 2;
-            S.len = 5;
-            S.buf = 3;
+            S.len = len;
+            S.buf = buf;
             this.sessions.push(S);
         }
         // These should be calculated...
-        let nLocs = 3;
-        let startLunch = new DateTime(12*60);
-        let endLunch = new DateTime(13*60);
+        let nLocs = Math.round(this.teams.length / 10);
+        let nJudgings = Math.ceil(this.teams.length/nLocs);
+        let startLunch = new DateTime(this.startTime.mins + nJudgings*15);
+        let endLunch = new DateTime(startLunch.mins + 60);
         this.sessions.push(new SessionParams(4,TYPES.JUDGING, "Robot Design Judging", nLocs,this.startTime, this.endTime));
         this.sessions.push(new SessionParams(5,TYPES.JUDGING, "Core Values Judging", nLocs,this.startTime, this.endTime));
         this.sessions.push(new SessionParams(6,TYPES.JUDGING, "Research Project Judging", nLocs,this.startTime, this.endTime));
