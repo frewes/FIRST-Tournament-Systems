@@ -4,6 +4,7 @@ import { Container, Nav, NavItem, NavLink, TabContent, TabPane} from 'reactstrap
 import { TYPES } from '../api/SessionTypes';
 import InitForm from "./InitForm";
 import TeamList from "../inputs/TeamList";
+import SessionForm from "./SessionForm"
 
 export default class DetailView extends React.Component {
     constructor(props) {
@@ -15,6 +16,7 @@ export default class DetailView extends React.Component {
         };
 
         this.updateScheduleFromBasics = this.updateScheduleFromBasics.bind(this);
+        this.updateSessions = this.updateSessions.bind(this);
     }
 
     toggle(tab) {
@@ -41,8 +43,26 @@ export default class DetailView extends React.Component {
         this.props.onChange(E);
     }
 
+    updateSessions(S) {
+        let E = this.props.event;
+        for (let i = 0; i < E.sessions.length; i++) {
+            if (E.sessions[i].id === S.id) {
+                E.sessions[i] = S;
+                this.props.onChange(E);
+                break;
+            }
+        }
+        console.log(E);
+    }
+
     renderSessions(type) {
-        return <h1>{type.name}</h1>
+        return (
+            <div>
+                {this.props.event.sessions.filter(S=>S.type === type).map(S => (
+                    <SessionForm key={S.id} session={S} onChange={this.updateSessions}/>
+                ))}
+            </div>
+        )
     }
 
     render() {
@@ -85,15 +105,19 @@ export default class DetailView extends React.Component {
                         <InitForm hideTeams hideSubmit event={this.props.event} onChange={this.updateScheduleFromBasics}/>
                     </TabPane>
                     <TabPane tabId="teams">
+                        &nbsp;
                         <TeamList teams={this.props.event.teams} onChange={this.updateTeams}/>
                     </TabPane>
                     <TabPane tabId="judging">
+                        &nbsp;
                         {this.renderSessions(TYPES.JUDGING)}
                     </TabPane>
                     <TabPane tabId="rounds">
+                        &nbsp;
                         {this.renderSessions(TYPES.MATCH_ROUND)}
                     </TabPane>
                     <TabPane tabId="breaks">
+                        &nbsp;
                         {this.renderSessions(TYPES.BREAK)}
                         </TabPane>
                 </TabContent>
