@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Table } from 'reactstrap';
-import { TYPES } from '../api/SessionTypes'
+// import { TYPES } from '../api/SessionTypes'
 import { DateTime } from "../api/DateTime";
 
 export default class DayScheduleView extends React.Component {
@@ -15,26 +15,26 @@ export default class DayScheduleView extends React.Component {
         let sessions = this.props.event.sessions;
         let rounds = sessions.sort((a,b) => { return a.id - b.id});
         // Estimate round times; this can be done better!
-        let timeAvailable = this.props.event.endTime.mins - this.props.event.startTime.mins - 60;
-        let timePerMatch = Math.round(timeAvailable / (this.props.event.nTeams * 3 / 2));
-        let matchLen = Math.ceil(timePerMatch/2);
-        let matchBuf = Math.floor(timePerMatch/2);
-        let roundDur = (matchLen + matchBuf) * Math.ceil(this.props.event.nTeams / 2);
-        let lastRoundEnd = new DateTime(this.props.event.startTime.mins);
-        let nLocs = Math.round(this.props.event.nTeams / 10);
-        let nJudgings = Math.ceil(this.props.event.nTeams/nLocs);
-        let startLunch = new DateTime(this.props.event.startTime.mins + nJudgings*15);
-        let endLunch = new DateTime(startLunch.mins + 60);
+        // let timeAvailable = this.props.event.endTime.mins - this.props.event.startTime.mins - 60;
+        // let timePerMatch = Math.round(timeAvailable / (this.props.event.nTeams * 3 / 2));
+        // let matchLen = Math.ceil(timePerMatch/2);
+        // let matchBuf = Math.floor(timePerMatch/2);
+        // let roundDur = (matchLen + matchBuf) * Math.ceil(this.props.event.nTeams / 2);
+        // let lastRoundEnd = new DateTime(this.props.event.startTime.mins);
+        // let nLocs = Math.round(this.props.event.nTeams / 10);
+        // let nJudgings = Math.ceil(this.props.event.nTeams/nLocs);
+        // let startLunch = new DateTime(this.props.event.startTime.mins + nJudgings*15);
+        // let endLunch = new DateTime(startLunch.mins + 60);
 
-        for (let i = 0; i < rounds.length; i++) {
-            if (rounds[i].type !== TYPES.MATCH_ROUND) continue;
-            rounds[i].startTime = lastRoundEnd;
-            let eTime = new DateTime(rounds[i].startTime.mins + roundDur);
-            if (rounds[i].startTime.mins < startLunch.mins && eTime.mins > endLunch.mins)
-                eTime.mins += (endLunch.mins - startLunch.mins);
-            rounds[i].endTime = eTime;
-            lastRoundEnd = eTime;
-        }
+        // for (let i = 0; i < rounds.length; i++) {
+        //     if (rounds[i].type !== TYPES.MATCH_ROUND) continue;
+        //     rounds[i].startTime = lastRoundEnd;
+        //     let eTime = new DateTime(rounds[i].startTime.mins + roundDur);
+        //     if (rounds[i].startTime.mins < startLunch.mins && eTime.mins > endLunch.mins)
+        //         eTime.mins += (endLunch.mins - startLunch.mins);
+        //     rounds[i].endTime = eTime;
+        //     lastRoundEnd = eTime;
+        // }
 
 
         let sorted = rounds.sort((a,b) => { return a.startTime.mins - b.startTime.mins});
@@ -65,7 +65,6 @@ export default class DayScheduleView extends React.Component {
     render() {
         let items = this.getItems();
         return (<div>
-            <h1>NTeams: {this.props.event.nTeams}</h1>
             <Table>
             <thead>
                 <tr>

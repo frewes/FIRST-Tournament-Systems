@@ -19,8 +19,8 @@ export default class TextInput extends React.Component {
     render() {
         return (
             <FormGroup row>
-                <Label sm={2} for={this.nextUniqueId()}>{this.props.label}</Label>
-                <Col sm={10}>
+                <Label hidden={this.props.nolabel ? true : false} sm={this.props.large? 2 : 6} for={this.nextUniqueId()}>{this.props.label}</Label>
+                <Col sm={this.props.nolabel ? 12 : this.props.large? 10 : 6}>
                     <Input type="text" id={this.lastUniqueId()} value={this.props.value} onChange={this.handleChange}/>
                 </Col>
             </FormGroup>

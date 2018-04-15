@@ -20,8 +20,8 @@ export default class DateTimeInput extends React.Component {
     render() {
         return (
             <FormGroup row>
-                <Label sm={2} for={this.nextUniqueId()}>{this.props.label}</Label>
-                <Col sm={10}>
+                <Label sm={this.props.large? 2 : 6} for={this.nextUniqueId()}>{this.props.label}</Label>
+                <Col sm={this.props.large? 10 : 6}>
                     <Input type="time" id={this.lastUniqueId()} pattern="[0-2][0-9]:[0-5][0-9]" step="900"
                            value={this.props.value.time} onChange={this.handleChange}/>
                 </Col>

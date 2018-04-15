@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Nav, NavItem, NavLink, TabContent, TabPane} from 'reactstrap';
+import { Container, Nav, NavItem, NavLink, TabContent, TabPane, Col, Row } from 'reactstrap';
 
 import { TYPES } from '../api/SessionTypes';
 import InitForm from "./InitForm";
@@ -57,11 +57,11 @@ export default class DetailView extends React.Component {
 
     renderSessions(type) {
         return (
-            <div>
-                {this.props.event.sessions.filter(S=>S.type === type).map(S => (
-                    <SessionForm key={S.id} session={S} onChange={this.updateSessions}/>
+            <Row>
+                {this.props.event.sessions.filter(S=>S.type === type).sort((a,b) => {return a.id-b.id;}).map(S => (
+                    <Col lg={6} md={12} key={S.id}><SessionForm session={S} onChange={this.updateSessions}/></Col>
                 ))}
-            </div>
+            </Row>
         )
     }
 
@@ -110,7 +110,7 @@ export default class DetailView extends React.Component {
                     </TabPane>
                     <TabPane tabId="judging">
                         &nbsp;
-                        {this.renderSessions(TYPES.JUDGING)}
+                            {this.renderSessions(TYPES.JUDGING)}
                     </TabPane>
                     <TabPane tabId="rounds">
                         &nbsp;

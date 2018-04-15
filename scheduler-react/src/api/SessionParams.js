@@ -35,6 +35,14 @@ export default class SessionParams {
     get name() { return this._name; }
     set name (value) { this._name = value; }
 
+    get nLocs() {return this._locations.length;}
+    set nLocs(value) {
+        while (this.nLocs < value)
+            this._locations.push(this.type.defaultLocs + " " + (this.nLocs + 1));
+        while (this.nLocs > value)
+            this._locations.pop();
+    }
+
     get locations() { return this._locations; }
     set locations(value) { this._locations = value; }
 

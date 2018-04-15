@@ -20,8 +20,8 @@ export default class NumberInput extends React.Component {
     render() {
         return (
             <FormGroup row>
-                <Label sm={2} for={this.nextUniqueId()}>{this.props.label}</Label>
-                <Col sm={10}>
+                <Label sm={this.props.large? 2 : 6} for={this.nextUniqueId()}>{this.props.label}</Label>
+                <Col sm={this.props.large? 10 : 6}>
                     <Input type="number" min={this.props.min} max={this.props.max} id={this.lastUniqueId()}
                            value={this.props.value} onChange={this.handleChange}/>
                 </Col>

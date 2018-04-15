@@ -66,10 +66,10 @@ export default class InitForm extends React.Component {
         return (
             <Container>
                 <Form onSubmit={this.handleSubmit}>
-                    <TextInput label="Title: " value={this.state.title} onChange={this.updateTitle}/>
-                    {!this.props.hideTeams && <NumberInput min="4" label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>}
-                    <DateTimeInput label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
-                    <DateTimeInput label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
+                    <TextInput large label="Title: " value={this.state.title} onChange={this.updateTitle}/>
+                    {!this.props.hideTeams && <NumberInput large min="4" label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>}
+                    <DateTimeInput large label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
+                    <DateTimeInput large label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
                     {!this.props.hideSubmit && <Button>Set up schedule</Button>}
                 </Form>
             </Container>

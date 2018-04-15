@@ -1,14 +1,29 @@
 import React from 'react';
 // import ReactDOM from 'react-dom';
+import { TYPES } from '../api/SessionTypes';
 
-import { Form } from 'reactstrap';
+import { Form, Table } from 'reactstrap';
 import TextInput from '../inputs/TextInput';
+import DateTimeInput from "../inputs/DateTimeInput";
+import NumberInput from "../inputs/NumberInput";
+
+import ReactDataSheet from 'react-datasheet';
 
 export default class SessionForm extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            grid: this.getDataGrid()
+        }
         this.updateName = this.updateName.bind(this);
+        this.updateStartTime= this.updateStartTime.bind(this);
+        this.updateEndTime = this.updateEndTime.bind(this);
+        this.updateLen = this.updateLen.bind(this);
+        this.updateBuf = this.updateBuf.bind(this);
+        this.updateNLocs = this.updateNLocs.bind(this);
+
+        this.updateLocs = this.updateLocs.bind(this);
     }
 
     updateName(value) {
@@ -17,13 +32,107 @@ export default class SessionForm extends React.Component {
         this.props.onChange(S);
     }
 
+    updateStartTime(value) {
+        let S = this.props.session;
+        S.startTime = value;
+        this.props.onChange(S);
+    }
+
+    updateEndTime(value) {
+        let S = this.props.session;
+        S.endTime = value;
+        this.props.onChange(S);
+    }
+
+    updateLen(value) {
+        let S = this.props.session;
+        S.len = value;
+        this.props.onChange(S);
+    }
+
+    updateBuf(value) {
+        let S = this.props.session;
+        S.buf = value;
+        this.props.onChange(S);
+    }
+
+    updateNLocs(value) {
+        let S = this.props.session;
+        S.nLocs = value;
+        this.setState({grid: this.getDataGrid()});
+        this.props.onChange(S);
+    }
+
+    getDataGrid() {
+        let grid = [];
+        for (let i = 0; i < this.props.session.nLocs; i++) {
+            grid.push([]);
+            grid[i].push({value: this.props.session.type.defaultLocs + " " + (i+1), readOnly: true});
+            grid[i].push({value: this.props.session.locations[i]});
+        }
+        return grid;
+    }
+
+    updateLocs(changes) {
+        const grid = this.state.grid.map(row => [...row])
+        changes.forEach(({cell, row, col, value}) => {
+            grid[row][col] = {...grid[row][col], value}
+        })
+        this.setState({grid});
+        let A = [];
+        for (let i = 0; i < grid.length; i++) {
+            A.push(grid[i][1].value);
+        }
+        let S = this.props.session;
+        S.locations = A;
+        this.props.onChange(S);
+    }
+
     render() {
         return (
-            <div>
+            <div className="session-form">
                 <Form>
-                    <TextInput label="Title" value={this.props.session.name} onChange={this.updateName}/>
+                    {this.props.advanced ?
+                        <TextInput label="Title" nolabel value={this.props.session.name} onChange={this.updateName}/> :
+                        <h3>{this.props.session.name}</h3>
+                    }
+                    <DateTimeInput label="Start time" value={this.props.session.startTime} onChange={this.updateStartTime}/>
+                    <DateTimeInput label="Must be done by" value={this.props.session.endTime} onChange={this.updateEndTime}/>
+                    {this.props.session.type !== TYPES.BREAK &&
+                        <NumberInput label="Duration (mins)" value={this.props.session.len} onChange={this.updateLen}/>}
+                    {this.props.session.type !== TYPES.BREAK &&
+                        <NumberInput label="Buffer/cleanup time (mins)" value={this.props.session.buf} onChange={this.updateBuf}/>}
+                    {this.props.session.type !== TYPES.BREAK && (
+                        this.props.session.type === TYPES.JUDGING ?
+                        <NumberInput label="Number of rooms" value={this.props.session.locations.length} onChange={this.updateNLocs}/> :
+                        <NumberInput label="Number of tables" value={this.props.session.locations.length} onChange={this.updateNLocs}/> )}
+                    {this.props.session.type !== TYPES.BREAK && <strong>Locations</strong>}
+                    {this.props.session.type !== TYPES.BREAK && <ReactDataSheet
+                        data={this.state.grid}
+                        valueRenderer={(cell) => cell.value}
+                        sheetRenderer={(props) => (
+                            <Table className="datagrid-custom">
+                                <tbody>
+                                    {props.children}
+                                </tbody>
+                            </Table>
+                        )}
+                        onCellsChanged={(changes) => this.updateLocs(changes)}
+                    />}
                 </Form>
             </div>
         );
     }
 }
+
+// get name() { return this._name; }
+// get locations() { return this._locations; }
+// get nSims() { return this._nSims; }
+// get startTime() { return this._startTime; }
+// get endTime() { return this._endTime; }
+// get len() { return this._len ; }
+// get buf() { return this._buf ; }
+// get instances() { return this._instances; }
+// get extraTimeFirst() { return this._extraTimeFirst; }
+// get extraTimeEvery() { return this._extraTimeEvery; }
+// get appliesTo() { return this._appliesTo; }

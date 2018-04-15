@@ -41,16 +41,21 @@ export class EventParams {
         let endLunch = new DateTime(startLunch.mins + 60);
 
         for (let i = 1; i <= 3; i++) {
-            let S = new SessionParams(i, TYPES.MATCH_ROUND, "Round " + i, 4, this.startTime, this.endTime);
+            let S = new SessionParams(i, TYPES.MATCH_ROUND, "Round " + i, 4,
+                new DateTime(this.startTime.mins), new DateTime(this.endTime.mins));
             S.nSims = nSims;
             S.len = matchLen;
             S.buf = matchBuf;
             this.sessions.push(S);
         }
-        this.sessions.push(new SessionParams(4,TYPES.JUDGING, "Robot Design Judging", nLocs, this.startTime, startLunch));
-        this.sessions.push(new SessionParams(5,TYPES.JUDGING, "Core Values Judging", nLocs, this.startTime, startLunch));
-        this.sessions.push(new SessionParams(6,TYPES.JUDGING, "Research Project Judging", nLocs, this.startTime, startLunch));
-        this.sessions.push(new SessionParams(7,TYPES.BREAK, "Lunch", 1, startLunch, endLunch));
+        this.sessions.push(new SessionParams(4,TYPES.JUDGING, "Robot Design Judging", nLocs,
+            new DateTime(this.startTime.mins), new DateTime(startLunch.mins)));
+        this.sessions.push(new SessionParams(5,TYPES.JUDGING, "Core Values Judging", nLocs,
+            new DateTime(this.startTime.mins), new DateTime(startLunch.mins)));
+        this.sessions.push(new SessionParams(6,TYPES.JUDGING, "Research Project Judging", nLocs,
+            new DateTime(this.startTime.mins), new DateTime(startLunch.mins)));
+        this.sessions.push(new SessionParams(7,TYPES.BREAK, "Lunch", 1,
+            new DateTime(startLunch.mins), new DateTime(endLunch.mins)));
     }
 
     get nTeams() { return this._teams.length; }

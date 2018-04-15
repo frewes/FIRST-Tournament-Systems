@@ -44,7 +44,6 @@ span.data-grid-container, span.data-grid-container:focus {
     overflow: hidden;
 }
 
-
 .data-grid-container .datagrid-custom .cell > input {
     outline: none !important;
     border: 2px solid rgb(33, 133, 208);
