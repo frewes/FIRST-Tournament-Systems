@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import InitForm from './ui/InitForm'
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.css';
 import { EventParams } from "./api/EventParams";
 import DetailView from "./ui/DetailView";
 
 import { Navbar, NavbarBrand, Container, Jumbotron, Button, Row, Col } from 'reactstrap';
 import DayScheduleView from "./ui/DayScheduleView";
+
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'react-datasheet/lib/react-datasheet.css';
+import './react-datagrid-custom.css';
 
 class App extends Component {
     constructor(props) {

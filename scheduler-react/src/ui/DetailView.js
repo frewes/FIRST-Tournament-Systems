@@ -3,6 +3,7 @@ import { Container, Nav, NavItem, NavLink, TabContent, TabPane} from 'reactstrap
 
 import { TYPES } from '../api/SessionTypes';
 import InitForm from "./InitForm";
+import TeamList from "../inputs/TeamList";
 
 export default class DetailView extends React.Component {
     constructor(props) {
@@ -34,6 +35,12 @@ export default class DetailView extends React.Component {
         this.props.onChange(E);
     }
 
+    updateTeams(T) {
+        let E = this.props.event;
+        E.teams = T;
+        this.props.onChange(E);
+    }
+
     renderSessions(type) {
         return <h1>{type.name}</h1>
     }
@@ -46,6 +53,12 @@ export default class DetailView extends React.Component {
                         <NavLink href="#" className={(this.state.activeTab === 'basics') ? "active" : ""}
                                  onClick={() => {this.toggle('basics')}}>
                             Basics
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink href="#" className={(this.state.activeTab === 'teams') ? "active" : ""}
+                                 onClick={() => {this.toggle('teams')}}>
+                            Teams
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -69,7 +82,10 @@ export default class DetailView extends React.Component {
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="basics">
-                        <InitForm event={this.props.event} onChange={this.updateScheduleFromBasics}/>
+                        <InitForm hideTeams hideSubmit event={this.props.event} onChange={this.updateScheduleFromBasics}/>
+                    </TabPane>
+                    <TabPane tabId="teams">
+                        <TeamList teams={this.props.event.teams} onChange={this.updateTeams}/>
                     </TabPane>
                     <TabPane tabId="judging">
                         {this.renderSessions(TYPES.JUDGING)}

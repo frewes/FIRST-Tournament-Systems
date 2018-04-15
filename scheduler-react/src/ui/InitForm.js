@@ -52,7 +52,7 @@ export default class InitForm extends React.Component {
     }
 
     handleSubmit(event) {
-        if (this.props.onSubmit) {
+        if (this.props.onSubmit && !this.props.hideSubmit) {
             this.props.onSubmit(this.state);
             event.preventDefault();
         }
@@ -67,10 +67,10 @@ export default class InitForm extends React.Component {
             <Container>
                 <Form onSubmit={this.handleSubmit}>
                     <TextInput label="Title: " value={this.state.title} onChange={this.updateTitle}/>
-                    <NumberInput min="4" label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>
+                    {!this.props.hideTeams && <NumberInput min="4" label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>}
                     <DateTimeInput label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
                     <DateTimeInput label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
-                    <Button>Set up schedule</Button>
+                    {!this.props.hideSubmit && <Button>Set up schedule</Button>}
                 </Form>
             </Container>
         );
