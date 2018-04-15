@@ -1,4 +1,4 @@
-// import { TYPES } from './SessionTypes'
+import { TYPES } from './SessionTypes'
 
 export default class SessionParams {
     constructor(uid, type, name, nLocs=4, startTime=null, endTime=null) {
@@ -41,6 +41,7 @@ export default class SessionParams {
             this._locations.push(this.type.defaultLocs + " " + (this.nLocs + 1));
         while (this.nLocs > value)
             this._locations.pop();
+        if (this.type === TYPES.JUDGING) this.nSims = this.nLocs;
     }
 
     get locations() { return this._locations; }

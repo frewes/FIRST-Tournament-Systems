@@ -15,12 +15,13 @@ export default class SessionForm extends React.Component {
 
         this.state = {
             grid: this.getDataGrid()
-        }
+        };
         this.updateName = this.updateName.bind(this);
         this.updateStartTime= this.updateStartTime.bind(this);
         this.updateEndTime = this.updateEndTime.bind(this);
         this.updateLen = this.updateLen.bind(this);
         this.updateBuf = this.updateBuf.bind(this);
+        this.updateNSims = this.updateNSims.bind(this);
         this.updateNLocs = this.updateNLocs.bind(this);
 
         this.updateLocs = this.updateLocs.bind(this);
@@ -56,6 +57,12 @@ export default class SessionForm extends React.Component {
         this.props.onChange(S);
     }
 
+    updateNSims(value) {
+        let S = this.props.session;
+        S.nSims = value;
+        this.props.onChange(S);
+    }
+
     updateNLocs(value) {
         let S = this.props.session;
         S.nLocs = value;
@@ -74,10 +81,10 @@ export default class SessionForm extends React.Component {
     }
 
     updateLocs(changes) {
-        const grid = this.state.grid.map(row => [...row])
+        const grid = this.state.grid.map(row => [...row]);
         changes.forEach(({cell, row, col, value}) => {
             grid[row][col] = {...grid[row][col], value}
-        })
+        });
         this.setState({grid});
         let A = [];
         for (let i = 0; i < grid.length; i++) {
@@ -99,13 +106,16 @@ export default class SessionForm extends React.Component {
                     <DateTimeInput label="Start time" value={this.props.session.startTime} onChange={this.updateStartTime}/>
                     <DateTimeInput label="Must be done by" value={this.props.session.endTime} onChange={this.updateEndTime}/>
                     {this.props.session.type !== TYPES.BREAK &&
-                        <NumberInput label="Duration (mins)" value={this.props.session.len} onChange={this.updateLen}/>}
+                        <NumberInput label="Duration (mins)" min={1} value={this.props.session.len} onChange={this.updateLen}/>}
                     {this.props.session.type !== TYPES.BREAK &&
-                        <NumberInput label="Buffer/cleanup time (mins)" value={this.props.session.buf} onChange={this.updateBuf}/>}
+                        <NumberInput label="Buffer/cleanup time (mins)" min={0} value={this.props.session.buf} onChange={this.updateBuf}/>}
                     {this.props.session.type !== TYPES.BREAK && (
                         this.props.session.type === TYPES.JUDGING ?
-                        <NumberInput label="Number of rooms" value={this.props.session.locations.length} onChange={this.updateNLocs}/> :
-                        <NumberInput label="Number of tables" value={this.props.session.locations.length} onChange={this.updateNLocs}/> )}
+                        <NumberInput label="Number of rooms" min={1} value={this.props.session.locations.length} onChange={this.updateNLocs}/> :
+                        <NumberInput label="Number of tables" min={1} value={this.props.session.locations.length} onChange={this.updateNLocs}/> )}
+                    {(this.props.session.type === TYPES.MATCH_ROUND || this.props.session.type === TYPES.MATCH_ROUND_PRACTICE) &&
+                        <NumberInput label="Simultaneous Teams" min={1} value={this.props.session.nSims} onChange={this.updateNSims}/>
+                    }
                     {this.props.session.type !== TYPES.BREAK && <strong>Locations</strong>}
                     {this.props.session.type !== TYPES.BREAK && <ReactDataSheet
                         data={this.state.grid}
