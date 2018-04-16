@@ -17,6 +17,7 @@ export default class DetailView extends React.Component {
 
         this.updateScheduleFromBasics = this.updateScheduleFromBasics.bind(this);
         this.updateSessions = this.updateSessions.bind(this);
+        this.updateTeams = this.updateTeams.bind(this);
     }
 
     toggle(tab) {
@@ -41,6 +42,7 @@ export default class DetailView extends React.Component {
         let E = this.props.event;
         E.teams = T;
         this.props.onChange(E);
+        console.log(this.props.event);
     }
 
     updateSessions(S) {
