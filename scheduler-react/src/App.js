@@ -31,7 +31,6 @@ class App extends Component {
 
         this.setState({
             eventParams: E,
-            display: 'Customise'
         });
     }
 
@@ -64,13 +63,20 @@ class App extends Component {
                     <h1 className="App-intro">
                         Basic setup
                     </h1>
-                    <InitForm onSubmit={this.initSchedule}/>
+                    <InitForm onChange={this.initSchedule}/>
+                    <Button color="warning" onClick={() => this.setState({display: 'Customise'})}>Customise</Button>&nbsp;
+                    <Button color="success" onClick={this.initSchedule}>Generate</Button>
                 </Jumbotron>
             );
         } else if (this.state.display === 'Customise') {
             mainWindow = (
                 <Row>
                     <Col xs="3">
+                        &nbsp;
+                        <br/>
+                        <Button color="success">Run schedule generation</Button>
+                        <br/>
+                        &nbsp;
                         <DayScheduleView event={this.state.eventParams}/>
                     </Col>
                     <Col xs="9">
@@ -79,7 +85,6 @@ class App extends Component {
                         </Jumbotron>
                     </Col>
                 </Row>
-
             )
         }
 

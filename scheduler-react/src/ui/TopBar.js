@@ -1,12 +1,10 @@
 import React from 'react';
 
-import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink, Container, Row } from 'reactstrap';
+import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, NavItem, NavLink } from 'reactstrap';
 
 import MdInfoOutline from 'react-icons/lib/md/info-outline'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import MdFileUpload from 'react-icons/lib/md/file-upload'
-
-import ToggleButton from 'react-toggle-button';
 
 import first from "../resources/first.png"
 
@@ -17,21 +15,14 @@ export default class TopBar extends React.Component {
         this.state = {
             isOpen: false,
             advanced: false
-        }
+        };
 
         this.toggle = this.toggle.bind(this);
-        this.toggleAdvanced = this.toggleAdvanced.bind(this);
     }
 
     toggle() {
         this.setState({
             isOpen: !this.state.isOpen
-        });
-    }
-
-    toggleAdvanced() {
-        this.setState({
-            advanced:!this.state.advanced
         });
     }
 
@@ -45,15 +36,11 @@ export default class TopBar extends React.Component {
                     <Nav className="ml-auto" navbar>
                         <NavItem>
                             <NavLink>
-                                <Container onClick={this.toggleAdvanced}>
-                                    <Row><small>Advanced</small></Row>
-                                    <Row><ToggleButton value={this.state.advanced} onToggle={this.toggleAdvanced}/></Row>
-                                </Container>
                             </NavLink>
                         </NavItem>
-                        <NavItem><NavLink><MdInfoOutline/></NavLink></NavItem>
-                        <NavItem><NavLink><MdFileDownload/></NavLink></NavItem>
-                        <NavItem><NavLink><MdFileUpload/></NavLink></NavItem>
+                        <NavItem><NavLink><MdInfoOutline size={20}/></NavLink></NavItem>
+                        <NavItem><NavLink><MdFileDownload size={20}/></NavLink></NavItem>
+                        <NavItem><NavLink><MdFileUpload size={20}/></NavLink></NavItem>
                     </Nav>
                 </Collapse>
             </Navbar>

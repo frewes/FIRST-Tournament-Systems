@@ -6,18 +6,28 @@ import InitForm from "./InitForm";
 import TeamList from "../inputs/TeamList";
 import SessionForm from "./SessionForm"
 
+import ToggleButton from 'react-toggle-button';
+
 export default class DetailView extends React.Component {
     constructor(props) {
         super(props);
 
         this.toggle = this.toggle.bind(this);
         this.state = {
-            activeTab: 'judging'
+            activeTab: 'judging',
+            advanced: false
         };
 
         this.updateScheduleFromBasics = this.updateScheduleFromBasics.bind(this);
         this.updateSessions = this.updateSessions.bind(this);
         this.updateTeams = this.updateTeams.bind(this);
+        this.toggleAdvanced = this.toggleAdvanced.bind(this);
+    }
+
+    toggleAdvanced() {
+        this.setState({
+            advanced:!this.state.advanced
+        });
     }
 
     toggle(tab) {
@@ -61,7 +71,7 @@ export default class DetailView extends React.Component {
         return (
             <Row>
                 {this.props.event.sessions.filter(S=>S.type === type).sort((a,b) => {return a.id-b.id;}).map(S => (
-                    <Col lg={6} md={12} key={S.id}><SessionForm session={S} onChange={this.updateSessions}/></Col>
+                    <Col lg={6} md={12} key={S.id}><SessionForm advanced={this.state.advanced} session={S} onChange={this.updateSessions}/></Col>
                 ))}
             </Row>
         )
@@ -101,6 +111,11 @@ export default class DetailView extends React.Component {
                             Breaks
                         </NavLink>
                     </NavItem>
+                    &nbsp;
+                    <div onClick={this.toggleAdvanced}>
+                        <small className="not-text">Advanced</small>
+                        <ToggleButton value={this.state.advanced} onToggle={this.toggleAdvanced}/>
+                    </div>
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="basics">

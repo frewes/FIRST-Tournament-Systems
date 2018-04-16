@@ -4,7 +4,7 @@ import NumberInput from '../inputs/NumberInput'
 import DateTimeInput from '../inputs/DateTimeInput'
 
 import { DateTime } from '../api/DateTime'
-import { Container, Form, Button } from 'reactstrap';
+import { Container, Form } from 'reactstrap';
 
 
 export default class InitForm extends React.Component {
@@ -24,6 +24,8 @@ export default class InitForm extends React.Component {
         this.updateEndTime = this.updateEndTime.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+
+        this.handleChange(this.state);
     }
 
     updateTitle(newTitle) {
@@ -52,10 +54,7 @@ export default class InitForm extends React.Component {
     }
 
     handleSubmit(event) {
-        if (this.props.onSubmit && !this.props.hideSubmit) {
-            this.props.onSubmit(this.state);
-            event.preventDefault();
-        }
+        event.preventDefault();
     }
 
     handleChange(data) {
@@ -70,7 +69,6 @@ export default class InitForm extends React.Component {
                     {!this.props.hideTeams && <NumberInput large min="4" label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>}
                     <DateTimeInput large label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
                     <DateTimeInput large label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
-                    {!this.props.hideSubmit && <Button>Set up schedule</Button>}
                 </Form>
             </Container>
         );

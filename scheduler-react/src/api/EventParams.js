@@ -62,7 +62,7 @@ export class EventParams {
     //Given a new number of teams, update things...
     set nTeams(value) {
         while (this.teams.length < value)
-            this.teams.push(new TeamParams(this.teams.length+1))
+            this.teams.push(new TeamParams(this.teams.length+1));
         while (this.teams.length > value)
             this.teams.pop();
         this.teams = this.teams.sort((a,b) => {return parseInt(a.number,10) - parseInt(b.number,10);});

@@ -27,16 +27,16 @@
   to { transform: rotate(360deg); }
 }
 
+.not-text {
+  cursor: pointer;
+}
+
 .navbar-brand small {
   display:block;
   font-size:12px;
+  cursor: auto;
 }
 
 .session-form {
   /*border: 1px solid rgb(33, 33, 33);*/
-}
-
-.centered-toggle {
-  float: none;
-  margin: 0 auto;
 }

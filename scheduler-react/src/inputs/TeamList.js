@@ -15,7 +15,7 @@ export default class TeamList extends React.Component {
         this.state = {
             grid: this.getDataGrid(),
             toAdd: 1
-        }
+        };
 
         this.updateCells = this.updateCells.bind(this);
         this.deleteTeam = this.deleteTeam.bind(this);
@@ -40,7 +40,7 @@ export default class TeamList extends React.Component {
     }
 
     updateCells(changes) {
-        const grid = this.state.grid.map(row => [...row])
+        const grid = this.state.grid.map(row => [...row]);
         let T = this.props.teams;
         changes.forEach(({cell, row, col, value}) => {
             grid[row][col] = {...grid[row][col], value};
