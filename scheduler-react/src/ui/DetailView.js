@@ -102,6 +102,7 @@ export default class DetailView extends React.Component {
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="basics">
+                        &nbsp;
                         <InitForm hideTeams hideSubmit event={this.props.event} onChange={this.updateScheduleFromBasics}/>
                     </TabPane>
                     <TabPane tabId="teams">

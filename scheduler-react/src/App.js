@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import InitForm from './ui/InitForm'
 import { EventParams } from "./api/EventParams";
 import DetailView from "./ui/DetailView";
+import TopBar from './ui/TopBar';
 
-import { Navbar, NavbarBrand, Container, Jumbotron, Button, Row, Col } from 'reactstrap';
+import { Container, Jumbotron, Button, Row, Col } from 'reactstrap';
 import DayScheduleView from "./ui/DayScheduleView";
 
 import './App.css';
@@ -84,9 +85,7 @@ class App extends Component {
 
         return (
             <Container className="App">
-                <Navbar color="light" light expand="md">
-                    <NavbarBrand>FLL Scheduler <small>Version {this.props.version}</small></NavbarBrand>
-                </Navbar>
+                <TopBar version={this.props.version}/>
                 {mainWindow}
             </Container>
         );
