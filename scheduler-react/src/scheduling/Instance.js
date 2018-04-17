@@ -6,8 +6,8 @@
  extra: true/false if extra time is allocated
  */
 export default class Instance {
-    constructor(session, num, time, teams, loc) {
-        this.session = session;
+    constructor(session_id, num, time, teams, loc) {
+        this.session_id = session_id;
         this.num = num;
         this.time = time;
         this.teams = teams;

@@ -59,7 +59,8 @@ class App extends Component {
         console.log("GENERATING");
         let S = new Scheduler(this.state.eventParams);
         S.buildAllTables();
-        console.log(S);
+        console.log(this.state.eventParams);
+        S.initialFill();
         console.log(this.state.eventParams);
         this.setState ({display: 'Review'});
     }
@@ -106,6 +107,10 @@ class App extends Component {
             mainWindow = (
                 <Row>
                     <Col lg="3">
+                        &nbsp;
+                        <br/>
+                        <Button color="warning" onClick={() => this.setState({display: 'Customise'})}>Change parameters</Button>&nbsp;
+                        <br/>
                         &nbsp;
                         <DayScheduleView event={this.state.eventParams}/>
                     </Col>

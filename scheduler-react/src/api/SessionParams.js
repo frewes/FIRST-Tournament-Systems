@@ -1,5 +1,7 @@
 import { TYPES } from './SessionTypes'
 
+import { DateTime } from './DateTime';
+
 export default class SessionParams {
     constructor(uid, type, name, nLocs=4, startTime=null, endTime=null) {
         this._id = uid;
@@ -13,6 +15,8 @@ export default class SessionParams {
 
         this.startTime = startTime;
         this.endTime = endTime;
+        this.actualStartTime = startTime;
+        this.actualEndTime = endTime;
 
         this.nSims = this.locations.length;
         this.len = 10;
@@ -54,10 +58,19 @@ export default class SessionParams {
     set nSims(value) { this._nSims = value; }
 
     get startTime() { return this._startTime; }
-    set startTime(value) { this._startTime = value; }
+    set startTime(value) {
+        this._startTime = value;
+        this._actualStartTime = new DateTime(value.mins);
+    }
 
     get endTime() { return this._endTime; }
     set endTime(value) { this._endTime = value; }
+
+    get actualEndTime() { return this._actualEndTime; }
+    set actualEndTime(value) { this._actualEndTime = value; }
+
+    get actualStartTime() { return this._actualStartTime; }
+    set actualStartTime(value) { this._actualStartTime = value; }
 
     get len() { return this._len ; }
     set len(value) { this._len = value; }

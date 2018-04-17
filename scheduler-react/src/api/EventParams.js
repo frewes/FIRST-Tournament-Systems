@@ -76,6 +76,20 @@ export class EventParams {
         alert("Not yet implemented!");
     }
 
+    getTeam(id) {
+        for (let i = 0 ; i < this.teams.length; i++) {
+            if (this.teams[i].id === id) return this.teams[i];
+        }
+        return null;
+    }
+
+    getSession(id) {
+        for (let i = 0 ; i < this.sessions.length; i++) {
+            if (this.sessions[i].id === id) return this.sessions[i];
+        }
+        return null;
+    }
+
     get version() {return this._version;}
 
     get title() {return this._title}

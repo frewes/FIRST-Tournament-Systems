@@ -1,7 +1,11 @@
+import ShortUniqueId from 'short-unique-id';
+
 export class TeamParams {
     constructor(number) {
         this.number = number;
         this.name = "Team " + number;
+
+        this.id = new ShortUniqueId();
 
         // So far unused
         this.pitNum = 0;
@@ -10,6 +14,7 @@ export class TeamParams {
         this.startTime = null;
         this.endTime = null;
         this.isSurrogate = false;
+        this.schedule = [];
     }
 
     get name() { return this._name; }

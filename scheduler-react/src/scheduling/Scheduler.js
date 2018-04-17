@@ -2,6 +2,7 @@ import { TYPES } from '../api/SessionTypes';
 import { DateTime } from '../api/DateTime';
 
 import Instance from './Instance';
+import { shuffle } from './utilities';
 
 export class Scheduler {
     constructor(E) {
@@ -18,11 +19,14 @@ export class Scheduler {
             // Make sure the start time isn't in a break
             if (session.type !== TYPES.BREAK) session.startTime = this.timeInc(session.startTime,0,session);
             let end = -Infinity;
-            if (!(session.type === TYPES.MATCH_ROUND || session.type === TYPES.MATCH_ROUND_PRACTICE))
+            session.actualStartTime = session.startTime;
+            if (!(session.type === TYPES.MATCH_ROUND || session.type === TYPES.MATCH_ROUND_PRACTICE)) {
                 end = this.tableSession(session);
-            if (session.type !== TYPES.BREAK && end > session.endTime.mins) {
-                if (willWork) willWork = willWork+", "+session.name;
-                else willWork = session.name;
+                session.actualEndTime = new DateTime(end);
+                if (session.type !== TYPES.BREAK && end > session.endTime.mins) {
+                    if (willWork) willWork = willWork + ", " + session.name;
+                    else willWork = session.name;
+                }
             }
         });
         [TYPES.MATCH_ROUND, TYPES.MATCH_ROUND_PRACTICE].forEach(T=> {
@@ -31,8 +35,9 @@ export class Scheduler {
             let locOffset = 0;
             this.event.sessions.filter(s=>s.type===T).forEach((session) => {
                 console.log(end);
-                if (session.startTime.mins < end) session.startTime = new DateTime(end);
+                if (session.startTime.mins < end) session.actualStartTime = new DateTime(end);
                 end = this.tableSession(session, offset, locOffset);
+                session.actualEndTime = new DateTime(end);
                 if (session.schedule[session.schedule.length-1].loc === 0) locOffset = 1;
                 else locOffset = 0;
                 offset += session.schedule.length;
@@ -55,7 +60,7 @@ export class Scheduler {
             if (session.type !== TYPES.JUDGING || !team.excludeJudging) teams.push(team);
         });
         if (session.type === TYPES.BREAK) session.nSims = teams.length;
-        let now = new DateTime(session.startTime.mins);
+        let now = new DateTime(session.actualStartTime.mins);
         let L = Math.ceil(teams.length / session.nSims);
         let lastNTeams = (teams.length % session.nSims);
         lastNTeams = (lastNTeams===0) ? session.nSims : lastNTeams;
@@ -114,6 +119,81 @@ export class Scheduler {
         return now.mins;
     }
 
+    initialFill() {
+        let oneSetOfTeams = this.event.teams.slice();
+        shuffle(oneSetOfTeams);
+        this.event.sessions.forEach(session => {
+            let teams = [];
+            shuffle(oneSetOfTeams).forEach(team => {
+                if (session.type !== TYPES.JUDGING || !team.excludeJudging) teams.push(team);
+            });
+            session.schedule.forEach(instance => this.fillInstance(instance,teams));
+        });
+    }
+
+    fillInstance(instance,teams) {
+        for (let t = 0; t < instance.teams.length; t++) {
+            let T = -1;
+            for (let k = 0; k < teams.length; k++) {
+                T = k;
+                if (this.canDo(teams[k],instance)) break;
+            }
+            if (T !== -1) {
+                let team = teams.splice(T,1)[0];
+                console.log(team);
+                instance.teams[t] = team.id;
+                team.schedule.push(instance);
+            }
+        }
+    }
+
+    /** ========================== UTILITIES ========================== **/
+
+    /**
+     Return true if the team can do the given instance.
+     Returns false if they don't have time to come from a previous instance or go to a later one.
+     if 'excl' is given, do not consider that session ID when checking this.
+     **/
+    canDo(team, instance, excl) {
+        if (team.extraTime && !instance.extra && this.event.getSession(instance.session_id).type !== TYPES.BREAK)
+            return false;
+        if (team.excludeJudging && this.event.getSession(instance.session_id).type === TYPES.JUDGING)
+            return false;
+        for (let i = 0; i < team.schedule.length; i++) {
+            if (this.event.getSession(team.schedule[i].session_id).type === TYPES.BREAK){
+                if (!this.event.getSession(team.schedule[i].session_id).appliesTo.includes(instance.session_id))
+                    continue;
+                if (this.event.getSession(instance.session_id).type === TYPES.BREAK) continue;
+            }
+            let startA = team.schedule[i].time.mins;
+            if (excl && team.schedule[i].session_id === excl) continue;
+            let extra = 0;
+            if (team.schedule[i].extra) extra = this.event.extraTime;
+            let endA = 0;
+            if (this.event.getSession(team.schedule[i].session_id).type === TYPES.BREAK)
+                endA = startA + this.event.getSession(team.schedule[i].session_id).len;
+            else
+                endA = startA + this.event.getSession(team.schedule[i].session_id).len + extra + this.event.minTravel;
+            let startB = instance.time.mins;
+            extra = 0;
+            if (instance.extra) extra = this.event.extraTime;
+
+            let endB = 0;
+            if (this.event.getSession(team.schedule[i].session_id).type === TYPES.BREAK)
+                endB = startB + this.event.getSession(instance.session_id).len;
+            else
+                endB = startB + this.event.getSession(instance.session_id).len + this.event.minTravel + extra;
+            // if ((team.start && startB < team.start) || (team.end && endB > team.end)) return false;
+            if (startA === startB || (startA < startB && endA > startB) || (startB < startA && endB > startA))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     Increments given time, skipping breaks.
+     @return Returns the incremented time.
+     */
     timeInc(time, inc, session) {
         let newMins = time.mins + inc;
         this.event.sessions.filter(x=>x.type !== TYPES.BREAK || !x.appliesTo.includes(session.id)).forEach(x => {

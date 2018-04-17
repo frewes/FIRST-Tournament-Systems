@@ -3,7 +3,6 @@ import ReactDataSheet from 'react-datasheet';
 
 import { Table } from 'reactstrap';
 
-import Team from './Team';
 
 export default class SingleScheduleView extends React.Component {
     constructor(props) {
@@ -36,8 +35,7 @@ export default class SingleScheduleView extends React.Component {
             // instance.teams.forEach(x => {
                 let x = instance.teams[i];
                 diff--;
-                A.push({value: <Team team={x}/>, readOnly:true});
-            }
+                A.push({value: (x) ? this.props.event.getTeam(x).number : " X ", readOnly: true})}
             while (diff-- > 0) A.push({value: "++", readOnly:true});
             grid.push(A);
         });

@@ -13,31 +13,7 @@ export default class DayScheduleView extends React.Component {
 
     getItems() {
         let sessions = this.props.event.sessions;
-        let rounds = sessions.sort((a,b) => { return a.id - b.id});
-        // Estimate round times; this can be done better!
-        // let timeAvailable = this.props.event.endTime.mins - this.props.event.startTime.mins - 60;
-        // let timePerMatch = Math.round(timeAvailable / (this.props.event.nTeams * 3 / 2));
-        // let matchLen = Math.ceil(timePerMatch/2);
-        // let matchBuf = Math.floor(timePerMatch/2);
-        // let roundDur = (matchLen + matchBuf) * Math.ceil(this.props.event.nTeams / 2);
-        // let lastRoundEnd = new DateTime(this.props.event.startTime.mins);
-        // let nLocs = Math.round(this.props.event.nTeams / 10);
-        // let nJudgings = Math.ceil(this.props.event.nTeams/nLocs);
-        // let startLunch = new DateTime(this.props.event.startTime.mins + nJudgings*15);
-        // let endLunch = new DateTime(startLunch.mins + 60);
-
-        // for (let i = 0; i < rounds.length; i++) {
-        //     if (rounds[i].type !== TYPES.MATCH_ROUND) continue;
-        //     rounds[i].startTime = lastRoundEnd;
-        //     let eTime = new DateTime(rounds[i].startTime.mins + roundDur);
-        //     if (rounds[i].startTime.mins < startLunch.mins && eTime.mins > endLunch.mins)
-        //         eTime.mins += (endLunch.mins - startLunch.mins);
-        //     rounds[i].endTime = eTime;
-        //     lastRoundEnd = eTime;
-        // }
-
-
-        let sorted = rounds.sort((a,b) => { return a.startTime.mins - b.startTime.mins});
+        let sorted = sessions.sort((a,b) => { return a.actualStartTime.mins - b.actualStartTime.mins});
         let items = [];
         items.push({
             _id: 0,
@@ -48,8 +24,8 @@ export default class DayScheduleView extends React.Component {
         for (let i = 0; i < sorted.length; i++) {
             items.push({
                 _id: i+1,
-                sTime: sorted[i].startTime.time,
-                eTime: sorted[i].endTime.time,
+                sTime: sorted[i].actualStartTime.time,
+                eTime: sorted[i].actualEndTime.time,
                 contents: sorted[i].name
             });
         }

@@ -22,7 +22,10 @@ export default class FullScheduleView extends React.Component {
                 <Row>
                     {this.getItems().filter(x=>x.type !== TYPES.BREAK)
                         .sort((a,b)=>{return a.type.priority-b.type.priority})
-                        .map(x => { return (<Col sm="12" md="6" key={x.id} ><SingleScheduleView session={x}/></Col>);
+                        .map(x => { return (
+                            <Col sm="12" md="6" key={x.id} >
+                                <SingleScheduleView event={this.props.event} session={x}/>
+                            </Col>);
                         })}
                 </Row>
             </Container>

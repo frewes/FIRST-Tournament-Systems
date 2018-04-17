@@ -95,7 +95,7 @@ function buildAllTables(event) {
 			else willWork = event.allSessions[i].name;			
 		}
 	}
-	var end = -Infinity;
+	var end = -Infinity;	
     var offset = 0;
     var locOffset = 0;
 	for (var i = 0; i < event.allSessions.length; i++) {
