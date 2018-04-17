@@ -34,7 +34,6 @@ export class Scheduler {
             let offset = 0;
             let locOffset = 0;
             this.event.sessions.filter(s=>s.type===T).forEach((session) => {
-                console.log(end);
                 if (session.startTime.mins < end) session.actualStartTime = new DateTime(end);
                 end = this.tableSession(session, offset, locOffset);
                 session.actualEndTime = new DateTime(end);
@@ -67,14 +66,14 @@ export class Scheduler {
         session.schedule = new Array(L);
 
         // Figure out how many rounds to make extra long
-        let everyN = (session.extraTimeEvery)?session.extraTimeEvery:Infinity;
+        let everyN = (session.extraTimeEvery>0)?session.extraTimeEvery:Infinity;
         let extraTimeTeams = teams.filter(x=>x.extraTime).length;
 
         let roundsSinceExtra = 0;
         let flag = false;
 
         let extraRoundsNeeded = Math.ceil(extraTimeTeams/session.nSims);
-        let extraRoundsMade = ((session.extraTimeFirst)?1:0) +((session.extraTimeEvery)?L/everyN:0);
+        let extraRoundsMade = ((session.extraTimeFirst)?1:0) +((session.extraTimeEvery>0)?L/everyN:0);
         if (extraRoundsMade < extraRoundsNeeded) {
             everyN = (L+1)/(extraRoundsNeeded+1);
             everyN += Math.round(Math.random()*2);
@@ -140,7 +139,6 @@ export class Scheduler {
             }
             if (T !== -1) {
                 let team = teams.splice(T,1)[0];
-                console.log(team);
                 instance.teams[t] = team.id;
                 team.schedule.push(instance);
             }

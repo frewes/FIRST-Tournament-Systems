@@ -27,7 +27,7 @@ export default class SessionParams {
 
         this.instances = 1; // Can be changed in later versions, specifically for TYPE_MATCH_FILLER.
         this.extraTimeFirst = false; // Should the first round be a little longer?
-        this.extraTimeEvery = null; // Extra time every N round
+        this.extraTimeEvery = 0; // Extra time every N round
         this.appliesTo = []; // Which sessions a break applies to
         this.usesSurrogates = false;
     }

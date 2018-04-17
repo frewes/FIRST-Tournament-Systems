@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Nav, NavItem, NavLink, TabContent, TabPane, Col, Row } from 'reactstrap';
 
 import { TYPES } from '../api/SessionTypes';
-import InitForm from "./InitForm";
+import BasicsForm from "./BasicsForm";
 import TeamList from "../inputs/TeamList";
 import SessionForm from "./SessionForm"
 
@@ -42,9 +42,10 @@ export default class DetailView extends React.Component {
         console.log(s);
         let E = this.props.event;
         E.title = s.title;
-        E.nTeams = s.nTeams;
         E.startTime = s.startTime;
         E.endTime = s.endTime;
+        E.minTravel = s.minTravel;
+        E.extraTime = s.extraTime;
         this.props.onChange(E);
     }
 
@@ -64,7 +65,6 @@ export default class DetailView extends React.Component {
                 break;
             }
         }
-        console.log(E);
     }
 
     renderSessions(type) {
@@ -120,11 +120,11 @@ export default class DetailView extends React.Component {
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="basics">
                         &nbsp;
-                        <InitForm hideTeams hideSubmit event={this.props.event} onChange={this.updateScheduleFromBasics}/>
+                        <BasicsForm advanced={this.state.advanced} event={this.props.event} onChange={this.updateScheduleFromBasics}/>
                     </TabPane>
                     <TabPane tabId="teams">
                         &nbsp;
-                        <TeamList teams={this.props.event.teams} onChange={this.updateTeams}/>
+                        <TeamList advanced={this.state.advanced} teams={this.props.event.teams} onChange={this.updateTeams}/>
                     </TabPane>
                     <TabPane tabId="judging">
                         &nbsp;

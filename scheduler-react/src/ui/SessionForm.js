@@ -6,6 +6,7 @@ import { Form, Table } from 'reactstrap';
 import TextInput from '../inputs/TextInput';
 import DateTimeInput from "../inputs/DateTimeInput";
 import NumberInput from "../inputs/NumberInput";
+import BooleanInput from "../inputs/BooleanInput";
 
 import ReactDataSheet from 'react-datasheet';
 
@@ -22,6 +23,8 @@ export default class SessionForm extends React.Component {
         this.updateLen = this.updateLen.bind(this);
         this.updateBuf = this.updateBuf.bind(this);
         this.updateNSims = this.updateNSims.bind(this);
+        this.updateExtraFirst = this.updateExtraFirst.bind(this);
+        this.updateExtraEvery = this.updateExtraEvery.bind(this);
         this.updateNLocs = this.updateNLocs.bind(this);
 
         this.updateLocs = this.updateLocs.bind(this);
@@ -67,6 +70,18 @@ export default class SessionForm extends React.Component {
         let S = this.props.session;
         S.nLocs = value;
         this.setState({grid: this.getDataGrid()});
+        this.props.onChange(S);
+    }
+
+    updateExtraFirst(value) {
+        let S = this.props.session;
+        S.extraTimeFirst = value;
+        this.props.onChange(S);
+    }
+
+    updateExtraEvery(value) {
+        let S = this.props.session;
+        S.extraTimeEvery = value;
         this.props.onChange(S);
     }
 
@@ -116,6 +131,10 @@ export default class SessionForm extends React.Component {
                     {(this.props.session.type === TYPES.MATCH_ROUND || this.props.session.type === TYPES.MATCH_ROUND_PRACTICE) &&
                         <NumberInput label="Simultaneous Teams" min={1} value={this.props.session.nSims} onChange={this.updateNSims}/>
                     }
+                    {this.props.advanced &&
+                       <BooleanInput label="Extra time first?" value={this.props.session.extraTimeFirst} onChange={this.updateExtraFirst}/>}
+                    {this.props.advanced &&
+                        <NumberInput label="Extra time every N" value={this.props.session.extraTimeEvery} min={0} onChange={this.updateExtraEvery}/>}
                     {this.props.session.type !== TYPES.BREAK && <strong>Locations</strong>}
                     {this.props.session.type !== TYPES.BREAK && <ReactDataSheet
                         data={this.state.grid}

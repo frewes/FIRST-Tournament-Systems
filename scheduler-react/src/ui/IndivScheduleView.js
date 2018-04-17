@@ -27,7 +27,6 @@ export default class IndivScheduleView extends React.Component {
         for (let i = 1; i < grid.length; i++) {
             grid[i] = this.props.data[i];
         }
-        console.log(grid);
         return grid;
     }
 
