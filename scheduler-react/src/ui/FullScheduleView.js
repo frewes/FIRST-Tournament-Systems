@@ -1,5 +1,6 @@
 import React from 'react';
 import SingleScheduleView from "./SingleScheduleView";
+import IndivScheduleView from "./IndivScheduleView";
 
 import { TYPES } from "../api/SessionTypes";
 
@@ -27,6 +28,9 @@ export default class FullScheduleView extends React.Component {
                                 <SingleScheduleView data={this.props.event.getSessionDataGrid(x.id)} session={x}/>
                             </Col>);
                         })}
+                </Row>
+                <Row>
+                    <Col xs={12}><IndivScheduleView data={this.props.event.getIndivDataGrid()}/></Col>
                 </Row>
             </Container>
         );

@@ -133,7 +133,77 @@ export class EventParams {
         return grid;
     }
 
+    getIndivDataGrid(compact=false) {
+        this.teams.sort((a,b) => a.number - b.number);
+        let grid = [];
+        let usesSurrogates = false;
+        this.sessions.forEach(s => {if (s.usesSurrogates) usesSurrogates = true;})
+        grid[0] = [{value: "Team", colSpan: 2}];
+        for (let i = 0; i < this.sessions.length; i++) {
+            if (this.sessions[i].type === TYPES.BREAK) continue;
+            grid[0].push({colSpan:compact?2:3,value:this.sessions[i].name});
+        }
+        grid[0].push({value: "Min. Travel time"});
+        if (usesSurrogates) grid[0].push({colSpan:compact?2:3,value:"Surrogate"});
+        grid[1] = [{value: "#"}, {value: "Name"}];
+        for (let i = 0; i < this.sessions.length; i++) {
+            if (this.sessions[i].type === TYPES.BREAK) continue;
+            for (let j = 0 ; j < this.sessions[i].instances; j++) {
+                if (!compact) grid[1].push({value: "#"});
+                grid[1].push({value: "Time"});
+                grid[1].push({value: "Loc"});
+            }
+        }
+        grid[1].push({value: ""});
+        if (usesSurrogates) {
+            if (!compact) grid[1].push({value: "#"});
+            grid[1].push({value: "Time"});
+            grid[1].push({value: "Loc"});
+        }
 
+        for (let i = 0; i < this.teams.length; i++) {
+            let row = [];
+            let team = this.teams[i];
+            row.push({value: team.number});
+            row.push({value: team.name});
+            for (let j = 0; j < team.schedule.length; j++) {
+                if (this.getSession(team.schedule[j].session_id).type === TYPES.BREAK) continue;
+                if (team.schedule[j].teams && (team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.id))) <= team.schedule[j].surrogates) continue; // Surrogate
+                if (!team.schedule[j].teams) {
+                    row.push({value: ""}); row.push({value: ""}); row.push({value: ""});
+                } else {
+                    if (!compact) row.push({value: team.schedule[j].num});
+                    row.push({value: team.schedule[j].time.time});
+                    if (team.schedule[j].loc === -1)
+                        row.push({value: "--"});
+                    else
+                        row.push({value: this.getSession(team.schedule[j].session_id).locations[team.schedule[j].teams.indexOf(team.id)+team.schedule[j].loc]});
+                }
+            }
+            row.push({value: "?"});
+            // row.push({value: ""+minTravelTime(team)});
+            let hadASurrogate = false;
+            for (let j = 0; j < team.schedule.length; j++) {
+                if (!team.schedule[j].teams) continue;
+                if (!((team.schedule[j].teams.length - team.schedule[j].teams.indexOf((team.uid))) > team.schedule[j].surrogates)) {
+                    hadASurrogate = true;
+                    if (!compact) row.push({value: team.schedule[j].num});
+                    row.push({value: team.schedule[j].time.time});
+                    if (team.schedule[j].loc === -1)
+                        row.push({value: "--"});
+                    else
+                        row.push({value: this.getSession(team.schedule[j].session_id).locations[team.schedule[j].teams.indexOf(team.id)+team.schedule[j].loc]});
+                }
+            }
+            if (!hadASurrogate && usesSurrogates) {
+                if (!compact) row.push({value: ""});
+                row.push({value: ""});
+                row.push({value: ""});
+            }
+            grid.push(row);
+        }
+        return grid;
+    }
 
     get version() {return this._version;}
 

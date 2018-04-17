@@ -359,8 +359,8 @@ function genSessionTable(event, session) {
         for (var dummy = 0; dummy < instance.loc; dummy++) {
         	diff--;
             row.push("");
-        }		
-		for (var t = 0; t < instance.teams.length; t++) {
+        }
+        for (var t = 0; t < instance.teams.length; t++) {
 			diff--;
 			var surrogate = "";
 			if ((instance.teams.length - t) <= instance.surrogates) surrogate = "*";
@@ -375,7 +375,7 @@ function genSessionTable(event, session) {
 	return table;
 }
 
-function genIndivTable(event, compact) {	
+function genIndivTable(event, compact) {
 	event.teams.sort(function(a,b) {
 		return a.uid - b.uid;
 	});
