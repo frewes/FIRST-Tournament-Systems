@@ -33,9 +33,15 @@ span.data-grid-container, span.data-grid-container:focus {
 }
 
 .data-grid-container .datagrid-custom .cell.read-only {
-    background: whitesmoke;
-    color: #999;
+    /*background: whitesmoke;*/
+    /*color: #999;*/
     text-align: center;
+}
+
+.data-grid-container .datagrid-custom .cell.header {
+    font-weight: bold;
+    border-top: 2px double rgb(33,33,33);
+    border-bottom: 2px double rgb(33,33,33);
 }
 
 .data-grid-container .datagrid-custom .cell > .text {

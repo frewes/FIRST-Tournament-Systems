@@ -3,9 +3,13 @@ import InitForm from './ui/InitForm'
 import { EventParams } from "./api/EventParams";
 import DetailView from "./ui/DetailView";
 import TopBar from './ui/TopBar';
+import { DateTime } from './api/DateTime';
+
+import { Scheduler } from './scheduling/Scheduler';
 
 import { Container, Jumbotron, Button, Row, Col } from 'reactstrap';
 import DayScheduleView from "./ui/DayScheduleView";
+import FullScheduleView from "./ui/FullScheduleView";
 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -17,12 +21,15 @@ class App extends Component {
         super(props);
         this.state = {
             display: 'LoadNew',
+            eventParams: new EventParams( this.props.version,
+                "2018 FLL Competition", 24, new DateTime(540), new DateTime(17*60))
         };
         // This binding is necessary to make `this` work in the callback
         this.handleCreateButtonClick = this.handleCreateButtonClick.bind(this);
         this.handleLoadButtonClick = this.handleLoadButtonClick.bind(this);
         this.initSchedule= this.initSchedule.bind(this);
         this.handleScheduleChange = this.handleScheduleChange.bind(this);
+        this.generate = this.generate.bind(this);
     }
 
     initSchedule(initState) {
@@ -48,6 +55,15 @@ class App extends Component {
         this.setState({display: 'Initialise'});
     }
 
+    generate() {
+        console.log("GENERATING");
+        let S = new Scheduler(this.state.eventParams);
+        S.buildAllTables();
+        console.log(S);
+        console.log(this.state.eventParams);
+        this.setState ({display: 'Review'});
+    }
+
     render() {
         let mainWindow = <h1>An error occurred</h1>;
         if (this.state.display=== 'LoadNew') {
@@ -65,23 +81,37 @@ class App extends Component {
                     </h1>
                     <InitForm onChange={this.initSchedule}/>
                     <Button color="warning" onClick={() => this.setState({display: 'Customise'})}>Customise</Button>&nbsp;
-                    <Button color="success" onClick={this.initSchedule}>Generate</Button>
+                    <Button color="success" onClick={this.generate}>Generate</Button>
                 </Jumbotron>
             );
         } else if (this.state.display === 'Customise') {
             mainWindow = (
                 <Row>
-                    <Col xs="3">
+                    <Col lg="3">
                         &nbsp;
                         <br/>
-                        <Button color="success">Run schedule generation</Button>
+                        <Button color="success" onClick={this.generate}>Run schedule generation</Button>
                         <br/>
                         &nbsp;
                         <DayScheduleView event={this.state.eventParams}/>
                     </Col>
-                    <Col xs="9">
+                    <Col lg="9">
                         <Jumbotron>
                             <DetailView onChange={this.handleScheduleChange} event={this.state.eventParams}/>
+                        </Jumbotron>
+                    </Col>
+                </Row>
+            )
+        } else if (this.state.display === 'Review') {
+            mainWindow = (
+                <Row>
+                    <Col lg="3">
+                        &nbsp;
+                        <DayScheduleView event={this.state.eventParams}/>
+                    </Col>
+                    <Col lg="9">
+                        <Jumbotron>
+                            <FullScheduleView event={this.state.eventParams}/>
                         </Jumbotron>
                     </Col>
                 </Row>
@@ -89,7 +119,7 @@ class App extends Component {
         }
 
         return (
-            <Container className="App">
+            <Container fluid className="App">
                 <TopBar version={this.props.version}/>
                 {mainWindow}
             </Container>
