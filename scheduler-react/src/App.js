@@ -45,6 +45,10 @@ class App extends Component {
         this.setState({
             eventParams: E
         });
+        // I don't love this way of doing it...
+        let S = new Scheduler(this.state.eventParams);
+        S.buildAllTables();
+        console.log(this.state.eventParams);
     }
 
     handleLoadButtonClick() {

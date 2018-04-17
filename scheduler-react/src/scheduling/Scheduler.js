@@ -17,7 +17,7 @@ export class Scheduler {
         });
         this.event.sessions.forEach((session) => {
             // Make sure the start time isn't in a break
-            if (session.type !== TYPES.BREAK) session.startTime = this.timeInc(session.startTime,0,session);
+            if (session.type !== TYPES.BREAK) session.startTime = new DateTime(this.timeInc(session.startTime,0,session));
             let end = -Infinity;
             session.actualStartTime = session.startTime;
             if (!(session.type === TYPES.MATCH_ROUND || session.type === TYPES.MATCH_ROUND_PRACTICE)) {
@@ -88,12 +88,12 @@ export class Scheduler {
             var locOffset = ((i+locD)%d)*session.nSims;
             if ((i%L) < L-1) {
                 session.schedule[i] = new Instance(session.id,i+1+numOffset,now,new Array(session.nSims),locOffset);
-                now = this.timeInc(now,session.len+session.buf,session);
+                now = new DateTime(this.timeInc(now,session.len+session.buf,session));
                 roundsSinceExtra++;
                 if ((i === 0 && session.extraTimeFirst) || (roundsSinceExtra >= everyN)) {
                     if (!(flag && extraRounds >= extraRoundsNeeded)) {
                         session.schedule[i].extra = true;
-                        now = this.timeInc(now,this.event.extraTime,session);
+                        now = new DateTime(this.timeInc(now,this.event.extraTime,session));
                         roundsSinceExtra = 0;
                         extraRounds++;
                     }
@@ -196,9 +196,9 @@ export class Scheduler {
      */
     timeInc(time, inc, session) {
         let newMins = time.mins + inc;
-        this.event.sessions.filter(x=>x.type !== TYPES.BREAK || !x.appliesTo.includes(session.id)).forEach(x => {
-            if (time.mins+inc >= x.startTime && time.mins < x.end) newMins = x.endTime.mins;
+        this.event.sessions.filter(x=>x.type === TYPES.BREAK && x.appliesTo.includes(session.id)).forEach(x => {
+            if (time.mins+inc >= x.startTime.mins && time.mins < x.endTime.mins) newMins = x.endTime.mins;
         });
-        return new DateTime(newMins);
+        return newMins;
     }
 }

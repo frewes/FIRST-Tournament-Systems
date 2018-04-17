@@ -3,6 +3,9 @@ import { TYPES } from './SessionTypes';
 import { DateTime } from "./DateTime";
 import SessionParams from "./SessionParams";
 
+import Instance from '../scheduling/Instance';
+import { overlaps } from "../scheduling/utilities";
+
 export class EventParams {
     constructor(version, title="Tournament", nTeams=24, startTime=new DateTime(9*60), endTime=new DateTime(9*17)) {
         this._version = version;
@@ -49,13 +52,14 @@ export class EventParams {
             this.sessions.push(S);
         }
         this.sessions.push(new SessionParams(4,TYPES.JUDGING, "Robot Design Judging", nLocs,
-            new DateTime(this.startTime.mins), new DateTime(startLunch.mins)));
+            new DateTime(this.startTime.mins), new DateTime(this.endTime.mins)));
         this.sessions.push(new SessionParams(5,TYPES.JUDGING, "Core Values Judging", nLocs,
-            new DateTime(this.startTime.mins), new DateTime(startLunch.mins)));
+            new DateTime(this.startTime.mins), new DateTime(this.endTime.mins)));
         this.sessions.push(new SessionParams(6,TYPES.JUDGING, "Research Project Judging", nLocs,
-            new DateTime(this.startTime.mins), new DateTime(startLunch.mins)));
+            new DateTime(this.startTime.mins), new DateTime(this.endTime.mins)));
         this.sessions.push(new SessionParams(7,TYPES.BREAK, "Lunch", 1,
             new DateTime(startLunch.mins), new DateTime(endLunch.mins)));
+        this.getSession(7).appliesTo = this.sessions.filter(x => x.type !== TYPES.BREAK).map(x => x.id);
     }
 
     get nTeams() { return this._teams.length; }
@@ -89,6 +93,47 @@ export class EventParams {
         }
         return null;
     }
+
+    getSessionDataGrid(id) {
+        let session = this.getSession(id);
+        let grid = [];
+        let cols = [{value: "#"},{value: "Time"}];
+        session.locations.forEach(x => cols.push({value: x}));
+        grid.push(cols);
+
+        let applyingBreaks = [];
+        this.sessions.filter(S => S.type === TYPES.BREAK && S.appliesTo.includes(session.id)).forEach(S => {
+            if (overlaps(S,session)) applyingBreaks.push(S);
+        });
+        let schedule = session.schedule.slice();
+        applyingBreaks.forEach(br => schedule.push(new Instance(br.id,"",br.actualStartTime,null)));
+
+        schedule.sort((a,b) => a.time.mins-b.time.mins).forEach((instance) => {
+            let A = [];
+            A.push({value: instance.num});
+            A.push({value: instance.time.time});
+            if (this.getSession(instance.session_id).type === TYPES.BREAK) {
+                A.push({value: this.getSession(instance.session_id).name, colSpan: session.nLocs});
+                grid.push(A);
+            } else {
+                let diff = session.nLocs;
+                for (let dummy = 0; dummy < instance.loc; dummy++) {
+                    diff--;
+                    A.push({value: ""});
+                }
+                for (let i = 0; i < instance.teams.length; i++) {
+                    let x = instance.teams[i];
+                    diff--;
+                    A.push({value: (x) ? this.getTeam(x).number : " X "})
+                }
+                while (diff-- > 0) A.push({value: ""});
+                grid.push(A);
+            }
+        });
+        return grid;
+    }
+
+
 
     get version() {return this._version;}
 

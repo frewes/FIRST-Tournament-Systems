@@ -24,7 +24,7 @@ export default class FullScheduleView extends React.Component {
                         .sort((a,b)=>{return a.type.priority-b.type.priority})
                         .map(x => { return (
                             <Col sm="12" md="6" key={x.id} >
-                                <SingleScheduleView event={this.props.event} session={x}/>
+                                <SingleScheduleView data={this.props.event.getSessionDataGrid(x.id)} session={x}/>
                             </Col>);
                         })}
                 </Row>

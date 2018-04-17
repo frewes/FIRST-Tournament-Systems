@@ -33,9 +33,9 @@ export function shuffle(a) {
 
 /** Checks if two session overlap at all **/
 export function overlaps(a,b) {
-    if (a.startTime.mins === b.startTime.mins || a.actualEndTime.mins === b.actualEndTime.mins) return true;
-    if (a.startTime.mins < b.startTime.mins && a.actualEndTime.mins > b.startTime.mins) return true;
-    return b.startTime.mins < a.startTime.mins && b.actualEndTime.mins > a.startTime.mins;
+    if (a.actualStartTime.mins === b.actualStartTime.mins || a.actualEndTime.mins === b.actualEndTime.mins) return true;
+    if (a.actualStartTime.mins < b.actualStartTime.mins && a.actualEndTime.mins > b.actualStartTime.mins) return true;
+    return b.actualStartTime.mins < a.actualStartTime.mins && b.actualEndTime.mins > a.actualStartTime.mins;
 }
 
 /**

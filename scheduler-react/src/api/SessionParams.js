@@ -66,10 +66,16 @@ export default class SessionParams {
     get endTime() { return this._endTime; }
     set endTime(value) { this._endTime = value; }
 
-    get actualEndTime() { return this._actualEndTime; }
+    get actualEndTime() {
+        if (this.type === TYPES.BREAK) return this._endTime;
+        return this._actualEndTime;
+    }
     set actualEndTime(value) { this._actualEndTime = value; }
 
-    get actualStartTime() { return this._actualStartTime; }
+    get actualStartTime() {
+        if (this.type === TYPES.BREAK) return this._startTime;
+        return this._actualStartTime;
+    }
     set actualStartTime(value) { this._actualStartTime = value; }
 
     get len() { return this._len ; }

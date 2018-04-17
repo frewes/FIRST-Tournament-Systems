@@ -14,31 +14,16 @@ export default class SingleScheduleView extends React.Component {
     }
 
     buildGrid() {
-        let grid = [];
-        let cols = [{value: "#", width:20, readOnly:true, className:'header'},
-                    {value: "Time", readOnly:true, className:'header'}];
-        this.props.session.locations.forEach(x => {
-            cols.push({value: x, readOnly:true, className:'header'});
+        let grid = this.props.data.slice();
+        grid[0] = this.props.data[0].map(x => {
+            x.className = "header";
+            return x;
         });
-        grid.push(cols);
 
-        this.props.session.schedule.forEach((instance) => {
-            let A = [];
-            A.push({value: instance.num, readOnly:true});
-            A.push({value: instance.time.time, readOnly:true});
-            let diff = this.props.session.nLocs;
-            for (let dummy = 0; dummy < instance.loc; dummy++) {
-                diff--;
-                A.push({value: "--", readOnly:true});
-            }
-            for (let i = 0; i < instance.teams.length; i++) {
-            // instance.teams.forEach(x => {
-                let x = instance.teams[i];
-                diff--;
-                A.push({value: (x) ? this.props.event.getTeam(x).number : " X ", readOnly: true})}
-            while (diff-- > 0) A.push({value: "++", readOnly:true});
-            grid.push(A);
-        });
+        for (let i = 1; i < grid.length; i++) {
+            grid[i] = this.props.data[i];
+        }
+        console.log(grid);
         return grid;
     }
 
