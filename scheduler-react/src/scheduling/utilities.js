@@ -41,11 +41,7 @@ export function overlaps(a,b) {
 /**
  Returns how many times a team has done a given session
  **/
-export function hasDone(team, uid) {
-    let count = 0;
-    team.schedule.forEach(i => {
-        if (team.schedule[i].session_id === uid) count++;
-    });
-    return count;
-}
+export function  hasDone(team, id) {
+    return team.schedule.filter(i=>i.session_id === id).length;
+    }
 

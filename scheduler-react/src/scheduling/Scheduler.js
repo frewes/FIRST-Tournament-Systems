@@ -2,7 +2,7 @@ import { TYPES } from '../api/SessionTypes';
 import { DateTime } from '../api/DateTime';
 
 import Instance from './Instance';
-import { shuffle } from './utilities';
+import { shuffle, hasDone } from './utilities';
 
 export class Scheduler {
     constructor(E) {
@@ -149,6 +149,11 @@ export class Scheduler {
         return now.mins;
     }
 
+    fillAllTables() {
+        this.initialFill();
+        this.swapFill();
+    }
+
     initialFill() {
         let oneSetOfTeams = this.event.teams.slice();
         shuffle(oneSetOfTeams);
@@ -176,6 +181,83 @@ export class Scheduler {
                 team.schedule.push(instance);
             }
         }
+    }
+
+    /**
+     Go through all sessions in the event and fix up errors through first-order swapping.
+     **/
+    swapFill(event) {
+        // 10 attempts.  Why not?
+        for (let j = 0; j < 10; j++) {
+            let fixed = 0;
+            this.evaluate();
+            this.event.sessions.filter(s => s.errors > 0).forEach(s => {
+                fixed += this.swapFillSession(s, this.event.teams);
+            });
+            if (fixed === 0) break;
+        }
+    }
+
+    /**
+     Go through a given session, fix all errors with first-order swapping.
+     TODO: deal with the case where instances > 1?  How to do this?
+     @return Number of errors fixed
+     **/
+    swapFillSession(session, teams) {
+        let fixed = 0;
+        // Make list of teams that aren't in this session enough (lost set)
+        let lostTeams = [];
+        for (let i = 0; i < teams.length ; i++)
+            if (hasDone(teams[i],session.id) < session.instances) lostTeams.push(teams[i]);
+        // Find every empty slot in the schedule
+        session.schedule.forEach(instance_A => {
+            for (let j = 0; j < instance_A.teams.length; j++) {
+                if (instance_A.teams[j] != null) continue;
+                // Found empty slot!
+                // Now find a team A from the full set that can do this time
+                for (let tA = 0; tA < teams.length; tA++) {
+                    if (!this.canDo(teams[tA], instance_A, session.id)) continue;
+                    // Now, find a team B from the lost set that can take team A's instance
+                    let instance_B = null;
+                    for (let x = 0; x < teams[tA].schedule.length; x++) {
+                        if (teams[tA].schedule[x].session_id === instance_A.session_id) {
+                            instance_B = teams[tA].schedule.splice(x, 1)[0];
+                            break;
+                        }
+                    }
+                    let f = fixed;
+                    if (instance_B == null) {
+                        continue;
+                        // Team A can just do instance A; no swap required, add the team in.
+                        // instance_A.teams[j] = teams[tA].uid;
+                        // teams[tA].schedule.push(instance_A);
+                        // fixed++;
+                        // break;
+                    }
+                    for (let tB = 0; tB < lostTeams.length; tB++) {
+                        if (!this.canDo(lostTeams[tB], instance_B)) continue;
+                        // Found a team that can swap with A!
+                        // Now, swap teams A and B
+                        // Add instanceA to teamA
+                        instance_A.teams[j] = teams[tA].id;
+                        teams[tA].schedule.push(instance_A);
+                        // Add instanceB to teamB
+                        for (let idx = 0; idx < instance_B.teams.length; idx++) {
+                            if (instance_B.teams[idx] === teams[tA].id) {
+                                instance_B.teams[idx] = lostTeams[tB].id;
+                            }
+                        }
+                        lostTeams[tB].schedule.push(instance_B);
+                        lostTeams.splice(tB, 1);
+                        fixed++;
+                        break;
+                    }
+                    if (f === fixed) teams[tA].schedule.push(instance_B);
+                    else break;
+                }
+            }
+        });
+        return fixed;
     }
 
     /** ========================== UTILITIES ========================== **/

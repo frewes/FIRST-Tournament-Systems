@@ -25,7 +25,8 @@ class App extends Component {
         this.state = {
             display: 'LoadNew',
             eventParams: new EventParams( this.props.version,
-                "2018 FLL Competition", 24, new DateTime(540), new DateTime(17*60))
+                "2018 FLL Competition", 24, new DateTime(540), new DateTime(17*60)),
+            processing: false
         };
         // This binding is necessary to make `this` work in the callback
         this.handleCreateButtonClick = this.handleCreateButtonClick.bind(this);
@@ -64,13 +65,20 @@ class App extends Component {
 
     generate() {
         console.log("GENERATING");
-        let S = new Scheduler(this.state.eventParams);
-        S.buildAllTables();
-        console.log(this.state.eventParams);
-        S.initialFill();
-        console.log(this.state.eventParams);
-        S.evaluate();
-        this.setState ({display: 'Review'});
+        this.setState({processing: true})
+        setTimeout((() => {
+            let S = new Scheduler(this.state.eventParams);
+            let count = 1000;
+            do {
+                S.buildAllTables();
+                console.log(this.state.eventParams);
+                S.fillAllTables();
+                console.log(this.state.eventParams);
+                S.evaluate();
+            } while (this.state.eventParams.errors > 0 && count-- > 0);
+            this.setState ({display: 'Review'});
+            this.setState({processing: false});
+        }), 50);
     }
 
     render() {
@@ -90,7 +98,8 @@ class App extends Component {
                     </h1>
                     <InitForm onChange={this.initSchedule}/>
                     <Button color="warning" onClick={() => this.setState({display: 'Customise'})}>Customise</Button>&nbsp;
-                    <Button color="success" onClick={this.generate}>Generate</Button>
+                    <Button color="success" onClick={this.generate}>{this.state.processing ? "Generating..." : "Generate"}</Button>
+
                 </Jumbotron>
             );
         } else if (this.state.display === 'Customise') {
@@ -99,7 +108,7 @@ class App extends Component {
                     <Col lg="3">
                         &nbsp;
                         <br/>
-                        <Button color="success" onClick={this.generate}>Run schedule generation</Button>
+                        <Button color="success" onClick={this.generate}>{this.state.processing ? "Generating..." : "Run Schedule Generation"}</Button>
                         <br/>
                         &nbsp;
                         <DayScheduleView event={this.state.eventParams}/>
