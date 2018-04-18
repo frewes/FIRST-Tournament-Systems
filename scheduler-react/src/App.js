@@ -16,6 +16,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'react-datasheet/lib/react-datasheet.css';
 import './react-datagrid-custom.css';
 
+// Should set this up as github.io page under the firstaustralia repo
+// That way github manages load balancing and doesn't crash
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -66,6 +69,7 @@ class App extends Component {
         console.log(this.state.eventParams);
         S.initialFill();
         console.log(this.state.eventParams);
+        S.evaluate();
         this.setState ({display: 'Review'});
     }
 

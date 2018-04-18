@@ -9,7 +9,39 @@ export class Scheduler {
         this.event = E;
     }
 
+    empty() {
+        this.event.sessions.forEach(session => {
+            session.schedule = [];
+            session.usesSurrogates = false;
+        });
+        this.event.teams.forEach(team => {
+            team.schedule = [];
+            team.isSurrogate = false;
+        });
+    }
+
+    evaluate() {
+        this.event.errors = 0;
+        // Add errors for each session (errors due to empty spots)
+        this.event.sessions.forEach(session => {
+            session.errors = 0;
+            session.schedule.forEach(instance => {
+                session.errors += (instance.teams.length-instance.teams.filter(t=>t).length);
+            });
+            this.event.errors += session.errors;
+        });
+        // Adelaide Ken bug: Teams getting assigned weirdly. Count the number of these errors.
+        this.event.teams.forEach(team => {
+                //     for (let j = 0; j < team.schedule.length; j++) {
+                //         if (team.schedule[j].teams.indexOf(team.id) === -1) {
+                //             this.event.errors++;
+                //         }
+                //     }
+        });
+    }
+
     buildAllTables() {
+        this.empty();
         let willWork = null;
         this.event.sessions.sort((a,b) => {
             if (a.type.priority === b.type.priority) return a.startTime.mins - b.startTime.mins;
@@ -17,9 +49,8 @@ export class Scheduler {
         });
         this.event.sessions.forEach((session) => {
             // Make sure the start time isn't in a break
-            if (session.type !== TYPES.BREAK) session.startTime = new DateTime(this.timeInc(session.startTime,0,session));
+            if (session.type !== TYPES.BREAK) session.actualStartTime = new DateTime(this.timeInc(session.startTime,0,session));
             let end = -Infinity;
-            session.actualStartTime = session.startTime;
             if (!(session.type === TYPES.MATCH_ROUND || session.type === TYPES.MATCH_ROUND_PRACTICE)) {
                 end = this.tableSession(session);
                 session.actualEndTime = new DateTime(end);
@@ -34,7 +65,7 @@ export class Scheduler {
             let offset = 0;
             let locOffset = 0;
             this.event.sessions.filter(s=>s.type===T).forEach((session) => {
-                if (session.startTime.mins < end) session.actualStartTime = new DateTime(end);
+                if (session.actualStartTime.mins < end) session.actualStartTime = new DateTime(end);
                 end = this.tableSession(session, offset, locOffset);
                 session.actualEndTime = new DateTime(end);
                 if (session.schedule[session.schedule.length-1].loc === 0) locOffset = 1;
@@ -79,7 +110,7 @@ export class Scheduler {
             everyN += Math.round(Math.random()*2);
             roundsSinceExtra += Math.floor(Math.random()*L);
             flag = true;
-        }
+}
         let extraRounds = 0;
         if (session.type === TYPES.BREAK) everyN = Infinity;
         for (var i = 0; i < L; i++) {
@@ -134,8 +165,10 @@ export class Scheduler {
         for (let t = 0; t < instance.teams.length; t++) {
             let T = -1;
             for (let k = 0; k < teams.length; k++) {
-                T = k;
-                if (this.canDo(teams[k],instance)) break;
+                if (this.canDo(teams[k],instance)) {
+                    T = k;
+                    break;
+                }
             }
             if (T !== -1) {
                 let team = teams.splice(T,1)[0];
@@ -185,6 +218,10 @@ export class Scheduler {
             if (startA === startB || (startA < startB && endA > startB) || (startB < startA && endB > startA))
                 return false;
         }
+        // console.log("Team is " + team.number);
+        // console.log(instance);
+        // console.log("Schedule: ")
+        // team.schedule.forEach(i => console.log(i));
         return true;
     }
 
@@ -195,7 +232,7 @@ export class Scheduler {
     timeInc(time, inc, session) {
         let newMins = time.mins + inc;
         this.event.sessions.filter(x=>x.type === TYPES.BREAK && x.appliesTo.includes(session.id)).forEach(x => {
-            if (time.mins+inc >= x.startTime.mins && time.mins < x.endTime.mins) newMins = x.endTime.mins;
+            if (time.mins+inc >= x.actualStartTime.mins && time.mins < x.actualEndTime.mins) newMins = x.actualEndTime.mins;
         });
         return newMins;
     }

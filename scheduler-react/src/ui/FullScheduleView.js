@@ -20,6 +20,7 @@ export default class FullScheduleView extends React.Component {
     render() {
         return (
             <Container>
+                <h1>{this.props.event.errors} error{this.props.event.errors !== 1 && "s"} found</h1>
                 <Row>
                     {this.getItems().filter(x=>x.type !== TYPES.BREAK)
                         .sort((a,b)=>{return a.type.priority-b.type.priority})

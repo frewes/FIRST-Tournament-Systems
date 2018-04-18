@@ -13,7 +13,6 @@ export default class TeamList extends React.Component {
         super(props);
 
         this.state = {
-            grid: this.getDataGrid(),
             toAdd: 1
         };
 
@@ -35,21 +34,28 @@ export default class TeamList extends React.Component {
             grid.push([]);
             grid[i].push({value: this.props.teams[i].number});
             grid[i].push({value: this.props.teams[i].name});
+            // if (this.props.advanced) {
+            //     grid[i].push({value: this.props.teams[i].excludeJudging});
+            //     grid[i].push({value: this.props.teams[i].extraTime});
+            // }
         }
         return grid;
     }
 
     updateCells(changes) {
-        const grid = this.state.grid.map(row => [...row]);
+        const grid = this.getDataGrid().map(row => [...row]);
         let T = this.props.teams;
         changes.forEach(({cell, row, col, value}) => {
             grid[row][col] = {...grid[row][col], value};
         });
-        for (let row = 0; row < this.state.grid.length; row++) {
+        for (let row = 0; row < grid.length; row++) {
             T[row].number = grid[row][0].value;
             T[row].name = grid[row][1].value;
+            // if (this.props.advanced) {
+            //     T[row].excludeJudging = grid[row][2].value;
+            //     T[row].extraTime = grid[row][3].value;
+            // }
         }
-        this.setState({grid});
         this.props.onChange(T);
     }
 
@@ -80,7 +86,7 @@ export default class TeamList extends React.Component {
                 <br/>
                 &nbsp;
             <ReactDataSheet
-                data={this.state.grid}
+                data={this.getDataGrid()}
                 valueRenderer={(cell) => cell.value}
                 sheetRenderer={(props) => (
                     <Table className="datagrid-custom">
@@ -88,6 +94,9 @@ export default class TeamList extends React.Component {
                             <tr>
                                 <th>Team number</th>
                                 <th>Team name</th>
+                                {/*{this.props.advanced && <th>Exclude from judging?</th>}*/}
+                                {/*{this.props.advanced && <th>Extra time?</th>}*/}
+                                {this.props.advanced && <th>Advanced</th>}
                                 <th width="20"></th>
                             </tr>
                         </thead>
@@ -99,6 +108,7 @@ export default class TeamList extends React.Component {
                 rowRenderer={(props) => (
                     <tr>
                         {props.children}
+                        {this.props.advanced && <td className='cell'><Button>Edit...</Button></td>}
                         <td className='cell' onClick={() => this.deleteTeam(props.row)}><MdHighlightRemove size={20}/></td>
                     </tr>
                 )}
