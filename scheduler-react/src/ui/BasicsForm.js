@@ -21,8 +21,8 @@ export default class BasicsForm extends React.Component {
         this.updateTitle = this.updateTitle.bind(this);
         this.updateStartTime = this.updateStartTime.bind(this);
         this.updateEndTime = this.updateEndTime.bind(this);
-        this.updateMinTravel = this.updateEndTime.bind(this);
-        this.updateExtraTime = this.updateEndTime.bind(this);
+        this.updateMinTravel = this.updateMinTravel.bind(this);
+        this.updateExtraTime = this.updateExtraTime.bind(this);
         this.handleChange = this.handleChange.bind(this);
 
         this.handleChange(this.state);

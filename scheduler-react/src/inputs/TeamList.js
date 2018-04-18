@@ -7,6 +7,8 @@ import { TeamParams } from '../api/TeamParams';
 
 import MdHighlightRemove from 'react-icons/lib/md/highlight-remove';
 import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
+import BooleanInput from "./BooleanInput";
+import DateTimeInput from "./DateTimeInput";
 
 export default class TeamList extends React.Component {
     constructor(props) {
@@ -24,6 +26,11 @@ export default class TeamList extends React.Component {
         this.deleteTeam = this.deleteTeam.bind(this);
         this.changeToAdd = this.changeToAdd.bind(this);
         this.addTeams = this.addTeams.bind(this);
+
+        this.setTeamExclude = this.setTeamExclude.bind(this);
+        this.setTeamExtra = this.setTeamExtra.bind(this);
+        this.setTeamStartTime = this.setTeamStartTime.bind(this);
+        this.setTeamEndTime = this.setTeamEndTime.bind(this);
     }
 
     toggle() {
@@ -85,13 +92,49 @@ export default class TeamList extends React.Component {
         this.setState({grid: this.getDataGrid()});
     }
 
+    setTeamExclude(b) {
+        let T = this.props.teams;
+        T[this.state.selectedTeam].excludeJudging = b;
+        this.props.onChange(T);
+    }
+
+    setTeamExtra (b) {
+        let T = this.props.teams;
+        T[this.state.selectedTeam].extraTime = b;
+        this.props.onChange(T);
+    }
+
+    setTeamStartTime(t) {
+        let T = this.props.teams;
+        T[this.state.selectedTeam].startTime = t;
+        this.props.onChange(T);
+    }
+
+    setTeamEndTime(t) {
+        let T = this.props.teams;
+        T[this.state.selectedTeam].endTime = t;
+        this.props.onChange(T);
+    }
+
+    buildModal(team) {
+        return (
+            <div>
+                {team.number}: {team.name}
+                <BooleanInput label="Exclude from judging?" value={team.excludeJudging} onChange={this.setTeamExclude}/>
+                <BooleanInput label="Extra time needed?" value={team.extraTime} onChange={this.setTeamExtra}/>
+                <DateTimeInput label="Arrives at: " value={team.startTime} onChange={this.setTeamStartTime}/>
+                <DateTimeInput label="Must leave by: " value={team.endTime} onChange={this.setTeamEndTime}/>
+            </div>
+        );
+    }
+
     render() {
         return (
             <div>
                 <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
                     <ModalHeader toggle={this.toggle}>Advanced edit</ModalHeader>
                     <ModalBody>
-                        Hello {this.props.teams[this.state.selectedTeam].name}
+                        {this.buildModal(this.props.teams[this.state.selectedTeam])}
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.toggle}>Close</Button>

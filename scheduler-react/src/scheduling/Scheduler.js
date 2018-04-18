@@ -214,7 +214,7 @@ export class Scheduler {
                 endB = startB + this.event.getSession(instance.session_id).len;
             else
                 endB = startB + this.event.getSession(instance.session_id).len + this.event.minTravel + extra;
-            // if ((team.start && startB < team.start) || (team.end && endB > team.end)) return false;
+            if ((team.startTime && startB < team.startTime.mins) || (team.endTime && endB > team.endTime.mins)) return false;
             if (startA === startB || (startA < startB && endA > startB) || (startB < startA && endB > startA))
                 return false;
         }
