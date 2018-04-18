@@ -2,7 +2,7 @@ import React from 'react';
 
 import ReactDataSheet from 'react-datasheet';
 
-import { Table, Button } from 'reactstrap';
+import { Table, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { TeamParams } from '../api/TeamParams';
 
 import MdHighlightRemove from 'react-icons/lib/md/highlight-remove';
@@ -13,13 +13,23 @@ export default class TeamList extends React.Component {
         super(props);
 
         this.state = {
-            toAdd: 1
+            toAdd: 1,
+            selectedTeam: 0,
+            modal: false
         };
+
+        this.toggle=this.toggle.bind(this);
 
         this.updateCells = this.updateCells.bind(this);
         this.deleteTeam = this.deleteTeam.bind(this);
         this.changeToAdd = this.changeToAdd.bind(this);
         this.addTeams = this.addTeams.bind(this);
+    }
+
+    toggle() {
+        this.setState({
+            modal: !this.state.modal
+        });
     }
 
     changeToAdd(ev) {
@@ -78,6 +88,16 @@ export default class TeamList extends React.Component {
     render() {
         return (
             <div>
+                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+                    <ModalHeader toggle={this.toggle}>Advanced edit</ModalHeader>
+                    <ModalBody>
+                        Hello {this.props.teams[this.state.selectedTeam].name}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={this.toggle}>Close</Button>
+                    </ModalFooter>
+                </Modal>
+
                 <Button onClick={this.addTeams}><MdAddCircleOutline/> Add</Button>&nbsp;
                 <input type="number" value={this.state.toAdd} min="1" onChange={this.changeToAdd}/>&nbsp;
                 team{this.state.toAdd>1 && "s"}&nbsp;
@@ -108,7 +128,9 @@ export default class TeamList extends React.Component {
                 rowRenderer={(props) => (
                     <tr>
                         {props.children}
-                        {this.props.advanced && <td className='cell'><Button>Edit...</Button></td>}
+                        {this.props.advanced && <td className='cell'>
+                            <Button onClick={() => {this.setState({selectedTeam:props.row}); this.toggle()}}>Edit...</Button>
+                        </td>}
                         <td className='cell' onClick={() => this.deleteTeam(props.row)}><MdHighlightRemove size={20}/></td>
                     </tr>
                 )}
