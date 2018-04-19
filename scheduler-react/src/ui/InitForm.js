@@ -14,8 +14,8 @@ export default class InitForm extends React.Component {
         this.state = {
             title: (this.props.event) ? this.props.event.title : '2018 FLL Tournament',
             nTeams: (this.props.event) ? this.props.event.nTeams : 24,
-            startTime: (this.props.event) ? this.props.event.startTime: new DateTime(9*60),
-            endTime: (this.props.event) ? this.props.event.endTime : new DateTime(17*60)
+            startTime: (this.props.event) ? this.props.event.startTime: new DateTime(9*60,["Day 1"]),
+            endTime: (this.props.event) ? this.props.event.endTime : new DateTime(17*60, ["Day 1"])
         };
 
         this.updateTitle = this.updateTitle.bind(this);

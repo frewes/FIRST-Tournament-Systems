@@ -26,6 +26,8 @@ export class EventParams {
         this.extraTime = 5;
         this.sessions = [];
         this.days = ["Day 1"];
+        this.startTime.days=this.days;
+        this.endTime.days=this.days;
         this.errors = Infinity;
 
         this.populateFLL();
@@ -33,8 +35,8 @@ export class EventParams {
 
     populateFLL() {
         // First guesses at all schedule parameters.  User can then tweak to their hearts' content without auto updates
-        let actualStart = new DateTime(this.startTime.mins+30);
-        let actualEnd = new DateTime(this.endTime.mins-30);
+        let actualStart = this.startTime.clone(30);
+        let actualEnd = this.endTime.clone(-30);
         let timeAvailable = actualEnd.mins - actualStart.mins - 30;
         let timePerMatch = Math.floor(timeAvailable / (this.nTeams * 3 / 2));
 
@@ -43,32 +45,31 @@ export class EventParams {
         let nSims = 2;
         let nLocs = Math.ceil(this.nTeams / 11);
         let nJudgings = Math.ceil(this.nTeams/nLocs);
-        let startLunch = new DateTime(actualStart.mins + nJudgings*15);
-        let endLunch = new DateTime(startLunch.mins + 30);
-
+        let startLunch = actualStart.clone(nJudgings*15);
+        let endLunch = startLunch.clone(30);
 
         for (let i = 1; i <= 3; i++) {
             let S = new SessionParams(this.uid_counter++, TYPES.MATCH_ROUND, "Round " + i, 4,
-                new DateTime(actualStart.mins), new DateTime(actualEnd.mins));
+                actualStart.clone(), actualEnd.clone());
             S.nSims = nSims;
             S.len = matchLen;
             S.buf = matchBuf;
             this.sessions.push(S);
         }
         this.sessions.push(new SessionParams(this.uid_counter++,TYPES.JUDGING, "Robot Design Judging", nLocs,
-            new DateTime(actualStart.mins), new DateTime(actualEnd.mins)));
+            actualStart.clone(), actualEnd.clone()));
         this.sessions.push(new SessionParams(this.uid_counter++,TYPES.JUDGING, "Core Values Judging", nLocs,
-            new DateTime(actualStart.mins), new DateTime(actualEnd.mins)));
+            actualStart.clone(), actualEnd.clone()));
         this.sessions.push(new SessionParams(this.uid_counter++,TYPES.JUDGING, "Research Project Judging", nLocs,
-            new DateTime(actualStart.mins), new DateTime(actualEnd.mins)));
+            actualStart.clone(), actualEnd.clone()));
         this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Opening Ceremony", 1,
-            new DateTime(this.startTime.mins), new DateTime(actualStart.mins)));
+            this.startTime.clone(), actualStart.clone()));
         this.getSession(this.uid_counter-1).universal = true;
         this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Lunch", 1,
-            new DateTime(startLunch.mins), new DateTime(endLunch.mins)));
+            startLunch.clone(), endLunch.clone()));
         this.getSession(this.uid_counter-1).universal = true;
         this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Closing Ceremony", 1,
-            new DateTime(actualEnd.mins), new DateTime(this.endTime.mins)));
+            actualEnd.clone(), this.endTime.clone()));
         this.getSession(this.uid_counter-1).universal = true;
     }
 
@@ -239,5 +240,20 @@ export class EventParams {
     set extraTime(value) {this._extraTime = value};
 
     get days() {return this._days;}
-    set days(value) {this._days = value};
+    // When changing the days, we have to make sure every DateTime gets the updated reference.
+    set days(value) {
+        this._days = value;
+        this.startTime.days = this._days;
+        this.endTime.days = this._days;
+        this.sessions.forEach(S => {
+            S.startTime.days = this._days;
+            S.actualStartTime.days = this._days;
+            S.endTime.days = this._days;
+            S.actualEndTime.days = this._days;
+        });
+        this.teams.forEach(T => {
+            if (T.startTime) T.startTime.days = this._days;
+            if (T.endTime) T.endTime.days = this._days;
+        });
+    };
 }

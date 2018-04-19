@@ -49,11 +49,11 @@ export class Scheduler {
         });
         this.event.sessions.forEach((session) => {
             // Make sure the start time isn't in a break
-            if (session.type !== TYPES.BREAK) session.actualStartTime = new DateTime(this.timeInc(session.startTime,0,session));
+            if (session.type !== TYPES.BREAK) session.actualStartTime.mins = this.timeInc(session.startTime,0,session);
             let end = -Infinity;
             if (!(session.type === TYPES.MATCH_ROUND || session.type === TYPES.MATCH_ROUND_PRACTICE)) {
                 end = this.tableSession(session);
-                session.actualEndTime = new DateTime(end);
+                session.actualEndTime.mins=end;
                 if (session.type !== TYPES.BREAK && end > session.endTime.mins) {
                     if (willWork) willWork = willWork + ", " + session.name;
                     else willWork = session.name;
@@ -65,9 +65,9 @@ export class Scheduler {
             let offset = 0;
             let locOffset = 0;
             this.event.sessions.filter(s=>s.type===T).forEach((session) => {
-                if (session.actualStartTime.mins < end) session.actualStartTime = new DateTime(end);
+                if (session.actualStartTime.mins < end) session.actualStartTime.mins = end;
                 end = this.tableSession(session, offset, locOffset);
-                session.actualEndTime = new DateTime(end);
+                session.actualEndTime.mins = end;
                 if (session.schedule[session.schedule.length-1].loc === 0) locOffset = 1;
                 else locOffset = 0;
                 offset += session.schedule.length;
@@ -146,7 +146,17 @@ export class Scheduler {
             //     session.schedule[i].teams[t] = null;
             // }
         }
+        this.sortThingsOut();
         return now.mins;
+    }
+
+    // Make sure everything is consistent.
+    sortThingsOut() {
+        this.event.sessions.forEach(session => {
+            session.schedule.forEach(instance => {
+                instance.time.days = this.event.days;
+            });
+        });
     }
 
     fillAllTables() {

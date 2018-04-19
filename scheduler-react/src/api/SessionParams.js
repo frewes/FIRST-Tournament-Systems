@@ -1,7 +1,5 @@
 import { TYPES } from './SessionTypes'
 
-import { DateTime } from './DateTime';
-
 export default class SessionParams {
     constructor(uid, type, name, nLocs=4, startTime=null, endTime=null) {
         this._id = uid;
@@ -62,7 +60,7 @@ export default class SessionParams {
     get startTime() { return this._startTime; }
     set startTime(value) {
         this._startTime = value;
-        this._actualStartTime = new DateTime(value.mins);
+        this._actualStartTime = value.clone();
     }
 
     get endTime() { return this._endTime; }

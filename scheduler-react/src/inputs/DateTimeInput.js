@@ -8,25 +8,51 @@ import { DateTime } from '../api/DateTime'
 export default class DateTimeInput extends React.Component {
     constructor(props) {
         super(props);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleTimeChange = this.handleTimeChange.bind(this);
+        this.handleDateChange = this.handleDateChange.bind(this);
+        this.buildInput = this.buildInput.bind(this);
 
         uniqueId.enableUniqueIds(this);
     }
 
-    handleChange(event) {
+    handleTimeChange(event) {
         let x = this.props.value;
         if (!x) x = new DateTime(0);
         x.time = event.target.value;
         this.props.onChange(x);
     }
 
+    handleDateChange(event) {
+        let x = this.props.value;
+        x.day = event.target.value;
+        this.props.onChange(x);
+    }
+
+    buildInput() {
+        if (this.props.value.days.length > 1) {
+            return (
+                    <FormGroup>
+                            <Input type="select" name="select" onChange={this.handleDateChange}>
+                                {this.props.value.days.map((d,idx) => <option key={idx}>{d}</option>)}
+                            </Input>
+                            <Input type="time" id={this.lastUniqueId()} pattern="[0-2][0-9]:[0-5][0-9]" step="900"
+                                   value={this.props.value ? this.props.value.timeValue : null} onChange={this.handleTimeChange}/>
+                    </FormGroup>
+                );
+        } else {
+            return (
+                <Input type="time" id={this.lastUniqueId()} pattern="[0-2][0-9]:[0-5][0-9]" step="900"
+                       value={this.props.value ? this.props.value.timeValue : null} onChange={this.handleTimeChange}/>
+            );
+        }
+    }
+
     render() {
         return (
             <FormGroup row>
                 <Label sm={this.props.large? 2 : 6} for={this.nextUniqueId()}>{this.props.label}</Label>
-                <Col sm={this.props.large? 10 : 6}>
-                    <Input type="time" id={this.lastUniqueId()} pattern="[0-2][0-9]:[0-5][0-9]" step="900"
-                           value={this.props.value ? this.props.value.time : null} onChange={this.handleChange}/>
+                <Col sm={this.props.large? 10:6}>
+                    {this.buildInput()}
                 </Col>
             </FormGroup>
         );
