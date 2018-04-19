@@ -29,6 +29,7 @@ export default class DetailView extends React.Component {
         this.toggleAdvanced = this.toggleAdvanced.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.toggleApplies = this.toggleApplies.bind(this);
+        this.updateUniversal = this.updateUniversal.bind(this);
     }
 
     toggleAdvanced() {
@@ -88,12 +89,21 @@ export default class DetailView extends React.Component {
         this.updateSessions(container);
     }
 
+    updateUniversal(value) {
+        let S = this.state.selectedSession;
+        if (!S) return;
+        S.universal = value;
+        this.updateSessions(S);
+    }
+
     buildModal() {
         let S = this.state.selectedSession;
         if (!S) return;
         return (
             <div>
                 {S.name} applies to...<br/>
+                {S.type === TYPES.BREAK && <BooleanInput label="All?" value={S.universal} onChange={this.updateUniversal}/>}
+                <hr/>
                 {this.props.event.sessions.filter(S=>S.type!==TYPES.BREAK).map(session =>
                     <BooleanInput key={session.id} disabled={S.universal} label={session.name} value={S.applies(session.id)}
                                   onChange={(x) => this.toggleApplies(S,session,x)}/>

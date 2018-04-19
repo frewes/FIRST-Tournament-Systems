@@ -26,7 +26,6 @@ export default class SessionForm extends React.Component {
         this.updateExtraFirst = this.updateExtraFirst.bind(this);
         this.updateExtraEvery = this.updateExtraEvery.bind(this);
         this.updateNLocs = this.updateNLocs.bind(this);
-        this.updateUniversal = this.updateUniversal.bind(this);
 
         this.updateLocs = this.updateLocs.bind(this);
     }
@@ -86,11 +85,6 @@ export default class SessionForm extends React.Component {
         this.props.onChange(S);
     }
 
-    updateUniversal(value) {
-        let S = this.props.session;
-        S.universal = value;
-        this.props.onChange(S);
-    }
 
     getDataGrid() {
         let grid = [];
@@ -155,9 +149,9 @@ export default class SessionForm extends React.Component {
                         )}
                         onCellsChanged={(changes) => this.updateLocs(changes)}
                     />}
-                    {this.props.session.type === TYPES.BREAK && <BooleanInput label="Universal break?" value={this.props.session.universal} onChange={this.updateUniversal}/>}
                     {this.props.session.type === TYPES.BREAK && <Button color='primary' onClick={this.props.onToggle}>Break applies to...</Button>}
                 </Form>
+                <br/>
             </div>
         );
     }
