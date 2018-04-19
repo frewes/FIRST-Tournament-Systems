@@ -15,6 +15,8 @@ export class EventParams {
             A.push(new TeamParams(nTeams));
             nTeams--;
         }
+        this.uid_counter = 1;
+
         this.teams = A.sort((a,b) => {return parseInt(a.number,10) - parseInt(b.number,10);});
 
         this.startTime = startTime;
@@ -31,35 +33,43 @@ export class EventParams {
 
     populateFLL() {
         // First guesses at all schedule parameters.  User can then tweak to their hearts' content without auto updates
-        let timeAvailable = this.endTime.mins - this.startTime.mins - 60;
-        // console.log("Time available: " + timeAvailable);
-        let timePerMatch = Math.round(timeAvailable / (this.nTeams * 3 / 2));
-        // console.log("Time per match: " + timePerMatch);
+        let actualStart = new DateTime(this.startTime.mins+30);
+        let actualEnd = new DateTime(this.endTime.mins-30);
+        let timeAvailable = actualEnd.mins - actualStart.mins - 30;
+        let timePerMatch = Math.floor(timeAvailable / (this.nTeams * 3 / 2));
+
         let matchLen = Math.ceil(timePerMatch/2);
         let matchBuf = Math.floor(timePerMatch/2);
         let nSims = 2;
         let nLocs = Math.ceil(this.nTeams / 11);
         let nJudgings = Math.ceil(this.nTeams/nLocs);
-        let startLunch = new DateTime(this.startTime.mins + nJudgings*15);
-        let endLunch = new DateTime(startLunch.mins + 60);
+        let startLunch = new DateTime(actualStart.mins + nJudgings*15);
+        let endLunch = new DateTime(startLunch.mins + 30);
+
 
         for (let i = 1; i <= 3; i++) {
-            let S = new SessionParams(i, TYPES.MATCH_ROUND, "Round " + i, 4,
-                new DateTime(this.startTime.mins), new DateTime(this.endTime.mins));
+            let S = new SessionParams(this.uid_counter++, TYPES.MATCH_ROUND, "Round " + i, 4,
+                new DateTime(actualStart.mins), new DateTime(actualEnd.mins));
             S.nSims = nSims;
             S.len = matchLen;
             S.buf = matchBuf;
             this.sessions.push(S);
         }
-        this.sessions.push(new SessionParams(4,TYPES.JUDGING, "Robot Design Judging", nLocs,
-            new DateTime(this.startTime.mins), new DateTime(this.endTime.mins)));
-        this.sessions.push(new SessionParams(5,TYPES.JUDGING, "Core Values Judging", nLocs,
-            new DateTime(this.startTime.mins), new DateTime(this.endTime.mins)));
-        this.sessions.push(new SessionParams(6,TYPES.JUDGING, "Research Project Judging", nLocs,
-            new DateTime(this.startTime.mins), new DateTime(this.endTime.mins)));
-        this.sessions.push(new SessionParams(7,TYPES.BREAK, "Lunch", 1,
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.JUDGING, "Robot Design Judging", nLocs,
+            new DateTime(actualStart.mins), new DateTime(actualEnd.mins)));
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.JUDGING, "Core Values Judging", nLocs,
+            new DateTime(actualStart.mins), new DateTime(actualEnd.mins)));
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.JUDGING, "Research Project Judging", nLocs,
+            new DateTime(actualStart.mins), new DateTime(actualEnd.mins)));
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Opening Ceremony", 1,
+            new DateTime(this.startTime.mins), new DateTime(actualStart.mins)));
+        this.getSession(this.uid_counter-1).universal = true;
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Lunch", 1,
             new DateTime(startLunch.mins), new DateTime(endLunch.mins)));
-        this.getSession(7).appliesTo = this.sessions.filter(x => x.type !== TYPES.BREAK).map(x => x.id);
+        this.getSession(this.uid_counter-1).universal = true;
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Closing Ceremony", 1,
+            new DateTime(actualEnd.mins), new DateTime(this.endTime.mins)));
+        this.getSession(this.uid_counter-1).universal = true;
     }
 
     get nTeams() { return this._teams.length; }
@@ -102,7 +112,7 @@ export class EventParams {
         grid.push(cols);
 
         let applyingBreaks = [];
-        this.sessions.filter(S => S.type === TYPES.BREAK && S.appliesTo.includes(session.id)).forEach(S => {
+        this.sessions.filter(S => S.type === TYPES.BREAK && S.applies(session.id)).forEach(S => {
             if (overlaps(S,session)) applyingBreaks.push(S);
         });
         let schedule = session.schedule.slice();

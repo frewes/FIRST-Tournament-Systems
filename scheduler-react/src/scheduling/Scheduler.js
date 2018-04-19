@@ -274,7 +274,7 @@ export class Scheduler {
             return false;
         for (let i = 0; i < team.schedule.length; i++) {
             if (this.event.getSession(team.schedule[i].session_id).type === TYPES.BREAK){
-                if (!this.event.getSession(team.schedule[i].session_id).appliesTo.includes(instance.session_id))
+                if (!this.event.getSession(team.schedule[i].session_id).applies(instance.session_id))
                     continue;
                 if (this.event.getSession(instance.session_id).type === TYPES.BREAK) continue;
             }
@@ -313,7 +313,7 @@ export class Scheduler {
      */
     timeInc(time, inc, session) {
         let newMins = time.mins + inc;
-        this.event.sessions.filter(x=>x.type === TYPES.BREAK && x.appliesTo.includes(session.id)).forEach(x => {
+        this.event.sessions.filter(x=>x.type === TYPES.BREAK && x.applies(session.id)).forEach(x => {
             if (time.mins+inc >= x.actualStartTime.mins && time.mins < x.actualEndTime.mins) newMins = x.actualEndTime.mins;
         });
         return newMins;

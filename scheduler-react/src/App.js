@@ -25,7 +25,7 @@ class App extends Component {
         this.state = {
             display: 'LoadNew',
             eventParams: new EventParams( this.props.version,
-                "2018 FLL Competition", 24, new DateTime(540), new DateTime(17*60)),
+                "2018 FLL Competition", 24, new DateTime(8.5*60), new DateTime(17*60)),
             processing: false
         };
         // This binding is necessary to make `this` work in the callback
@@ -96,7 +96,7 @@ class App extends Component {
                     <h1 className="App-intro">
                         Basic setup
                     </h1>
-                    <InitForm onChange={this.initSchedule}/>
+                    <InitForm event={this.state.eventParams} onChange={this.initSchedule}/>
                     <Button color="warning" onClick={() => this.setState({display: 'Customise'})}>Customise</Button>&nbsp;
                     <Button color="success" onClick={this.generate}>{this.state.processing ? "Generating..." : "Generate"}</Button>
 

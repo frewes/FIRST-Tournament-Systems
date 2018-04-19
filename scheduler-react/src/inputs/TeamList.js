@@ -11,7 +11,6 @@ import FaTimesCircleO from "react-icons/lib/fa/times-circle-o";
 import BooleanInput from "./BooleanInput";
 import DateTimeInput from "./DateTimeInput";
 
-
 export default class TeamList extends React.Component {
     constructor(props) {
         super(props);

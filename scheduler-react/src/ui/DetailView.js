@@ -1,10 +1,13 @@
 import React from 'react';
-import { Container, Nav, NavItem, NavLink, TabContent, TabPane, Col, Row } from 'reactstrap';
+import { Nav, NavItem, NavLink, TabContent, TabPane,
+    Container, Col, Row, Button,
+    Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 
 import { TYPES } from '../api/SessionTypes';
 import BasicsForm from "./BasicsForm";
-import TeamList from "../inputs/TeamList";
 import SessionForm from "./SessionForm"
+import TeamList from "../inputs/TeamList";
+import BooleanInput from "../inputs/BooleanInput";
 
 import ToggleButton from 'react-toggle-button';
 
@@ -15,13 +18,17 @@ export default class DetailView extends React.Component {
         this.toggle = this.toggle.bind(this);
         this.state = {
             activeTab: 'judging',
-            advanced: false
+            advanced: false,
+            modal: false,
+            selectedSession: null
         };
 
         this.updateScheduleFromBasics = this.updateScheduleFromBasics.bind(this);
         this.updateSessions = this.updateSessions.bind(this);
         this.updateTeams = this.updateTeams.bind(this);
         this.toggleAdvanced = this.toggleAdvanced.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
+        this.toggleApplies = this.toggleApplies.bind(this);
     }
 
     toggleAdvanced() {
@@ -42,8 +49,6 @@ export default class DetailView extends React.Component {
         console.log(s);
         let E = this.props.event;
         E.title = s.title;
-        E.startTime = s.startTime;
-        E.endTime = s.endTime;
         E.minTravel = s.minTravel;
         E.extraTime = s.extraTime;
         this.props.onChange(E);
@@ -67,11 +72,45 @@ export default class DetailView extends React.Component {
         }
     }
 
+    toggleModal(session) {
+        let value = !this.state.modal;
+        let s = (value) ? session : null
+        this.setState({modal: value, selectedSession: s});
+    }
+
+    toggleApplies(container,session,include) {
+        if (include && !container.applies(session.id)) {
+            container.appliesTo.push(session.id);
+        }
+        if (!include && container.applies(session.id)) {
+            container.appliesTo.splice(container.appliesTo.indexOf(session.id), 1);
+        }
+        this.updateSessions(container);
+    }
+
+    buildModal() {
+        let S = this.state.selectedSession;
+        if (!S) return;
+        return (
+            <div>
+                {S.name} applies to...<br/>
+                {this.props.event.sessions.filter(S=>S.type!==TYPES.BREAK).map(session =>
+                    <BooleanInput key={session.id} disabled={S.universal} label={session.name} value={S.applies(session.id)}
+                                  onChange={(x) => this.toggleApplies(S,session,x)}/>
+                )}
+            </div>
+        );
+    }
+
+
     renderSessions(type) {
         return (
             <Row>
                 {this.props.event.sessions.filter(S=>S.type === type).sort((a,b) => {return a.id-b.id;}).map(S => (
-                    <Col lg={6} md={12} key={S.id}><SessionForm advanced={this.state.advanced} session={S} onChange={this.updateSessions}/></Col>
+                    <Col lg={6} md={12} key={S.id}>
+                        <SessionForm onToggle={() => this.toggleModal(S)} advanced={this.state.advanced}
+                                     session={S} onChange={this.updateSessions}/>
+                    </Col>
                 ))}
             </Row>
         )
@@ -80,6 +119,16 @@ export default class DetailView extends React.Component {
     render() {
         return (
             <Container>
+                <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+                    <ModalHeader toggle={this.toggleModal}>Advanced edit</ModalHeader>
+                    <ModalBody>
+                        {this.buildModal()}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={this.toggleModal}>Close</Button>
+                    </ModalFooter>
+                </Modal>
+
                 <Nav pills>
                     <NavItem>
                         <NavLink href="#" className={(this.state.activeTab === 'basics') ? "active" : ""}

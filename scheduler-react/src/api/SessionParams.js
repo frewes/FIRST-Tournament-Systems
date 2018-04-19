@@ -13,6 +13,8 @@ export default class SessionParams {
         for (let i = 1; i <= nLocs; i++) A.push(this.type.defaultLocs + " " + i);
         this.locations = A;
 
+        this.universal = false;
+
         this.startTime = startTime;
         this.endTime = endTime;
         this.actualStartTime = startTime;
@@ -96,8 +98,17 @@ export default class SessionParams {
     get extraTimeEvery() { return this._extraTimeEvery; }
     set extraTimeEvery(value) { this._extraTimeEvery = value; }
 
+    get universal() { return this._universal; }
+    set universal(value) { this._universal = value; }
+
     get appliesTo() { return this._appliesTo; }
     set appliesTo(value) { this._appliesTo = value; }
+
+    // Does this session apply to id?
+    applies(id) {
+        if(this.universal) return true;
+        else return this.appliesTo.includes(id);
+    }
 
     get usesSurrogates() { return this._usesSurrogates; }
     set usesSurrogates(value) { this._usesSurrogates = value; }

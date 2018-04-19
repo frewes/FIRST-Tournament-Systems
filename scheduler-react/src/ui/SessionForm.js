@@ -2,7 +2,7 @@ import React from 'react';
 // import ReactDOM from 'react-dom';
 import { TYPES } from '../api/SessionTypes';
 
-import { Form, Table } from 'reactstrap';
+import { Form, Table, Button } from 'reactstrap';
 import TextInput from '../inputs/TextInput';
 import DateTimeInput from "../inputs/DateTimeInput";
 import NumberInput from "../inputs/NumberInput";
@@ -26,6 +26,7 @@ export default class SessionForm extends React.Component {
         this.updateExtraFirst = this.updateExtraFirst.bind(this);
         this.updateExtraEvery = this.updateExtraEvery.bind(this);
         this.updateNLocs = this.updateNLocs.bind(this);
+        this.updateUniversal = this.updateUniversal.bind(this);
 
         this.updateLocs = this.updateLocs.bind(this);
     }
@@ -82,6 +83,12 @@ export default class SessionForm extends React.Component {
     updateExtraEvery(value) {
         let S = this.props.session;
         S.extraTimeEvery = value;
+        this.props.onChange(S);
+    }
+
+    updateUniversal(value) {
+        let S = this.props.session;
+        S.universal = value;
         this.props.onChange(S);
     }
 
@@ -148,20 +155,10 @@ export default class SessionForm extends React.Component {
                         )}
                         onCellsChanged={(changes) => this.updateLocs(changes)}
                     />}
+                    {this.props.session.type === TYPES.BREAK && <BooleanInput label="Universal break?" value={this.props.session.universal} onChange={this.updateUniversal}/>}
+                    {this.props.session.type === TYPES.BREAK && <Button color='primary' onClick={this.props.onToggle}>Break applies to...</Button>}
                 </Form>
             </div>
         );
     }
 }
-
-// get name() { return this._name; }
-// get locations() { return this._locations; }
-// get nSims() { return this._nSims; }
-// get startTime() { return this._startTime; }
-// get endTime() { return this._endTime; }
-// get len() { return this._len ; }
-// get buf() { return this._buf ; }
-// get instances() { return this._instances; }
-// get extraTimeFirst() { return this._extraTimeFirst; }
-// get extraTimeEvery() { return this._extraTimeEvery; }
-// get appliesTo() { return this._appliesTo; }

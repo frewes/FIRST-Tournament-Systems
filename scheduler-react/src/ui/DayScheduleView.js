@@ -1,8 +1,6 @@
 import React from 'react';
 
 import { Table } from 'reactstrap';
-// import { TYPES } from '../api/SessionTypes'
-import { DateTime } from "../api/DateTime";
 
 export default class DayScheduleView extends React.Component {
     constructor(props) {
@@ -15,12 +13,6 @@ export default class DayScheduleView extends React.Component {
         let sessions = this.props.event.sessions;
         let sorted = sessions.sort((a,b) => { return a.actualStartTime.mins - b.actualStartTime.mins});
         let items = [];
-        items.push({
-            _id: 0,
-            sTime: new DateTime(this.props.event.startTime.mins-30).time,
-            eTime: this.props.event.startTime.time,
-            contents: "Opening Ceremony"
-        });
         for (let i = 0; i < sorted.length; i++) {
             items.push({
                 _id: i+1,
@@ -29,12 +21,6 @@ export default class DayScheduleView extends React.Component {
                 contents: sorted[i].name
             });
         }
-        items.push({
-            _id: sorted.length+2,
-            sTime: this.props.event.endTime.time,
-            eTime: new DateTime(this.props.event.endTime.mins+30).time,
-            contents: "Closing Ceremony"
-        });
         return items;
     }
 
