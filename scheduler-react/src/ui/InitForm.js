@@ -11,50 +11,33 @@ export default class InitForm extends React.Component {
     constructor(props) {
         super(props);
         // Default values....
-        this.state = {
-            title: (this.props.event) ? this.props.event.title : '2018 FLL Tournament',
-            nTeams: (this.props.event) ? this.props.event.nTeams : 24,
-            startTime: (this.props.event) ? this.props.event.startTime: new DateTime(9*60,["Day 1"]),
-            endTime: (this.props.event) ? this.props.event.endTime : new DateTime(17*60, ["Day 1"])
-        };
 
         this.updateTitle = this.updateTitle.bind(this);
         this.updateNTeams = this.updateNTeams.bind(this);
         this.updateStartTime = this.updateStartTime.bind(this);
         this.updateEndTime = this.updateEndTime.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
-
-        this.handleChange(this.state);
     }
 
     updateTitle(newTitle) {
-        this.setState({title: newTitle});
-        let data = this.state;
+        let data = this.props.event;
         data.title = newTitle;
         this.handleChange(data);
     }
     updateNTeams(newN) {
-        this.setState({nTeams: newN});
-        let data = this.state;
+        let data = this.props.event;
         data.nTeams = newN;
         this.handleChange(data);
     }
     updateStartTime(newTime) {
-        this.setState({startTime: newTime});
-        let data = this.state;
+        let data = this.props.event;
         data.startTime = newTime;
         this.handleChange(data);
     }
     updateEndTime(newTime) {
-        this.setState({endTime: newTime});
-        let data = this.state;
+        let data = this.props.event;
         data.endTime = newTime;
         this.handleChange(data);
-    }
-
-    handleSubmit(event) {
-        event.preventDefault();
     }
 
     handleChange(data) {
@@ -65,10 +48,10 @@ export default class InitForm extends React.Component {
         return (
             <Container>
                 <Form onSubmit={this.handleSubmit}>
-                    <TextInput large label="Title: " value={this.state.title} onChange={this.updateTitle}/>
-                    <NumberInput large min="4" label="Number of teams: " value={this.state.nTeams} onChange={this.updateNTeams}/>
-                    <DateTimeInput large label="Start time: " value={this.state.startTime} onChange={this.updateStartTime}/>
-                    <DateTimeInput large label="End time: " value={this.state.endTime} onChange={this.updateEndTime}/>
+                    <TextInput large label="Title: " value={this.props.event.title} onChange={this.updateTitle}/>
+                    <NumberInput large min="4" label="Number of teams: " value={this.props.event.nTeams} onChange={this.updateNTeams}/>
+                    <DateTimeInput large label="Start time: " value={this.props.event.startTime} onChange={this.updateStartTime}/>
+                    <DateTimeInput large label="End time: " value={this.props.event.endTime} onChange={this.updateEndTime}/>
                 </Form>
             </Container>
         );

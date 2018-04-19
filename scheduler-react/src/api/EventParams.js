@@ -239,6 +239,15 @@ export class EventParams {
     get extraTime() {return this._extraTime;}
     set extraTime(value) {this._extraTime = value};
 
+    set nDays(value) {
+        let A = this.days;
+        while (A.length < value)
+            A.push("Day " + (this.days.length+1));
+        while (A.length > value)
+            A.pop();
+        this.days = A;
+    }
+
     get days() {return this._days;}
     // When changing the days, we have to make sure every DateTime gets the updated reference.
     set days(value) {

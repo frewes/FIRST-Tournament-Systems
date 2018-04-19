@@ -96,7 +96,7 @@ class App extends Component {
                     <h1 className="App-intro">
                         Basic setup
                     </h1>
-                    <InitForm event={this.state.eventParams} onChange={this.initSchedule}/>
+                    <InitForm event={this.state.eventParams} onChange={this.handleScheduleChange}/>
                     <Button color="warning" onClick={() => this.setState({display: 'Customise'})}>Customise</Button>&nbsp;
                     <Button color="success" onClick={this.generate}>{this.state.processing ? "Generating..." : "Generate"}</Button>
 

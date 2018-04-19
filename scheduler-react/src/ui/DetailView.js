@@ -23,7 +23,7 @@ export default class DetailView extends React.Component {
             selectedSession: null
         };
 
-        this.updateScheduleFromBasics = this.updateScheduleFromBasics.bind(this);
+        this.handleScheduleChange = this.handleScheduleChange.bind(this);
         this.updateSessions = this.updateSessions.bind(this);
         this.updateTeams = this.updateTeams.bind(this);
         this.toggleAdvanced = this.toggleAdvanced.bind(this);
@@ -46,13 +46,8 @@ export default class DetailView extends React.Component {
         }
     }
 
-    updateScheduleFromBasics(s) {
-        console.log(s);
-        let E = this.props.event;
-        E.title = s.title;
-        E.minTravel = s.minTravel;
-        E.extraTime = s.extraTime;
-        this.props.onChange(E);
+    handleScheduleChange(s) {
+        this.props.onChange(s);
     }
 
     updateTeams(T) {
@@ -179,7 +174,7 @@ export default class DetailView extends React.Component {
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="basics">
                         &nbsp;
-                        <BasicsForm advanced={this.state.advanced} event={this.props.event} onChange={this.updateScheduleFromBasics}/>
+                        <BasicsForm advanced={this.state.advanced} event={this.props.event} onChange={this.handleScheduleChange}/>
                     </TabPane>
                     <TabPane tabId="teams">
                         &nbsp;

@@ -143,7 +143,7 @@ export default class SessionForm extends React.Component {
                         sheetRenderer={(props) => (
                             <Table className="datagrid-custom">
                                 <tbody>
-                                    {props.children}
+                                {props.children}
                                 </tbody>
                             </Table>
                         )}
