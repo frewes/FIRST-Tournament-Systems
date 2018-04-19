@@ -5,10 +5,12 @@ import ReactDataSheet from 'react-datasheet';
 import { Table, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { TeamParams } from '../api/TeamParams';
 
-import MdHighlightRemove from 'react-icons/lib/md/highlight-remove';
 import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
+import FaCheckCircleO from "react-icons/lib/fa/check-circle-o";
+import FaTimesCircleO from "react-icons/lib/fa/times-circle-o";
 import BooleanInput from "./BooleanInput";
 import DateTimeInput from "./DateTimeInput";
+
 
 export default class TeamList extends React.Component {
     constructor(props) {
@@ -51,10 +53,13 @@ export default class TeamList extends React.Component {
             grid.push([]);
             grid[i].push({value: this.props.teams[i].number});
             grid[i].push({value: this.props.teams[i].name});
-            // if (this.props.advanced) {
-            //     grid[i].push({value: this.props.teams[i].excludeJudging});
-            //     grid[i].push({value: this.props.teams[i].extraTime});
-            // }
+            grid[i].push({value: this.props.teams[i].pitNum});
+            if (this.props.advanced) {
+                grid[i].push({value: this.props.teams[i].excludeJudging ? <FaCheckCircleO size={20}/> : <FaTimesCircleO size={20}/>});
+                grid[i].push({value: this.props.teams[i].extraTime ? <FaCheckCircleO size={20}/> : <FaTimesCircleO size={20}/>});
+                grid[i].push({value: this.props.teams[i].startTime ? this.props.teams[i].startTime.time : "--"});
+                grid[i].push({value: this.props.teams[i].endTime ? this.props.teams[i].endTime.time : "--"});
+            }
         }
         return grid;
     }
@@ -68,10 +73,7 @@ export default class TeamList extends React.Component {
         for (let row = 0; row < grid.length; row++) {
             T[row].number = grid[row][0].value;
             T[row].name = grid[row][1].value;
-            // if (this.props.advanced) {
-            //     T[row].excludeJudging = grid[row][2].value;
-            //     T[row].extraTime = grid[row][3].value;
-            // }
+            T[row].pitNum = grid[row][2].value;
         }
         this.props.onChange(T);
     }
@@ -157,8 +159,11 @@ export default class TeamList extends React.Component {
                             <tr>
                                 <th>Team number</th>
                                 <th>Team name</th>
-                                {/*{this.props.advanced && <th>Exclude from judging?</th>}*/}
-                                {/*{this.props.advanced && <th>Extra time?</th>}*/}
+                                <th>Pit No.</th>
+                                {this.props.advanced && <th>Exclude from judging?</th>}
+                                {this.props.advanced && <th>Extra time?</th>}
+                                {this.props.advanced && <th>Arrives</th>}
+                                {this.props.advanced && <th>Leaves</th>}
                                 {this.props.advanced && <th>Advanced</th>}
                                 <th width="20"></th>
                             </tr>
@@ -172,9 +177,11 @@ export default class TeamList extends React.Component {
                     <tr>
                         {props.children}
                         {this.props.advanced && <td className='cell'>
-                            <Button onClick={() => {this.setState({selectedTeam:props.row}); this.toggle()}}>Edit...</Button>
+                            <Button className="btn-sm" onClick={() => {this.setState({selectedTeam:props.row}); this.toggle()}}>Edit...</Button>
                         </td>}
-                        <td className='cell' onClick={() => this.deleteTeam(props.row)}><MdHighlightRemove size={20}/></td>
+                        <td className='cell'>
+                            <Button color='danger' className='btn-sm' onClick={() => this.deleteTeam(props.row)}><FaTimesCircleO size={20}/></Button>
+                        </td>
                     </tr>
                 )}
                 onCellsChanged={(changes) => this.updateCells(changes)}
