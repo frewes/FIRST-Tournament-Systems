@@ -112,6 +112,8 @@ export default class SessionForm extends React.Component {
     }
 
     render() {
+        let truth = this.props.session.startTime.mins < this.props.session.actualStartTime.mins;
+
         return (
             <div className="session-form">
                 <Form>
@@ -119,8 +121,8 @@ export default class SessionForm extends React.Component {
                         <TextInput label="Title" nolabel value={this.props.session.name} onChange={this.updateName}/> :
                         <h3>{this.props.session.name}</h3>
                     }
-                    <DateTimeInput label="Start time" value={this.props.session.startTime} onChange={this.updateStartTime}/>
-                    <DateTimeInput label="Must be done by" value={this.props.session.endTime} onChange={this.updateEndTime}/>
+                    <DateTimeInput label={"Start time"+((truth)?"*":"")} value={this.props.session.startTime} onChange={this.updateStartTime}/>
+                    <DateTimeInput label="Will be done by" immutable value={this.props.session.endTime} onChange={this.updateEndTime}/>
                     {this.props.session.type !== TYPES.BREAK &&
                         <NumberInput label="Duration (mins)" min={1} value={this.props.session.len} onChange={this.updateLen}/>}
                     {this.props.session.type !== TYPES.BREAK &&
@@ -150,6 +152,8 @@ export default class SessionForm extends React.Component {
                         onCellsChanged={(changes) => this.updateLocs(changes)}
                     />}
                     {this.props.session.type === TYPES.BREAK && <Button color='primary' onClick={this.props.onToggle}>Break applies to...</Button>}
+                    {truth && <span>* Will actually start at {this.props.session.actualStartTime.time}</span>}
+
                 </Form>
                 <br/>
             </div>

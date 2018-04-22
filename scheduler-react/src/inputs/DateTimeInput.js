@@ -53,7 +53,7 @@ export default class DateTimeInput extends React.Component {
             <FormGroup row>
                 <Label sm={this.props.large? 2 : 6} for={this.nextUniqueId()}>{this.props.label}</Label>
                 <Col sm={this.props.large? 10:6}>
-                    {this.buildInput()}
+                    {this.props.immutable ? this.props.value.time : this.buildInput()}
                 </Col>
             </FormGroup>
         );
