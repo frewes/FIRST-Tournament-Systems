@@ -44,8 +44,12 @@ export class Scheduler {
         this.empty();
         let willWork = null;
         this.event.sessions.sort((a,b) => {
-            if (a.type.priority === b.type.priority) return a.startTime.mins - b.startTime.mins;
-            return a.type.priority - b.type.priority;
+            if (a.id === b.id) {
+                if (a.type.priority === b.type.priority) return a.startTime.mins - b.startTime.mins;
+                return a.type.priority - b.type.priority;
+            } else {
+                return a.id - b.id;
+            }
         });
         this.event.sessions.forEach((session) => {
             // Make sure the start time isn't in a break
@@ -117,6 +121,9 @@ export class Scheduler {
             var d = Math.floor(session.nLocs/session.nSims);
             var locOffset = ((i+locD)%d)*session.nSims;
             if ((i%L) < L-1) {
+                // Check that the schedule will finish...
+                let whenDone = this.timeInc(now, session.len, session);
+                if (whenDone !== (now.mins + session.len)) now = new DateTime(whenDone);
                 session.schedule[i] = new Instance(session.id,i+1+numOffset,now,new Array(session.nSims),locOffset);
                 now = new DateTime(this.timeInc(now,session.len+session.buf,session));
                 roundsSinceExtra++;
@@ -306,7 +313,7 @@ export class Scheduler {
                 endB = startB + this.event.getSession(instance.session_id).len;
             else
                 endB = startB + this.event.getSession(instance.session_id).len + this.event.minTravel + extra;
-            if ((team.startTime && startB < team.startTime.mins) || (team.endTime && endB > team.endTime.mins)) return false;
+            if ((team.startTime.mins && startB < team.startTime.mins) || (team.endTime.mins && endB > team.endTime.mins)) return false;
             if (startA === startB || (startA < startB && endA > startB) || (startB < startA && endB > startA))
                 return false;
         }

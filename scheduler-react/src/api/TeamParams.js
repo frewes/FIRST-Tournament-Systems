@@ -1,5 +1,7 @@
 import ShortUniqueId from 'short-unique-id';
 
+import { DateTime } from "./DateTime";
+
 export class TeamParams {
     constructor(number) {
         this.number = number;
@@ -11,8 +13,8 @@ export class TeamParams {
         this.pitNum = 0;
         this.extraTime = false;
         this.excludeJudging = false;
-        this.startTime = null;
-        this.endTime = null;
+        this.startTime = new DateTime(null);
+        this.endTime = new DateTime(null);
         this.isSurrogate = false;
         this.schedule = [];
     }

@@ -58,13 +58,16 @@ export default class SessionParams {
     set nSims(value) { this._nSims = value; }
 
     get startTime() { return this._startTime; }
+    // TODO clone value here so we don't have to everywhere else.
     set startTime(value) {
         this._startTime = value;
         this._actualStartTime = value.clone();
     }
 
     get endTime() { return this._endTime; }
-    set endTime(value) { this._endTime = value; }
+    set endTime(value) {
+        this._endTime = value;
+    }
 
     get actualEndTime() {
         if (this.type === TYPES.BREAK) return this._endTime;
@@ -78,10 +81,10 @@ export default class SessionParams {
     }
     set actualStartTime(value) { this._actualStartTime = value; }
 
-    get len() { return this._len ; }
+    get len() { return (this._type === TYPES.BREAK) ? 0 : this._len;}
     set len(value) { this._len = value; }
 
-    get buf() { return this._buf ; }
+    get buf() { return (this._type === TYPES.BREAK) ? this.endTime.mins-this.startTime.mins : this._buf;}
     set buf(value) { this._buf = value; }
 
     get errors() { return this._errors; }

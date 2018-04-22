@@ -30,23 +30,50 @@ export class EventParams {
         this.endTime.days=this.days;
         this.errors = Infinity;
 
-        this.populateFLL();
+        // this.populateFLL();
     }
 
     populateFLL() {
         // First guesses at all schedule parameters.  User can then tweak to their hearts' content without auto updates
         let actualStart = this.startTime.clone(30);
         let actualEnd = this.endTime.clone(-30);
-        let timeAvailable = actualEnd.mins - actualStart.mins - 30;
-        let timePerMatch = Math.floor(timeAvailable / (this.nTeams * 3 / 2));
-
-        let matchLen = Math.ceil(timePerMatch/2);
-        let matchBuf = Math.floor(timePerMatch/2);
-        let nSims = 2;
         let nLocs = Math.ceil(this.nTeams / 11);
         let nJudgings = Math.ceil(this.nTeams/nLocs);
-        let startLunch = actualStart.clone(nJudgings*15);
+
+        let startLunch = new DateTime(Math.max(actualStart.mins+nJudgings*15,12*60),this.days);
         let endLunch = startLunch.clone(30);
+
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Opening Ceremony", 1,
+            this.startTime.clone(), actualStart.clone()));
+        this.getSession(this.uid_counter-1).universal = true;
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Lunch" + ((this.nDays>1)?" 1":""), 1,
+            startLunch.clone(), endLunch.clone()));
+        this.getSession(this.uid_counter-1).universal = true;
+        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Closing Ceremony", 1,
+            actualEnd.clone(), this.endTime.clone()));
+        this.getSession(this.uid_counter-1).universal = true;
+
+        let nightStart = new DateTime(this.endTime.mins%(24*60),this.days);
+        let nightEnd = this.startTime.clone();
+
+        for (let i = 1; i < this.days.length; i++) {
+            nightEnd = nightEnd.clone(24*60);
+            this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Night" + ((this.nDays>2)?" "+i:""), 1,
+                nightStart.clone(), nightEnd.clone()));
+            this.getSession(this.uid_counter-1).universal = true;
+            nightStart = nightStart.clone(24*60);
+
+            this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Lunch " + (i+1), 1,
+                startLunch.clone(24*60), endLunch.clone(24*60)));
+            this.getSession(this.uid_counter-1).universal = true;
+        }
+        let timeAvailable = this.endTime.mins - this.startTime.mins;
+        this.sessions.filter(s=>s.type===TYPES.BREAK).forEach(s=>{timeAvailable = timeAvailable - (s.endTime.mins-s.startTime.mins)});
+        let timePerMatch = Math.floor(timeAvailable / (this.nTeams * 3 / 2));
+
+        let matchLen = Math.min(Math.ceil(timePerMatch/2),5);
+        let matchBuf = timePerMatch-matchLen;
+        let nSims = 2;
 
         for (let i = 1; i <= 3; i++) {
             let S = new SessionParams(this.uid_counter++, TYPES.MATCH_ROUND, "Round " + i, 4,
@@ -62,15 +89,8 @@ export class EventParams {
             actualStart.clone(), actualEnd.clone()));
         this.sessions.push(new SessionParams(this.uid_counter++,TYPES.JUDGING, "Research Project Judging", nLocs,
             actualStart.clone(), actualEnd.clone()));
-        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Opening Ceremony", 1,
-            this.startTime.clone(), actualStart.clone()));
-        this.getSession(this.uid_counter-1).universal = true;
-        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Lunch", 1,
-            startLunch.clone(), endLunch.clone()));
-        this.getSession(this.uid_counter-1).universal = true;
-        this.sessions.push(new SessionParams(this.uid_counter++,TYPES.BREAK, "Closing Ceremony", 1,
-            actualEnd.clone(), this.endTime.clone()));
-        this.getSession(this.uid_counter-1).universal = true;
+
+        this.sessions.sort((a,b) => {return (a.startTime === b.startTime)?a.id-b.id : a.startTime.mins - b.startTime.mins;});
     }
 
     get nTeams() { return this._teams.length; }
@@ -145,7 +165,13 @@ export class EventParams {
     }
 
     getIndivDataGrid(compact=false) {
+        // Always sort before doing things if you need a particular order.
         this.teams.sort((a,b) => a.number - b.number);
+        this.sessions.sort((a,b) => {return a.id-b.id});
+        this.teams.forEach(team => {
+            team.schedule.sort((a,b) => {return this.getSession(a.session_id).id-this.getSession(b.session_id).id;});
+        });
+
         let grid = [];
         let usesSurrogates = false;
         this.sessions.forEach(s => {if (s.usesSurrogates) usesSurrogates = true;})
@@ -239,6 +265,7 @@ export class EventParams {
     get extraTime() {return this._extraTime;}
     set extraTime(value) {this._extraTime = value};
 
+    get nDays() { return this._days.length; }
     set nDays(value) {
         let A = this.days;
         while (A.length < value)
@@ -261,8 +288,8 @@ export class EventParams {
             S.actualEndTime.days = this._days;
         });
         this.teams.forEach(T => {
-            if (T.startTime) T.startTime.days = this._days;
-            if (T.endTime) T.endTime.days = this._days;
+            T.startTime.days = this._days;
+            T.endTime.days = this._days;
         });
     };
 }

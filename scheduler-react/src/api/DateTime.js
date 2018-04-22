@@ -5,6 +5,7 @@ export class DateTime {
     }
 
     displayTime() {
+        if (!this.mins) return "--:--";
         let x = (this.mins%(24*60));
         let d = Math.floor(this.mins/(24*60));
         let  h = Math.floor(x/60);
@@ -34,13 +35,15 @@ export class DateTime {
     get time() { return this.displayTime()};
     set time(value) {
         let res = value.split(":");
-        this._mins = parseInt(res[0],10)*60 + parseInt(res[1], 10);
+        this._mins = parseInt(res[0],10)*60 + parseInt(res[1], 10) + this.dayIdx*24*60;
     }
 
+    get dayIdx() { return Math.floor(this._mins/(24*60))}
+
     get timeValue() { return this.justTime()}
-    get day() { return this.days;}
+    get day() { return this._days[this.dayIdx];}
     set day(value) {
-        if (this.days.includes(value)) this.mins = (this.mins%(24*60))+(this.days.indexOf(value)*24*60);
+        if (this.days.includes(value)) this.mins = ((this.mins)?(this.mins%(24*60)):0)+(this.days.indexOf(value)*24*60);
     }
 
     get days() { return this._days; }

@@ -32,17 +32,18 @@ export default class DateTimeInput extends React.Component {
         if (this.props.value.days.length > 1) {
             return (
                     <FormGroup>
-                            <Input type="select" name="select" onChange={this.handleDateChange}>
+                            <Input type="select" name="select" onChange={this.handleDateChange}
+                                   value={this.props.value.days[Math.floor(this.props.value.mins/(24*60))]}>
                                 {this.props.value.days.map((d,idx) => <option key={idx}>{d}</option>)}
                             </Input>
                             <Input type="time" id={this.lastUniqueId()} pattern="[0-2][0-9]:[0-5][0-9]" step="900"
-                                   value={this.props.value ? this.props.value.timeValue : null} onChange={this.handleTimeChange}/>
+                                   value={this.props.value.mins ? this.props.value.timeValue : null} onChange={this.handleTimeChange}/>
                     </FormGroup>
                 );
         } else {
             return (
                 <Input type="time" id={this.lastUniqueId()} pattern="[0-2][0-9]:[0-5][0-9]" step="900"
-                       value={this.props.value ? this.props.value.timeValue : null} onChange={this.handleTimeChange}/>
+                       value={this.props.value.mins ? this.props.value.timeValue : null} onChange={this.handleTimeChange}/>
             );
         }
     }

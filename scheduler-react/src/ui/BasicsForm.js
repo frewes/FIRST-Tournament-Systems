@@ -18,6 +18,7 @@ export default class BasicsForm extends React.Component {
         this.updateMinTravel = this.updateMinTravel.bind(this);
         this.updateExtraTime = this.updateExtraTime.bind(this);
         this.updateNDays = this.updateNDays.bind(this);
+        this.updateDays = this.updateDays.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.getDataGrid = this.getDataGrid.bind(this);
     }
@@ -75,14 +76,9 @@ export default class BasicsForm extends React.Component {
     }
 
     render() {
-        return (
-            <Container>
-                <TextInput large label="Title: " value={this.props.event.title} onChange={this.updateTitle}/>
-                {this.props.advanced &&
-                    <NumberInput label="Min. travel (mins)" large value={this.props.event.minTravel} onChange={this.updateMinTravel}/>}
-                {this.props.advanced &&
-                    <NumberInput label="Extra time (mins)" large value={this.props.event.extraTime} onChange={this.updateExtraTime}/>}
-                <NumberInput label="Number of days" large value={this.props.event.days.length} onChange={this.updateNDays}/>
+        let dayInput = (
+            <div>
+                {/*<NumberInput label="Number of days" large value={this.props.event.days.length} onChange={this.updateNDays}/>*/}
                 <ReactDataSheet
                     data={this.state.grid}
                     valueRenderer={(cell) => cell.value}
@@ -95,6 +91,15 @@ export default class BasicsForm extends React.Component {
                     )}
                     onCellsChanged={(changes) => this.updateDays(changes)}
                 />
+            </div>
+        );
+        return (
+            <Container>
+                <TextInput large label="Title: " value={this.props.event.title} onChange={this.updateTitle}/>
+                <NumberInput label="Min. travel (mins)" large value={this.props.event.minTravel} onChange={this.updateMinTravel}/>
+                {this.props.advanced &&
+                    <NumberInput label="Extra time (mins)" large value={this.props.event.extraTime} onChange={this.updateExtraTime}/>}
+                {dayInput};
             </Container>
         );
     }

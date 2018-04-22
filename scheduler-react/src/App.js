@@ -28,11 +28,11 @@ class App extends Component {
                 "2018 FLL Competition", 24, new DateTime(8.5*60), new DateTime(17*60)),
             processing: false
         };
-        // This binding is necessary to make `this` work in the callback
         this.handleCreateButtonClick = this.handleCreateButtonClick.bind(this);
         this.handleLoadButtonClick = this.handleLoadButtonClick.bind(this);
         this.initSchedule= this.initSchedule.bind(this);
         this.handleScheduleChange = this.handleScheduleChange.bind(this);
+        this.customise = this.customise.bind(this);
         this.generate = this.generate.bind(this);
     }
 
@@ -61,6 +61,13 @@ class App extends Component {
 
     handleCreateButtonClick() {
         this.setState({display: 'Initialise'});
+    }
+
+    customise() {
+        this.state.eventParams.populateFLL();
+        let S = new Scheduler(this.state.eventParams);
+        S.buildAllTables();
+        this.setState({display: 'Customise'});
     }
 
     generate() {
@@ -97,8 +104,11 @@ class App extends Component {
                         Basic setup
                     </h1>
                     <InitForm event={this.state.eventParams} onChange={this.handleScheduleChange}/>
-                    <Button color="warning" onClick={() => this.setState({display: 'Customise'})}>Customise</Button>&nbsp;
-                    <Button color="success" onClick={this.generate}>{this.state.processing ? "Generating..." : "Generate"}</Button>
+                    <Button color="warning" onClick={this.customise}>Customise</Button>&nbsp;
+                    <Button color="success" onClick={()=> {
+                        this.state.eventParams.populateFLL();
+                        this.generate();
+                    }}>{this.state.processing ? "Generating..." : "Generate"}</Button>
 
                 </Jumbotron>
             );
