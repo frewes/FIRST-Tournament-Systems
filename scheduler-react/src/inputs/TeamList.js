@@ -142,12 +142,13 @@ export default class TeamList extends React.Component {
                     </ModalFooter>
                 </Modal>
 
-                <Button onClick={this.addTeams}><MdAddCircleOutline/> Add</Button>&nbsp;
-                <input type="number" value={this.state.toAdd} min="1" onChange={this.changeToAdd}/>&nbsp;
-                team{this.state.toAdd>1 && "s"}&nbsp;
-                <br/>
-                Number of teams: {this.props.teams.length}
-                <br/>
+                {this.props.cosmetic || (<div><Button onClick={this.addTeams}><MdAddCircleOutline/> Add</Button>&nbsp;
+                        <input type="number" value={this.state.toAdd} min="1" onChange={this.changeToAdd}/>&nbsp;
+                        team{this.state.toAdd>1 && "s"}&nbsp;
+                        <br/>
+                        Number of teams: {this.props.teams.length}
+                        <br/>
+                    </div>)}
                 &nbsp;
             <ReactDataSheet
                 data={this.getDataGrid()}
@@ -164,7 +165,7 @@ export default class TeamList extends React.Component {
                                 {this.props.advanced && <th>Arrives</th>}
                                 {this.props.advanced && <th>Leaves</th>}
                                 {this.props.advanced && <th>Advanced</th>}
-                                <th width="20"></th>
+                                {this.props.cosmetic || <th width="20"></th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -178,9 +179,9 @@ export default class TeamList extends React.Component {
                         {this.props.advanced && <td className='cell'>
                             <Button className="btn-sm" onClick={() => {this.setState({selectedTeam:props.row}); this.toggle()}}>Edit...</Button>
                         </td>}
-                        <td className='cell'>
+                        {this.props.cosmetic || <td className='cell'>
                             <Button color='danger' className='btn-sm' onClick={() => this.deleteTeam(props.row)}><FaTimesCircleO size={20}/></Button>
-                        </td>
+                        </td>}
                     </tr>
                 )}
                 onCellsChanged={(changes) => this.updateCells(changes)}
