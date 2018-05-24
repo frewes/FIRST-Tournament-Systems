@@ -62,13 +62,13 @@ export default class FullScheduleView extends React.Component {
         return (
             <Container>
                 <Nav pills>
-                    <NavItem><NavLink>{this.props.event.errors} error{this.props.event.errors !== 1 && "s"}</NavLink></NavItem>
-                    <NavItem>
-                        <NavLink href="#" className={(this.state.activeTab === 'display') ? "active" : ""}
-                                 onClick={() => { this.toggle('display')}}>
-                            Display Parameters
-                        </NavLink>
-                    </NavItem>
+                    {/*<NavItem><NavLink>{this.props.event.errors} error{this.props.event.errors !== 1 && "s"}</NavLink></NavItem>*/}
+                    {/*<NavItem>*/}
+                        {/*<NavLink href="#" className={(this.state.activeTab === 'display') ? "active" : ""}*/}
+                                 {/*onClick={() => { this.toggle('display')}}>*/}
+                            {/*Display Parameters*/}
+                        {/*</NavLink>*/}
+                    {/*</NavItem>*/}
                     <NavItem>
                         <NavLink href="#" className={(this.state.activeTab === 'sessions') ? "active" : ""}
                                  onClick={() => { this.toggle('sessions')}}>
