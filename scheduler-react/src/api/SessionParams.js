@@ -15,8 +15,8 @@ export default class SessionParams {
 
         this.startTime = startTime;
         this.endTime = endTime;
-        this.actualStartTime = startTime;
-        this.actualEndTime = endTime;
+        this.actualStartTime = startTime.clone();
+        this.actualEndTime = endTime.clone();
 
         this.nSims = this.locations.length;
         this.len = 10;
