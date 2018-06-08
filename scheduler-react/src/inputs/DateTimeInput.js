@@ -18,7 +18,7 @@ export default class DateTimeInput extends React.Component {
     handleTimeChange(event) {
         let x = this.props.value;
         if (!x) x = new DateTime(0);
-        x.time = event.target.value;
+        if (event.target.value) x.time = event.target.value;
         this.props.onChange(x);
     }
 
