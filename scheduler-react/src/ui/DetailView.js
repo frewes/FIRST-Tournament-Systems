@@ -70,7 +70,7 @@ export default class DetailView extends React.Component {
 
     toggleModal(session) {
         let value = !this.state.modal;
-        let s = (value) ? session : null
+        let s = (value) ? session : null;
         this.setState({modal: value, selectedSession: s});
     }
 

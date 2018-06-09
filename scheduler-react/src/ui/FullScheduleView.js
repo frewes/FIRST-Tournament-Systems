@@ -1,6 +1,7 @@
 import React from 'react';
 import SingleScheduleView from "./SingleScheduleView";
 import IndivScheduleView from "./IndivScheduleView";
+import OutputGenView from "./OutputGenView";
 
 import { TYPES } from "../api/SessionTypes";
 
@@ -8,6 +9,7 @@ import { Container, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane } from 
 import SessionForm from "./SessionForm";
 import BasicsForm from "./BasicsForm";
 import TeamList from '../inputs/TeamList';
+
 
 export default class FullScheduleView extends React.Component {
     constructor(props) {
@@ -112,8 +114,7 @@ export default class FullScheduleView extends React.Component {
                         <IndivScheduleView data={this.props.event.getIndivDataGrid()}/>
                     </TabPane>
                     <TabPane tabId='outputs'>
-                        &nbsp;
-                        Not yet implemented...
+                        <OutputGenView data={this.props.event}/>
                     </TabPane>
                 </TabContent>
             </Container>
