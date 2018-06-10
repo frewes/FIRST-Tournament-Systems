@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { PdfGenerator } from '../api/pdfGen';
 
 import { Modal, ModalHeader, ModalBody, ModalFooter, Container, Row, Col, Button, Card, CardText, CardTitle } from 'reactstrap';
 
@@ -19,7 +20,8 @@ export default class OutputGenView extends Component {
     }
 
     generatePDF() {
-      alert("Not yet implemented...");
+      let p = new PdfGenerator(this.props.data);
+      p.makePDFs();
     }
 
     // To add image uploading...
