@@ -28,7 +28,7 @@ export class PdfGenerator {
     let download = true;
     if (download) {
       prefix=prompt("File name prefix", this.event.title.replace(/ /g,"-"));
-      if (prefix == null) return;
+      if (prefix === null) return;
     }
     for (var i = 0; i < this.event.teams.length; i++) {
       if (this.event.teams[i].name.length > 12) this.styleDict.teamEntry.fontSize = 10;
@@ -102,7 +102,7 @@ export class PdfGenerator {
     }
     this.doc.content.push({text: session.name + " Schedule", style:'header2',margin:[0,10]});
     this.doc.content.push({table: t,layout: 'lightHorizontalLines'});
-    // if (session.usesSurrogates && session.fillerPolicy == USE_SURROGATES)
+    // if (session.usesSurrogates && session.fillerPolicy === USE_SURROGATES)
     //   this.doc.content.push({text:"\n* Surrogate team; results not counted",alignment:'center'});
     this.doc.content.push({text: " ", pageBreak:'after'});
   }
@@ -129,8 +129,8 @@ export class PdfGenerator {
       let col = "blue"
       for (let i = 0; i < data[k].length; i++) {
         // Hack way to calculate alternating colours.  TODO: Fix
-        let col = (i%4 > 1) ? 'blue' : 'black';
-        if (k == 0) col = (i%2 == 1) ? 'blue' : 'black';
+        col = (i%4 > 1) ? 'blue' : 'black';
+        if (k === 0) col = (i%2 === 1) ? 'blue' : 'black';
         if (data[k][i].colSpan) {
           t.body[k].push({colSpan:data[k][i].colSpan, text:data[k][i].value.toString(),color:col,style:curStyle});
           for (let dummy = 1; dummy < data[k][i].colSpan; dummy++) t.body[k].push({});
@@ -162,7 +162,6 @@ export class PdfGenerator {
     this.doc.content.push({text: team.number + ": " + team.name, style:'header2',margin:[0,10]});
     let t = {headerRows:1,dontBreakRows:true};
     t.widths = new Array(3);
-    let w = 515/(3);
     for (var i = 0; i < 3; i++) {
       t.widths[i] = (i<-1) ? 'auto':'*';
     }
@@ -173,15 +172,15 @@ export class PdfGenerator {
     t.body[0][2] = {text:"Location"};
     for (let i = 0; i < schedule.length; i++) {
       // If it's a break that applies to specific sessions, don't put it in.
-      if (this.event.getSession(schedule[i].session_id).type == TYPES.BREAK && this.event.getSession(schedule[i].session_id).appliesTo.length > 0) continue;
+      if (this.event.getSession(schedule[i].session_id).type === TYPES.BREAK && this.event.getSession(schedule[i].session_id).appliesTo.length > 0) continue;
       var row = [];
       var spot = schedule[i].teams.indexOf(team.id);
       var num =" ("+schedule[i].num+")";
       if ((schedule[i].teams.length - schedule[i].teams.indexOf((team.id))) <= schedule[i].surrogates) num = " ("+schedule[i].num+", surrogate)";
-      if (this.event.getSession(schedule[i].session_id).type == TYPES.BREAK) num ="";
+      if (this.event.getSession(schedule[i].session_id).type === TYPES.BREAK) num ="";
 
       var loc = this.event.getSession(schedule[i].session_id).locations[spot+schedule[i].loc];
-      if (this.event.getSession(schedule[i].session_id).type == TYPES.BREAK) loc = this.event.getSession(schedule[i].session_id).locations[0];
+      if (this.event.getSession(schedule[i].session_id).type === TYPES.BREAK) loc = this.event.getSession(schedule[i].session_id).locations[0];
       if (!loc) loc = "";
       row.push({text: schedule[i].time.time+num});
       row.push({text: this.event.getSession(schedule[i].session_id).name});
@@ -195,7 +194,7 @@ export class PdfGenerator {
 
   buildDoc() {
     this.doc = {};
-    this.doc.content = new Array();
+    this.doc.content = [];
     this.doc.header = {
       text: this.event.title,
       style: 'header',
@@ -275,7 +274,7 @@ export class PdfGenerator {
 }
 
 function getBase64Image(img) {
-  if (img.src.substring(0,4) == "data") return img.src;
+  if (img.src.substring(0,4) === "data") return img.src;
   // Create an empty canvas element
   let canvas = document.createElement("canvas");
   canvas.width = img.naturalWidth;
@@ -290,10 +289,10 @@ function getBase64Image(img) {
   // guess the original format, but be aware the using "image/jpg"
   // will re-encode the image
   let dataURL="";
-  if (img.src.search(new RegExp('.png','i')) != -1) {
-    let dataURL = canvas.toDataURL("image/png");
-  } else if (img.src.search(new RegExp('.jpe?g','i')) != -1) {
-    let dataURL = canvas.toDataURL("image/jpeg");
+  if (img.src.search(new RegExp('.png','i')) !== -1) {
+    dataURL = canvas.toDataURL("image/png");
+  } else if (img.src.search(new RegExp('.jpe?g','i')) !== -1) {
+    dataURL = canvas.toDataURL("image/jpeg");
   }
 
   return dataURL;
