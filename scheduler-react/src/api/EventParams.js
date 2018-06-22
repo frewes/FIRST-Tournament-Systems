@@ -103,14 +103,6 @@ export class EventParams {
         this.teams = this.teams.sort((a,b) => {return parseInt(a.number,10) - parseInt(b.number,10);});
     }
 
-    saveToJSON() {
-        return "UNDEFINED";
-    }
-
-    populateWithJSON(json) {
-        alert("Not yet implemented!");
-    }
-
     getTeam(id) {
         for (let i = 0 ; i < this.teams.length; i++) {
             if (this.teams[i].id === id) return this.teams[i];
@@ -292,4 +284,36 @@ export class EventParams {
             T.endTime.days = this._days;
         });
     };
+
+    static freeze(o) {
+      return {
+        _class : 'EventParams',
+        _version : o._version,
+        _title : o._title,
+        _teams : o._teams,
+        uid_counter : o.uid_counter,
+        _startTime : o._startTime,
+        _endTime : o._endTime,
+        _sessions : o._sessions,
+        _days : o._days,
+        errors : o.errors,
+        _extraTime: o._extraTime,
+        _minTravel: o._minTravel
+      };
+    }
+
+    static thaw(o) {
+      let E = new EventParams(o._version, o._title);
+      E._teams = o._teams;
+      E.uid_counter = o.uid_counter;
+      E._startTime = o._startTime;
+      E._endTime = o._endTime;
+      E._minTravel = o._minTravel;
+      E._extraTime = o._extraTime;
+      E._sessions = o._sessions;
+      E._days = o._days;
+      E.errors = o.errors;
+      if (!E.errors) E.errors = Infinity;
+      return E;
+    }
 }

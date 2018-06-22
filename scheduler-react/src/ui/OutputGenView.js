@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { PdfGenerator } from '../api/pdfGen';
+import { PdfGenerator } from '../api/PdfGen';
 
 import { Modal, ModalHeader, ModalBody, ModalFooter, Container, Row, Col, Button, Card, CardText, CardTitle } from 'reactstrap';
 

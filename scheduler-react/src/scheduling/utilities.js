@@ -1,3 +1,10 @@
+import { DateTime } from '../api/DateTime';
+import { EventParams } from '../api/EventParams';
+import SessionParams from '../api/SessionParams';
+import { TeamParams } from '../api/TeamParams';
+import Instance from '../scheduling/Instance';
+
+
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number, LeJared
 export function cmpVersions (a, b) {
     var i, diff;
@@ -43,5 +50,74 @@ export function overlaps(a,b) {
  **/
 export function  hasDone(team, id) {
     return team.schedule.filter(i=>i.session_id === id).length;
-    }
+  }
 
+export function saveToFile(filename, content) {
+  // if (filename.startsWith("null.")) return;
+  // var data = new Blob([content], {type: 'text/plain'});
+  //   if (saveFile !== null) {
+  //     window.URL.revokeObjectURL(saveFile); //Prevents memory leaks on multiple saves.
+  //   }
+  //   saveFile = window.URL.createObjectURL(data);
+  //   saveLink = $("#saveLink")[0];
+  //   saveLink.download = filename;
+  //   saveLink.href = saveFile;
+  //   saveLink.click();
+}
+
+// Should be called from a file input
+export function loadFromFile(evt) {
+    // //https://www.html5rocks.com/en/tutorials/file/dndfiles/
+    // // ^ Explains how to read files as binary, text, etc.
+    // var reader = new FileReader();
+    // reader.onload = function(e) {
+    //     console.log("Loaded: ");
+    //     console.log(e.target.result);
+    //     loadFile(e.target.result);
+    // }
+    // if (evt.files[0]) {
+    //     reader.readAsText(evt.files[0]);
+    // }
+    // printToDom(tournament);
+    // toggleAdvMode();
+    // alert ("Loaded " + evt.files[0].name + "!");
+}
+
+// Replacer function for JSON.stringify
+// Saves any class instance as an object with its data and a class descriptor.
+export function freeze(key, object) {
+  if (object instanceof DateTime) {
+    return DateTime.freeze(object);
+  } else if (object instanceof EventParams) {
+    return EventParams.freeze(object);
+  } else if (object instanceof SessionParams) {
+    return SessionParams.freeze(object);
+  } else if (object instanceof TeamParams) {
+    return TeamParams.freeze(object);
+  } else if (object instanceof Instance) {
+    return Instance.freeze(object);
+  } else return object;
+}
+
+// Reviver function for JSON.parse
+// Returns any object as an instance of its class descriptor and data
+export function thaw(key, value) {
+  if (value instanceof Object && value._class) {
+    switch (value._class) {
+      case 'DateTime':
+        return DateTime.thaw(value);
+      case 'EventParams':
+        return EventParams.thaw(value);
+      case 'SessionParams':
+        return SessionParams.thaw(value);
+        case 'TeamParams':
+          return TeamParams.thaw(value);
+        case 'Instance':
+          return Instance.thaw(value);
+      default:
+        return value;
+    }
+  } else {
+    return value;
+  }
+}

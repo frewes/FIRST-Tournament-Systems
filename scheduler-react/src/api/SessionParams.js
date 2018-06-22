@@ -15,8 +15,8 @@ export default class SessionParams {
 
         this.startTime = startTime;
         this.endTime = endTime;
-        this.actualStartTime = startTime.clone();
-        this.actualEndTime = endTime.clone();
+        if (this.startTime) this.actualStartTime = startTime.clone();
+        if (this.endTime) this.actualEndTime = endTime.clone();
 
         this.nSims = this.locations.length;
         this.len = 10;
@@ -61,7 +61,7 @@ export default class SessionParams {
     // TODO clone value here so we don't have to everywhere else.
     set startTime(value) {
         this._startTime = value;
-        this._actualStartTime = value.clone();
+        if(value) this._actualStartTime = value.clone();
     }
 
     get endTime() { return this._endTime; }
@@ -108,9 +108,55 @@ export default class SessionParams {
     // Does this session apply to id?
     applies(id) {
         if(this.universal) return true;
-        else return this.appliesTo.includes(id);
+        else return this.appliesTo._includes(id);
     }
 
     get usesSurrogates() { return this._usesSurrogates; }
     set usesSurrogates(value) { this._usesSurrogates = value; }
+
+    static freeze(o) {
+      return {
+        _class : 'SessionParams',
+        _id : o._id,
+        _type : o._type,
+        _name : o._name,
+        _locations : o._locations,
+        _universal : o._universal,
+        _startTime : o._startTime,
+        _endTime : o._endTime,
+        _actualStartTime : o._actualStartTime,
+        _actualEndTime : o._actualEndTime,
+        _nSims : o._nSims,
+        _len : o._len,
+        _buf : o._buf,
+        _schedule : o._schedule,
+        _errors : o._errors,
+        _instances : o._instances,
+        _extraTimeFirst : o._extraTimeFirst,
+        _extraTimeEvery : o._extraTimeEvery,
+        _appliesTo : o._appliesTo,
+        _usesSurrogates : o._usesSurrogates
+      };
+    }
+
+    static thaw(o) {
+      let S = new SessionParams(o._id, o._type, o._name);
+      S._locations = o._locations;
+      S._universal = o._universal;
+      S._startTime = o._startTime;
+      S._endTime = o._endTime;
+      S._actualStartTime = o._actualStartTime;
+      S._actualEndTime = o._actualEndTime;
+      S._nSims = o._nSims;
+      S._len = o._len;
+      S._buf = o._buf;
+      S._schedule = o._schedule;
+      S._errors = o._errors;
+      S._instances = o._instances;
+      S._extraTimeFirst = o._extraTimeFirst;
+      S._extraTimeEvery = o._extraTimeEvery;
+      S._appliesTo = o._appliesTo;
+      S._usesSurrogates = o._usesSurrogates;
+      return S;
+    }
 }

@@ -39,7 +39,7 @@ export default class TopBar extends React.Component {
                             </NavLink>
                         </NavItem>
                         <NavItem><NavLink><MdInfoOutline size={20}/></NavLink></NavItem>
-                        <NavItem><NavLink><MdFileDownload size={20}/></NavLink></NavItem>
+                        <NavItem onClick={this.props.onSave}><NavLink><MdFileDownload size={20}/></NavLink></NavItem>
                         <NavItem><NavLink><MdFileUpload size={20}/></NavLink></NavItem>
                     </Nav>
                 </Collapse>

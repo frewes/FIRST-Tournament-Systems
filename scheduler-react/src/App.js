@@ -7,6 +7,8 @@ import { DateTime } from './api/DateTime';
 
 import { Scheduler } from './scheduling/Scheduler';
 
+import { freeze, thaw, saveToFile, loadFromFile } from './scheduling/utilities';
+
 import { Container, Jumbotron, Button, Row, Col } from 'reactstrap';
 import DayScheduleView from "./ui/DayScheduleView";
 import FullScheduleView from "./ui/FullScheduleView";
@@ -34,6 +36,8 @@ class App extends Component {
         this.handleScheduleChange = this.handleScheduleChange.bind(this);
         this.customise = this.customise.bind(this);
         this.generate = this.generate.bind(this);
+        this.onSave = this.onSave.bind(this);
+        this.onLoad = this.onLoad.bind(this);
     }
 
     initSchedule(initState) {
@@ -86,6 +90,19 @@ class App extends Component {
             this.setState ({display: 'Review'});
             this.setState({processing: false});
         }), 50);
+    }
+
+    onSave() {
+      var filename =prompt("Enter filename", this.eventParams.title.replace(/ /g, '_'));
+      let json_str = JSON.stringify(this.state.eventParams,freeze);
+      if (filename != null) saveToFile(filename+".schedule",json_str);
+      // Write to file
+    }
+
+    onLoad() {
+      let json_str = ""; // Load from file
+      let E = JSON.parse(json_str,thaw);
+      this.setState({eventParams: E});
     }
 
     render() {
@@ -152,7 +169,7 @@ class App extends Component {
 
         return (
             <Container fluid className="App">
-                <TopBar version={this.props.version}/>
+                <TopBar version={this.props.version} onSave={this.onSave} onLoad={this.onLoad}/>
                 {mainWindow}
             </Container>
         );

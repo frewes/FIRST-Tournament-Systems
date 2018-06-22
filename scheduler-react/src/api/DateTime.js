@@ -50,4 +50,16 @@ export class DateTime {
     set days(value) { this._days = value;}
 
     clone(inc=0) {return new DateTime(this.mins+inc, this.days);}
+
+    static freeze(o) {
+      return {
+        _class : 'DateTime',
+        mins : o.mins,
+        days : o.days,
+      };
+    }
+
+    static thaw(o) {
+      return new DateTime(o.mins, o.days);
+    }
 }
