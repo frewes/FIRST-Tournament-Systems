@@ -31,7 +31,6 @@ export class EventParams {
         this.startTime.days=this.days;
         this.endTime.days=this.days;
         this.errors = Infinity;
-        this.display='LoadNew';
         // this.populateFLL();
     }
 
@@ -315,7 +314,7 @@ export class EventParams {
 
     static freeze(o) {
       return {
-        _class : 'Event Params',
+        _class : 'EventParams',
         _version : o._version,
         _title : o._title,
         _teams : o._teams,
@@ -326,8 +325,7 @@ export class EventParams {
         _days : o._days,
         errors : o.errors,
         _extraTime: o._extraTime,
-        _minTravel: o._minTravel,
-        _display: o._display
+        _minTravel: o._minTravel
       };
     }
 
@@ -342,7 +340,6 @@ export class EventParams {
       E._sessions = o._sessions;
       E._days = o._days;
       E.errors = o.errors;
-      E.display = o.display;
       if (!E.errors) E.errors = Infinity;
       return E;
     }

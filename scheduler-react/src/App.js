@@ -25,13 +25,11 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            display: 'LoadNew',
+            display: 'Initialise',
             eventParams: new EventParams( this.props.version,
                 "2018 FLL Competition", 24, new DateTime(8.5*60), new DateTime(17*60)),
             processing: false
         };
-        this.handleCreateButtonClick = this.handleCreateButtonClick.bind(this);
-        this.handleLoadButtonClick = this.handleLoadButtonClick.bind(this);
         this.initSchedule= this.initSchedule.bind(this);
         this.handleScheduleChange = this.handleScheduleChange.bind(this);
         this.customise = this.customise.bind(this);
@@ -57,14 +55,6 @@ class App extends Component {
         let S = new Scheduler(E);
         S.buildAllTables();
         console.log(E);
-    }
-
-    handleLoadButtonClick() {
-        alert("Loading not yet implemented");
-    }
-
-    handleCreateButtonClick() {
-        this.setState({display: 'Initialise'});
     }
 
     customise() {
@@ -110,14 +100,7 @@ class App extends Component {
 
     render() {
         let mainWindow = <h1>An error occurred</h1>;
-        if (this.state.display=== 'LoadNew') {
-            mainWindow = (
-                <Jumbotron>
-                    <Button onClick={this.handleCreateButtonClick}>Create new schedule</Button>&nbsp;
-                    <Button onClick={this.handleLoadButtonClick}>Load existing schedule</Button>
-                </Jumbotron>
-            );
-        } else if (this.state.display === 'Initialise') {
+        if (this.state.display === 'Initialise') {
             mainWindow = (
                 <Jumbotron>
                     <h1 className="App-intro">
