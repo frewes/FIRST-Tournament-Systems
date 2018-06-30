@@ -3,7 +3,7 @@ import { EventParams } from '../api/EventParams';
 import SessionParams from '../api/SessionParams';
 import { TeamParams } from '../api/TeamParams';
 import Instance from '../scheduling/Instance';
-
+import { SessionType } from '../api/SessionTypes';
 
 //https://stackoverflow.com/questions/6832596/how-to-compare-software-version-number-using-js-only-number, LeJared
 export function cmpVersions (a, b) {
@@ -53,16 +53,21 @@ export function  hasDone(team, id) {
   }
 
 export function saveToFile(filename, content) {
-  // if (filename.startsWith("null.")) return;
-  // var data = new Blob([content], {type: 'text/plain'});
-  //   if (saveFile !== null) {
-  //     window.URL.revokeObjectURL(saveFile); //Prevents memory leaks on multiple saves.
-  //   }
-  //   saveFile = window.URL.createObjectURL(data);
-  //   saveLink = $("#saveLink")[0];
-  //   saveLink.download = filename;
-  //   saveLink.href = saveFile;
-  //   saveLink.click();
+  let file = new Blob([content], {type : 'application/json'});
+  if (window.navigator.msSaveOrOpenBlob) // IE10+
+      window.navigator.msSaveOrOpenBlob(file, filename);
+  else { // Others
+      var a = document.createElement("a"),
+              url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+      }, 0);
+  }
 }
 
 // Should be called from a file input
@@ -96,6 +101,8 @@ export function freeze(key, object) {
     return TeamParams.freeze(object);
   } else if (object instanceof Instance) {
     return Instance.freeze(object);
+  } else if (object instanceof SessionType) {
+    return SessionType.freeze(object);
   } else return object;
 }
 
@@ -110,10 +117,12 @@ export function thaw(key, value) {
         return EventParams.thaw(value);
       case 'SessionParams':
         return SessionParams.thaw(value);
-        case 'TeamParams':
-          return TeamParams.thaw(value);
-        case 'Instance':
-          return Instance.thaw(value);
+      case 'TeamParams':
+        return TeamParams.thaw(value);
+      case 'Instance':
+        return Instance.thaw(value);
+      case 'SessionType':
+        return SessionType.thaw(value);
       default:
         return value;
     }

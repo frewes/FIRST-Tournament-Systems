@@ -93,16 +93,19 @@ class App extends Component {
     }
 
     onSave() {
-      var filename =prompt("Enter filename", this.eventParams.title.replace(/ /g, '_'));
-      let json_str = JSON.stringify(this.state.eventParams,freeze);
+      var filename =prompt("Enter filename", this.state.eventParams.title.replace(/ /g, '_'));
+      // let json_str = JSON.stringify(this.state.eventParams,freeze);
+      let json_str = JSON.stringify(this.state,freeze);
       if (filename != null) saveToFile(filename+".schedule",json_str);
       // Write to file
     }
 
-    onLoad() {
-      let json_str = ""; // Load from file
+    onLoad(json_str) {
       let E = JSON.parse(json_str,thaw);
-      this.setState({eventParams: E});
+      console.log(E);
+      // let disp = 'Customise';
+      // if (E.schedule !== null) disp = 'Review';
+      this.setState(E);
     }
 
     render() {

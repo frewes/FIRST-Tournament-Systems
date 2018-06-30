@@ -1,13 +1,12 @@
-import ShortUniqueId from 'short-unique-id';
-
 import { DateTime } from "./DateTime";
 
 export class TeamParams {
-    constructor(number) {
+    constructor(id, number) {
         this.number = number;
         this.name = "Team " + number;
 
-        this.id = new ShortUniqueId();
+        // this.id = new ShortUniqueId();
+        this.id = id;
 
         // So far unused
         this.pitNum = 0;
@@ -42,9 +41,8 @@ export class TeamParams {
     }
 
     static thaw(o) {
-      let T = new TeamParams(o.number);
+      let T = new TeamParams(o.id,o.number);
       T.name = o.name;
-      T.id = o.id;
       T.pitNum = o.pitNum;
       T.extraTime = o.extraTime;
       T.excludeJudging = o.excludeJudging;

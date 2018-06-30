@@ -1,4 +1,4 @@
-class SessionType {
+export class SessionType {
     constructor(uid, name, priority, defaultTitle, defaultLocs, fillerPolicy=POLICIES.blank) {
         this._name = name;
         this._priority = priority;
@@ -12,6 +12,30 @@ class SessionType {
     get defaultTitle() { return this._defaultTitle; }
     get fillerPolicy() { return this._fillerPolicy; }
     get defaultLocs() { return this._defaultLocs; }
+
+
+    static freeze(o) {
+      return {
+        _class : 'SessionType',
+        _name: o.name,
+      };
+    }
+
+    static thaw(o) {
+      // console.log(TYPES);
+      // console.log(Object.keys(TYPES));
+      console.log("Object name:");
+      console.log(o._name);
+      let V = null;
+      Object.values(TYPES).forEach(v => {
+        console.log(v);
+        console.log(v.name);
+        if (o._name === v.name) console.log("MATCH");
+        if (o._name === v.name) V = v;
+      });
+      console.log(V);
+      return V;
+    }
 }
 
 export const POLICIES = {blank: "Leave blanks", surrogates: "Use surrogates"};

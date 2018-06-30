@@ -14,16 +14,29 @@ export default class TopBar extends React.Component {
 
         this.state = {
             isOpen: false,
-            advanced: false
+            advanced: false,
         };
 
         this.toggle = this.toggle.bind(this);
+        this.onFileChange = this.onFileChange.bind(this);
     }
 
     toggle() {
         this.setState({
             isOpen: !this.state.isOpen
         });
+    }
+
+    onFileChange(e, f) {
+      let file = f || e.target.files[0];
+      let reader = new FileReader();
+      console.log(file);
+
+      reader.onload = (e) => {
+         this.props.onLoad(reader.result);
+      }
+      reader.readAsText(file);
+      // reader.readAsDataURL(file);
     }
 
     render() {
@@ -40,7 +53,7 @@ export default class TopBar extends React.Component {
                         </NavItem>
                         <NavItem><NavLink><MdInfoOutline size={20}/></NavLink></NavItem>
                         <NavItem onClick={this.props.onSave}><NavLink><MdFileDownload size={20}/></NavLink></NavItem>
-                        <NavItem><NavLink><MdFileUpload size={20}/></NavLink></NavItem>
+                        <NavItem><NavLink><label><MdFileUpload size={20}/><input type="file" accept=".schedule" onChange={this.onFileChange} hidden ref="input" /></label></NavLink></NavItem>
                     </Nav>
                 </Collapse>
             </Navbar>

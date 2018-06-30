@@ -10,10 +10,12 @@ export class EventParams {
     constructor(version, title="Tournament", nTeams=24, startTime=new DateTime(9*60), endTime=new DateTime(9*17)) {
         this._version = version;
         this.title = title;
+        let id = Math.floor((Math.random() * 100) + 1);
         let A = [];
         while (nTeams > 0) {
-            A.push(new TeamParams(nTeams));
+            A.push(new TeamParams(id, nTeams));
             nTeams--;
+            id += Math.floor((Math.random() * 100) + 1);;
         }
         this.uid_counter = 1;
 
@@ -29,6 +31,7 @@ export class EventParams {
         this.startTime.days=this.days;
         this.endTime.days=this.days;
         this.errors = Infinity;
+        this.display='LoadNew';
 
         // this.populateFLL();
     }
@@ -96,10 +99,14 @@ export class EventParams {
     get nTeams() { return this._teams.length; }
     //Given a new number of teams, update things...
     set nTeams(value) {
-        while (this.teams.length < value)
-            this.teams.push(new TeamParams(this.teams.length+1));
+        while (this.teams.length < value) {
+          let maxId = 0;
+          this.teams.forEach(t=>{maxId=(maxId>t.id?maxId:t.id)});
+          maxId += Math.floor((Math.random() * 100) + 1);;
+          this.teams.push(new TeamParams(this.teams.length+1));
+        }
         while (this.teams.length > value)
-            this.teams.pop();
+          this.teams.pop();
         this.teams = this.teams.sort((a,b) => {return parseInt(a.number,10) - parseInt(b.number,10);});
     }
 
@@ -257,6 +264,9 @@ export class EventParams {
     get extraTime() {return this._extraTime;}
     set extraTime(value) {this._extraTime = value};
 
+    get display() {return this._display}
+    set display(d) {this._display = d;}
+
     get nDays() { return this._days.length; }
     set nDays(value) {
         let A = this.days;
@@ -298,7 +308,8 @@ export class EventParams {
         _days : o._days,
         errors : o.errors,
         _extraTime: o._extraTime,
-        _minTravel: o._minTravel
+        _minTravel: o._minTravel,
+        _display: o._display
       };
     }
 
@@ -313,6 +324,7 @@ export class EventParams {
       E._sessions = o._sessions;
       E._days = o._days;
       E.errors = o.errors;
+      E.display = o.display;
       if (!E.errors) E.errors = Infinity;
       return E;
     }
