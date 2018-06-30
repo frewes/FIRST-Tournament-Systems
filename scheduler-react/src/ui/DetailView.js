@@ -190,6 +190,12 @@ export default class DetailView extends React.Component {
                         </NavLink>
                     </NavItem>
                     <NavItem>
+                        <NavLink href="#" className={this.state.activeTab === 'practice' ? "active" : ""}
+                                 onClick={() => {this.toggle('practice')}}>
+                            Practice
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
                         <NavLink href="#" className={(this.state.activeTab === 'breaks') ? "active" : ""}
                                  onClick={() => {this.toggle('breaks')}}>
                             Breaks
@@ -225,6 +231,10 @@ export default class DetailView extends React.Component {
                     <TabPane tabId="rounds">
                         &nbsp;
                         {this.renderSessions(TYPES.MATCH_ROUND)}
+                    </TabPane>
+                    <TabPane tabId="practice">
+                        &nbsp;
+                        {this.renderSessions(TYPES.MATCH_ROUND_PRACTICE)}
                     </TabPane>
                     <TabPane tabId="breaks">
                         &nbsp;
