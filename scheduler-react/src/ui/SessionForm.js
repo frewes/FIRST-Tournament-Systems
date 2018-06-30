@@ -2,6 +2,8 @@ import React from 'react';
 // import ReactDOM from 'react-dom';
 import { TYPES } from '../api/SessionTypes';
 
+import MdRemoveCircleOutline from 'react-icons/lib/md/remove-circle-outline';
+
 import { Form, Table, Button } from 'reactstrap';
 import TextInput from '../inputs/TextInput';
 import DateTimeInput from "../inputs/DateTimeInput";
@@ -28,6 +30,7 @@ export default class SessionForm extends React.Component {
         this.updateNLocs = this.updateNLocs.bind(this);
 
         this.updateLocs = this.updateLocs.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     updateName(value) {
@@ -111,6 +114,10 @@ export default class SessionForm extends React.Component {
         this.props.onChange(S);
     }
 
+    handleDelete() {
+      this.props.onDelete(this.props.session);
+    }
+
     render() {
         let truth = this.props.session.startTime.mins < this.props.session.actualStartTime.mins;
         if (this.props.cosmetic) {
@@ -185,6 +192,8 @@ export default class SessionForm extends React.Component {
                         {this.props.session.type === TYPES.BREAK &&
                         <Button color='primary' onClick={this.props.onToggle}>Break applies to...</Button>}
                         {truth && <span>* Will actually start at {this.props.session.actualStartTime.time}</span>}
+                        {this.props.advanced && <Button onClick={this.handleDelete} color='danger'><MdRemoveCircleOutline/> Delete</Button>}
+
                     </Form>
                     <br/>
                 </div>

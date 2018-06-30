@@ -108,7 +108,7 @@ export default class SessionParams {
     // Does this session apply to id?
     applies(id) {
         if(this.universal) return true;
-        else return this.appliesTo._includes(id);
+        else return this.appliesTo.includes(id);
     }
 
     get usesSurrogates() { return this._usesSurrogates; }

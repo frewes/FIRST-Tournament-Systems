@@ -3,11 +3,14 @@ import { Nav, NavItem, NavLink, TabContent, TabPane,
     Container, Col, Row, Button,
     Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
 
+import MdAddCircleOutline from 'react-icons/lib/md/add-circle-outline';
+
 import { TYPES } from '../api/SessionTypes';
 import BasicsForm from "./BasicsForm";
 import SessionForm from "./SessionForm"
 import TeamList from "../inputs/TeamList";
 import BooleanInput from "../inputs/BooleanInput";
+import SessionParams from "../api/SessionParams";
 
 import ToggleButton from 'react-toggle-button';
 
@@ -30,6 +33,8 @@ export default class DetailView extends React.Component {
         this.toggleModal = this.toggleModal.bind(this);
         this.toggleApplies = this.toggleApplies.bind(this);
         this.updateUniversal = this.updateUniversal.bind(this);
+        this.deleteSession = this.deleteSession.bind(this);
+        this.addSession = this.addSession.bind(this);
     }
 
     toggleAdvanced() {
@@ -91,6 +96,31 @@ export default class DetailView extends React.Component {
         this.updateSessions(S);
     }
 
+    deleteSession(S) {
+        let E = this.props.event;
+        console.log(S);
+        E.sessions.splice(E.sessions.indexOf(S),1);
+        this.props.onChange(E);
+    }
+
+    addSession() {
+      let E = this.props.event;
+      let S = null;
+      if (this.state.activeTab === 'judging')
+        S = new SessionParams(E.uid_counter+1, TYPES.JUDGING, "Judging", 4, E.startTime.clone(), E.endTime.clone());
+      else if (this.state.activeTab === 'rounds')
+        S = new SessionParams(E.uid_counter+1, TYPES.MATCH_ROUND, "Round X", 4, E.startTime.clone(), E.endTime.clone());
+      else if (this.state.activeTab === 'breaks') {
+        S = new SessionParams(E.uid_counter+1, TYPES.BREAK, "Break", 1, E.startTime.clone(), E.endTime.clone());
+        S.universal = true;
+      } else if (this.state.activeTab === 'practice')
+        S = new SessionParams(E.uid_counter+1, TYPES.MATCH_ROUND_PRACTICE, "Practice Round X", 4, E.startTime.clone(), E.endTime.clone());
+      else return;
+      E.sessions.push(S);
+      E.uid_counter = E.uid_counter+1;
+      this.props.onChange(E);
+    }
+
     buildModal() {
         let S = this.state.selectedSession;
         if (!S) return;
@@ -100,8 +130,8 @@ export default class DetailView extends React.Component {
                 {S.type === TYPES.BREAK && <BooleanInput label="All?" value={S.universal} onChange={this.updateUniversal}/>}
                 <hr/>
                 {this.props.event.sessions.filter(S=>S.type!==TYPES.BREAK).map(session =>
-                    <BooleanInput key={session.id} disabled={S.universal} label={session.name} value={S.applies(session.id)}
-                                  onChange={(x) => this.toggleApplies(S,session,x)}/>
+                    <BooleanInput key={session.id} disabled={S.universal} label={session.name}
+                        value={S.applies(session.id)} onChange={(x) => this.toggleApplies(S,session,x)}/>
                 )}
             </div>
         );
@@ -113,7 +143,7 @@ export default class DetailView extends React.Component {
             <Row>
                 {this.props.event.sessions.filter(S=>S.type === type).sort((a,b) => {return a.id-b.id;}).map(S => (
                     <Col lg={6} md={12} key={S.id}>
-                        <SessionForm onToggle={() => this.toggleModal(S)} advanced={this.state.advanced}
+                        <SessionForm onDelete={this.deleteSession} onToggle={() => this.toggleModal(S)} advanced={this.state.advanced}
                                      session={S} onChange={this.updateSessions}/>
                     </Col>
                 ))}
@@ -170,6 +200,14 @@ export default class DetailView extends React.Component {
                         <small className="not-text">Advanced</small>
                         <ToggleButton value={this.state.advanced} onToggle={this.toggleAdvanced}/>
                     </div>
+                    {this.state.advanced && this.state.activeTab !== 'basics' && this.state.activeTab !== 'teams' && (
+                      <NavItem>
+                        <NavLink href="#" onClick={this.addSession}>
+                          <MdAddCircleOutline/>
+                        </NavLink>
+                      </NavItem>)
+                    }
+
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="basics">
