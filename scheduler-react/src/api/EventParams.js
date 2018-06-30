@@ -32,7 +32,6 @@ export class EventParams {
         this.endTime.days=this.days;
         this.errors = Infinity;
         this.display='LoadNew';
-
         // this.populateFLL();
     }
 
@@ -216,8 +215,8 @@ export class EventParams {
                         row.push({value: this.getSession(team.schedule[j].session_id).locations[team.schedule[j].teams.indexOf(team.id)+team.schedule[j].loc]});
                 }
             }
-            row.push({value: "?"});
-            // row.push({value: ""+minTravelTime(team)});
+            // row.push({value: "?"});
+            row.push({value: ""+this.minTravelTime(team)});
             let hadASurrogate = false;
             for (let j = 0; j < team.schedule.length; j++) {
                 if (!team.schedule[j].teams) continue;
@@ -239,6 +238,25 @@ export class EventParams {
             grid.push(row);
         }
         return grid;
+    }
+
+    minTravelTime(team) {
+      let minTravel = Infinity;
+      team.schedule.forEach(i => {
+        team.schedule.forEach(j => {
+          if (i !== j) {
+            let sA = i.time.mins;
+            let eA = i.time.mins + this.getSession(i.session_id).len + (i.extraTime?this.extraTime:0);
+            let sB = j.time.mins;
+            let eB = j.time.mins + this.getSession(j.session_id).len + (i.extraTime?this.extraTime:0);
+            let dA = sB - eA;
+            let dB = sA - eB;
+            let d = (dA < 0)?dB:dA;
+            minTravel = (minTravel>d)?d:minTravel;
+          }
+        });
+      });
+      return minTravel;
     }
 
     get version() {return this._version;}
@@ -297,7 +315,7 @@ export class EventParams {
 
     static freeze(o) {
       return {
-        _class : 'EventParams',
+        _class : 'Event Params',
         _version : o._version,
         _title : o._title,
         _teams : o._teams,
