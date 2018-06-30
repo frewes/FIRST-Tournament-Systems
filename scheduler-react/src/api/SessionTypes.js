@@ -28,12 +28,9 @@ export class SessionType {
       console.log(o._name);
       let V = null;
       Object.values(TYPES).forEach(v => {
-        console.log(v);
-        console.log(v.name);
         if (o._name === v.name) console.log("MATCH");
         if (o._name === v.name) V = v;
       });
-      console.log(V);
       return V;
     }
 }

@@ -32,11 +32,11 @@ export class Scheduler {
         });
         // Adelaide Ken bug: Teams getting assigned weirdly. Count the number of these errors.
         this.event.teams.forEach(team => {
-                //     for (let j = 0; j < team.schedule.length; j++) {
-                //         if (team.schedule[j].teams.indexOf(team.id) === -1) {
-                //             this.event.errors++;
-                //         }
-                //     }
+          for (let j = 0; j < team.schedule.length; j++) {
+              if (team.schedule[j].teams.indexOf(team.id) === -1) {
+                  this.event.errors++;
+              }
+          }
         });
     }
 
