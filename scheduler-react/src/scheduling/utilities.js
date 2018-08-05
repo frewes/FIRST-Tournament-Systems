@@ -147,3 +147,46 @@ export function thaw(key, value) {
     return value;
   }
 }
+
+export function getBase64Image(img) {
+    // console.log("Image source");
+    // console.log(img.src);
+    if (img.src.substring(0,4) === "data") return img.src;
+    // Create an empty canvas element
+    let canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+
+    // Copy the image contents to the canvas
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+
+    // Get the data-URL formatted image
+    // Firefox supports PNG and JPEG. You could check img.src to
+    // guess the original format, but be aware the using "image/jpg"
+    // will re-encode the image.
+
+    let dataURL = "";
+    if (img.src.search(new RegExp('.png','i')) !== -1) {
+        dataURL = canvas.toDataURL("image/png");
+    } else if (img.src.search(new RegExp('.jpe?g','i')) !== -1) {
+        dataURL = canvas.toDataURL("image/jpeg");
+    }
+    if (img.src.substring(0,4) === "data") dataURL = img.src;
+    console.log(dataURL);
+    return dataURL;
+}
+
+export function toDataUrl(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function() {
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            callback(reader.result);
+        }
+        reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+}

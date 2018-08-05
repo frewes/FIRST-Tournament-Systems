@@ -4,7 +4,12 @@ import { DateTime } from "./DateTime";
 import SessionParams from "./SessionParams";
 
 import Instance from '../scheduling/Instance';
-import { overlaps } from "../scheduling/utilities";
+import { overlaps, getBase64Image, toDataUrl } from "../scheduling/utilities";
+
+import firstlogo from '../resources/firstlogo.png';
+import flllogo from '../resources/flllogo.jpg';
+import mqlogo from '../resources/mqlogo.png';
+import gamelogo from '../resources/gamelogo.jpg';
 
 export class EventParams {
     constructor(version, title="Tournament", nTeams=24, startTime=new DateTime(9*60), endTime=new DateTime(9*17)) {
@@ -15,7 +20,7 @@ export class EventParams {
         while (nTeams > 0) {
             A.push(new TeamParams(id, nTeams));
             nTeams--;
-            id += Math.floor((Math.random() * 100) + 1);;
+            id += Math.floor((Math.random() * 100) + 1);
         }
         this.uid_counter = 1;
 
@@ -30,6 +35,21 @@ export class EventParams {
         this.days = ["Day 1"];
         this.startTime.days=this.days;
         this.endTime.days=this.days;
+
+        toDataUrl(flllogo, (base) => {
+            this.logoTopLeft = base;
+        });
+        toDataUrl(gamelogo, (base) => {
+            this.logoTopRight = base;
+        });
+        toDataUrl(mqlogo, (base) => {
+            this.logoBotLeft = base;
+        });
+        toDataUrl(firstlogo, (base) => {
+            this.logoBotRight = base;
+        });
+
+        // console.log(this.logoBotRight);
         this.errors = Infinity;
         // this.populateFLL();
     }
@@ -292,6 +312,15 @@ export class EventParams {
     get display() {return this._display}
     set display(d) {this._display = d;}
 
+    get logoTopLeft() {return this._logoTopLeft}
+    set logoTopLeft(x) {this._logoTopLeft = x;}
+    get logoBotLeft() {return this._logoBotLeft}
+    set logoBotLeft(x) {this._logoBotLeft = x;}
+    get logoTopRight() {return this._logoTopRight}
+    set logoTopRight(x) {this._logoTopRight = x;}
+    get logoBotRight() {return this._logoBotRight}
+    set logoBotRight(x) {this._logoBotRight = x;}
+
     get nDays() { return this._days.length; }
     set nDays(value) {
         let A = this.days;
@@ -333,7 +362,11 @@ export class EventParams {
         _days : o._days,
         errors : o.errors,
         _extraTime: o._extraTime,
-        _minTravel: o._minTravel
+        _minTravel: o._minTravel,
+        _logoTopLeft: o._logoTopLeft,
+        _logoBotLeft: o._logoBotLeft,
+        _logoTopRight: o._logoTopRight,
+        _logoBotRight: o._logoBotRight,
       };
     }
 
@@ -348,6 +381,10 @@ export class EventParams {
       E._sessions = o._sessions;
       E._days = o._days;
       E.errors = o.errors;
+      E._logoTopLeft = o._logoTopLeft;
+      E._logoBotLeft = o._logoBotLeft;
+      E._logoTopRight = o._logoTopRight;
+      E._logoBotRight = o._logoBotRight;
       if (!E.errors) E.errors = Infinity;
       return E;
     }
