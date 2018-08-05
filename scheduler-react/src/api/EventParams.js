@@ -122,6 +122,14 @@ export class EventParams {
         return null;
     }
 
+    getSessions(type) {
+        let A = [];
+        for (let i = 0 ; i < this.sessions.length; i++) {
+            if (this.sessions[i].type === type) A.push(this.sessions[i]);
+        }
+        return A;
+    }
+
     getSessionDataGrid(id) {
         let session = this.getSession(id);
         let grid = [];

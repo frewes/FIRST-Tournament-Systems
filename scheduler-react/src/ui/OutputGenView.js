@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { PdfGenerator } from '../api/PdfGenerator';
+import { CsvGenerator } from '../api/CsvGenerator';
 
 import { Modal, ModalHeader, ModalBody, ModalFooter, Container, Row, Col, Button, Card, CardText, CardTitle } from 'reactstrap';
 
@@ -12,6 +13,7 @@ export default class OutputGenView extends Component {
         }
         this.toggle=this.toggle.bind(this);
         this.generatePDF=this.generatePDF.bind(this);
+        this.generateCSV=this.generateCSV.bind(this);
     }
     toggle() {
         this.setState({
@@ -22,6 +24,11 @@ export default class OutputGenView extends Component {
     generatePDF() {
       let p = new PdfGenerator(this.props.data);
       p.makePDFs();
+    }
+
+    generateCSV() {
+        let c = new CsvGenerator(this.props.data);
+        c.makeCSV();
     }
 
     // To add image uploading...
@@ -48,7 +55,7 @@ export default class OutputGenView extends Component {
                         <Card body>
                             <CardTitle>CSV</CardTitle>
                             <CardText>Export to CSV format used by the FLL scoring system</CardText>
-                            <Button color="success">Go!</Button>
+                            <Button color="success" onClick={this.generateCSV}>Go!</Button>
                         </Card>
                     </Col>
                     <Col lg="6">

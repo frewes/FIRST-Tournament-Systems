@@ -7,7 +7,7 @@ import { DateTime } from './api/DateTime';
 
 import { Scheduler } from './scheduling/Scheduler';
 
-import { freeze, thaw, saveToFile, loadFromFile } from './scheduling/utilities';
+import { freeze, thaw, saveToFile_json, loadFromFile } from './scheduling/utilities';
 
 import { Container, Jumbotron, Button, Row, Col } from 'reactstrap';
 import DayScheduleView from "./ui/DayScheduleView";
@@ -86,7 +86,7 @@ class App extends Component {
       var filename =prompt("Enter filename", this.state.eventParams.title.replace(/ /g, '_'));
       // let json_str = JSON.stringify(this.state.eventParams,freeze);
       let json_str = JSON.stringify(this.state,freeze);
-      if (filename != null) saveToFile(filename+".schedule",json_str);
+      if (filename != null) saveToFile_json(filename+".schedule",json_str);
       // Write to file
     }
 
