@@ -36,6 +36,8 @@ export class EventParams {
         this.startTime.days=this.days;
         this.endTime.days=this.days;
 
+        this.tempNames = null;
+
         toDataUrl(flllogo, (base) => {this.logoTopLeft = base;});
         toDataUrl(gamelogo, (base) => {this.logoTopRight = base;});
         toDataUrl(mqlogo, (base) => {this.logoBotLeft = base;});
@@ -51,6 +53,17 @@ export class EventParams {
     }
 
     populateFLL() {
+        // Set team names
+        if (this.tempNames) {
+            let names = this.tempNames.split("\n");
+            this.teams.forEach(t => {
+                let saved = t.name;
+                if (names.length > 0)
+                    t.name = names.shift();
+                if (t.name === "") t.name = saved;
+            });
+        }
+
         // First guesses at all schedule parameters.  User can then tweak to their hearts' content without auto updates
         let actualStart = this.startTime.clone(30);
         let actualEnd = this.endTime.clone(-30);
@@ -116,8 +129,8 @@ export class EventParams {
         while (this.teams.length < value) {
           let maxId = 0;
           this.teams.forEach(t=>{maxId=(maxId>t.id?maxId:t.id)});
-          maxId += Math.floor((Math.random() * 100) + 1);;
-          this.teams.push(new TeamParams(this.teams.length+1));
+          maxId += Math.floor((Math.random() * 100) + 1);
+          this.teams.push(new TeamParams(maxId, this.teams.length+1));
         }
         while (this.teams.length > value)
           this.teams.pop();

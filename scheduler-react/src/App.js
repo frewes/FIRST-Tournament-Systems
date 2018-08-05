@@ -65,6 +65,7 @@ class App extends Component {
     }
 
     generate() {
+        this.state.eventParams.populateFLL();
         console.log("GENERATING");
         this.setState({processing: true})
         setTimeout((() => {
@@ -108,10 +109,7 @@ class App extends Component {
                     </h1>
                     <InitForm event={this.state.eventParams} onChange={this.handleScheduleChange}/>
                     <Button color="warning" onClick={this.customise}>Customise</Button>&nbsp;
-                    <Button color="success" onClick={()=> {
-                        this.state.eventParams.populateFLL();
-                        this.generate();
-                    }}>{this.state.processing ? "Generating..." : "Generate"}</Button>
+                    <Button color="success" onClick={()=> {this.generate();}}>{this.state.processing ? "Generating..." : "Generate"}</Button>
 
                 </Jumbotron>
             );

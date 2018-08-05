@@ -6,6 +6,8 @@ import DateTimeInput from '../inputs/DateTimeInput'
 import { Container, Form, Table } from 'reactstrap';
 
 import ReactDataSheet from 'react-datasheet';
+import TeamList from "../inputs/TeamList";
+import TextAreaInput from "../inputs/TextAreaInput";
 
 export default class InitForm extends React.Component {
     constructor(props) {
@@ -22,6 +24,7 @@ export default class InitForm extends React.Component {
         this.updateEndTime = this.updateEndTime.bind(this);
         this.updateNDays = this.updateNDays.bind(this);
         this.updateDays = this.updateDays.bind(this);
+        this.updateTeamNames = this.updateTeamNames.bind(this);
 
         this.handleChange = this.handleChange.bind(this);
     }
@@ -79,6 +82,12 @@ export default class InitForm extends React.Component {
         this.handleChange(E);
     }
 
+    updateTeamNames(e) {
+        let E = this.props.event;
+        E.tempNames = e;
+        this.handleChange(E);
+    }
+
     handleChange(data) {
         if (this.props.onChange) this.props.onChange(data);
     }
@@ -104,6 +113,7 @@ export default class InitForm extends React.Component {
                     />
                     <DateTimeInput large label="Start time: " value={this.props.event.startTime} onChange={this.updateStartTime}/>
                     <DateTimeInput large label="End time: " value={this.props.event.endTime} onChange={this.updateEndTime}/>
+                    <TextAreaInput large label="Team names:" rows={10} placeholder="List of team names" onChange={this.updateTeamNames}/>
                 </Form>
             </Container>
         );
