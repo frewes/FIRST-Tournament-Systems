@@ -15,17 +15,28 @@ export class PdfGenerator {
         logo4: this._event.logoBotRight,
     };
     console.log(this.imageDict);
+    // this.styleDict = {
+    //     header: {fontSize: this._event.titleFontSize,bold: true,alignment: 'center'},
+    //     footer: {fontSize: 14,bold: true,alignment: 'center',color: 'grey'},
+    //     header2: {fontSize: 20,bold: true,alignment: 'center'},
+    //     tablebody: {fontSize: 8,alignment:'center'},
+    //     extraTime: {alignment: 'center',color: 'red'},
+    //     tablehead: {fontSize: 10,bold: true,alignment:'center'},
+    //     breakrow: {bold: true,alignment:'center',fillColor: '#eeeeee'},
+    //     teamEntry:{fontSize:this._event.baseFontSize, alignment:'center'}
+    // };
     this.styleDict = {
-      header: {fontSize: 22,bold: true,alignment: 'center'},
-      footer: {fontSize: 14,bold: true,alignment: 'center',color: 'grey'},
-      header2: {fontSize: 20,bold: true,alignment: 'center'},
-      tablebody: {fontSize: 8,alignment:'center'},
-      extraTime: {alignment: 'center',color: 'red'},
-      tablehead: {fontSize: 10,bold: true,alignment:'center'},
-      breakrow: {bold: true,alignment:'center',fillColor: '#eeeeee'},
-      teamEntry:{alignment:'center',fontSize:12}
+        header: {fontSize: this._event.titleFontSize,bold: true,alignment: 'center'},
+        footer: {fontSize: this._event.baseFontSize+2,bold: true,alignment: 'center',color: 'grey'},
+        header2: {fontSize: this._event.titleFontSize+2,bold: true,alignment: 'center'},
+        tablebody: {fontSize: this._event.baseFontSize-4,alignment:'center'},
+        extraTime: {alignment: 'center',color: 'red'},
+        tablehead: {fontSize: this._event.baseFontSize-2,bold: true,alignment:'center'},
+        breakrow: {bold: true,alignment:'center',fillColor: '#eeeeee'},
+        teamEntry:{fontSize:this._event.baseFontSize, alignment:'center'}
     };
-
+    console.log("Style Dictionary");
+    console.log(this.styleDict);
   }
 
   get event() { return this._event; }
@@ -237,7 +248,7 @@ export class PdfGenerator {
       {image: 'header', width: 530, height: 20, alignment: 'center'}
     ];};
     this.doc.footer={
-      text: 'www.firstaustralia.org',
+      text: this.event.footerText,
       style: 'footer',
       margin:[0,50,0,0]
     }

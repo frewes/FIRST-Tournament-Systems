@@ -20,6 +20,7 @@ export default class FullScheduleView extends React.Component {
         }
 
         this.getItems = this.getItems.bind(this);
+        this.updatePDFSettings = this.updatePDFSettings.bind(this);
     }
 
     getItems() {
@@ -56,6 +57,17 @@ export default class FullScheduleView extends React.Component {
                 break;
             }
         }
+    }
+
+    updatePDFSettings(S) {
+        let E = this.props.event;
+        E.titleFontSize = S.titleFontSize;
+        E.baseFontSize = S.baseFontSize;
+        E.logoTopLeft = S.logoTopLeft;
+        E.logoTopRight = S.logoTopRight;
+        E.logoBotLeft = S.logoBotLeft;
+        E.logoBotRight = S.logoBotRight;
+        E.footerText = S.footerText;
     }
 
 
@@ -114,7 +126,7 @@ export default class FullScheduleView extends React.Component {
                         <IndivScheduleView data={this.props.event.getIndivDataGrid()}/>
                     </TabPane>
                     <TabPane tabId='outputs'>
-                        <OutputGenView data={this.props.event}/>
+                        <OutputGenView data={this.props.event} handleChange={this.updatePDFSettings}/>
                     </TabPane>
                 </TabContent>
             </Container>

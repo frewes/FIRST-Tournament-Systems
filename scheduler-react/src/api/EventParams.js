@@ -36,18 +36,14 @@ export class EventParams {
         this.startTime.days=this.days;
         this.endTime.days=this.days;
 
-        toDataUrl(flllogo, (base) => {
-            this.logoTopLeft = base;
-        });
-        toDataUrl(gamelogo, (base) => {
-            this.logoTopRight = base;
-        });
-        toDataUrl(mqlogo, (base) => {
-            this.logoBotLeft = base;
-        });
-        toDataUrl(firstlogo, (base) => {
-            this.logoBotRight = base;
-        });
+        toDataUrl(flllogo, (base) => {this.logoTopLeft = base;});
+        toDataUrl(gamelogo, (base) => {this.logoTopRight = base;});
+        toDataUrl(mqlogo, (base) => {this.logoBotLeft = base;});
+        toDataUrl(firstlogo, (base) => {this.logoBotRight = base;});
+
+        this.titleFontSize = 22;
+        this.baseFontSize = 12;
+        this.footerText = 'www.firstaustralia.org';
 
         // console.log(this.logoBotRight);
         this.errors = Infinity;
@@ -321,6 +317,9 @@ export class EventParams {
     get logoBotRight() {return this._logoBotRight}
     set logoBotRight(x) {this._logoBotRight = x;}
 
+    get footerText() {return this._footer;}
+    set footerText(x) {this._footer = x;}
+
     get nDays() { return this._days.length; }
     set nDays(value) {
         let A = this.days;
@@ -367,6 +366,7 @@ export class EventParams {
         _logoBotLeft: o._logoBotLeft,
         _logoTopRight: o._logoTopRight,
         _logoBotRight: o._logoBotRight,
+        _footer: o._footer
       };
     }
 
@@ -385,6 +385,7 @@ export class EventParams {
       E._logoBotLeft = o._logoBotLeft;
       E._logoTopRight = o._logoTopRight;
       E._logoBotRight = o._logoBotRight;
+      E._footer = o._footer;
       if (!E.errors) E.errors = Infinity;
       return E;
     }
