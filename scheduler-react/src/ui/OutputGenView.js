@@ -15,7 +15,11 @@ export default class OutputGenView extends Component {
             pdf_modal: false,
             title_size: this.props.data.titleFontSize,
             base_size: this.props.data.baseFontSize,
-            footer: this.props.data.footerText
+            footer: this.props.data.footerText,
+            tl_logo: this.props.data.logoTopLeft,
+            tr_logo: this.props.data.logoTopRight,
+            bl_logo: this.props.data.logoBotLeft,
+            br_logo: this.props.data.logoBotRight
         };
         this.toggle=this.toggle.bind(this);
         this.generatePDF=this.generatePDF.bind(this);
@@ -23,6 +27,10 @@ export default class OutputGenView extends Component {
         this.updateBaseSize = this.updateBaseSize.bind(this);
         this.updateTitleSize = this.updateTitleSize.bind(this);
         this.updateFooter = this.updateFooter.bind(this);
+        this.onTLChange = this.onTLChange.bind(this);
+        this.onTRChange = this.onTRChange.bind(this);
+        this.onBLChange = this.onBLChange.bind(this);
+        this.onBRChange = this.onBRChange.bind(this);
     }
     toggle() {
         this.setState({
@@ -67,6 +75,52 @@ export default class OutputGenView extends Component {
         });
     }
 
+    onTLChange(e, f) {
+        let file = f || e.target.files[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+            let E = this.props.data;
+            E.logoTopLeft = reader.result;
+            this.props.handleChange(E);
+            this.setState({tl_logo: E.logoTopLeft});
+        };
+        reader.readAsDataURL(file);
+    }
+    onTRChange(e, f) {
+        let file = f || e.target.files[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+            let E = this.props.data;
+            E.logoTopRight = reader.result;
+            this.props.handleChange(E);
+            this.setState({tr_logo: E.logoTopRight});
+        };
+        reader.readAsDataURL(file);
+    }
+    onBLChange(e, f) {
+        let file = f || e.target.files[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+            let E = this.props.data;
+            E.logoBotLeft = reader.result;
+            this.props.handleChange(E);
+            this.setState({bl_logo: E.logoBotLeft});
+        };
+        reader.readAsDataURL(file);
+    }
+    onBRChange(e, f) {
+        let file = f || e.target.files[0];
+        let reader = new FileReader();
+        reader.onload = (e) => {
+            let E = this.props.data;
+            E.logoBotRight = reader.result;
+            this.props.handleChange(E);
+            this.setState({br_logo: E.logoBotRight});
+        };
+        reader.readAsDataURL(file);
+    }
+
+
     // To add image uploading...
     // https://codepen.io/hartzis/pen/VvNGZP
 
@@ -78,8 +132,14 @@ export default class OutputGenView extends Component {
                     <ModalBody>
                         <Container>
                             <Row>
-                                <Col><img alt={"Top Left Logo"} src={this.props.data.logoTopLeft} height={100}/></Col>
-                                <Col><img alt={"Top Right Logo"} src={this.props.data.logoTopRight} height={100}/></Col>
+                                <Col><label>
+                                    <img alt={"Top Left Logo"} src={this.state.tl_logo} height={100}/>
+                                    <input type="file" accept="image/*" hidden ref="input" onChange={this.onTLChange}/>
+                                </label></Col>
+                                <Col><label>
+                                    <img alt={"Top Right Logo"} src={this.state.tr_logo} height={100}/>
+                                    <input type="file" accept="image/*" hidden ref="input" onChange={this.onTRChange}/>
+                                </label></Col>
                             </Row>
                             <br/>
                             <NumberInput min={4} value={this.state.title_size} label={"Title font size"} onChange={this.updateTitleSize}/>
@@ -87,8 +147,14 @@ export default class OutputGenView extends Component {
                             <NumberInput min={2} value={this.state.base_size} label={"Base font size"} onChange={this.updateBaseSize}/>
                             <br/>
                             <Row>
-                                <Col><img alt={"Bottom Left Logo"} src={this.props.data.logoBotLeft} height={100}/></Col>
-                                <Col><img alt={"Bottom Right Logo"} src={this.props.data.logoBotRight} height={100}/></Col>
+                                <Col><label>
+                                    <img alt={"Bottom Left Logo"} src={this.state.bl_logo} height={100}/>
+                                    <input type="file" accept="image/*" hidden ref="input" onChange={this.onBLChange}/>
+                                </label></Col>
+                                <Col><label>
+                                    <img alt={"Bottom Right Logo"} src={this.state.br_logo} height={100}/>
+                                    <input type="file" accept="image/*" hidden ref="input" onChange={this.onBRChange}/>
+                                </label></Col>
                             </Row>
                             <br/>
                             <TextInput value={this.state.footer} label={"Footer Text"} onChange={this.updateFooter}/>

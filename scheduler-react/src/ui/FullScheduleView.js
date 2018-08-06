@@ -68,6 +68,7 @@ export default class FullScheduleView extends React.Component {
         E.logoBotLeft = S.logoBotLeft;
         E.logoBotRight = S.logoBotRight;
         E.footerText = S.footerText;
+        this.props.onChange(E);
     }
 
 

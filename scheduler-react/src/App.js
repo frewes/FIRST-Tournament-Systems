@@ -36,6 +36,7 @@ class App extends Component {
         this.generate = this.generate.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onLoad = this.onLoad.bind(this);
+        this.updatePDFSettings = this.updatePDFSettings.bind(this);
     }
 
     initSchedule(initState) {
@@ -99,6 +100,18 @@ class App extends Component {
       this.setState(E);
     }
 
+    updatePDFSettings(S) {
+        let E = this.state.eventParams;
+        E.titleFontSize = S.titleFontSize;
+        E.baseFontSize = S.baseFontSize;
+        E.logoTopLeft = S.logoTopLeft;
+        E.logoTopRight = S.logoTopRight;
+        E.logoBotLeft = S.logoBotLeft;
+        E.logoBotRight = S.logoBotRight;
+        E.footerText = S.footerText;
+        this.setState({eventParams: E});
+    }
+
     render() {
         let mainWindow = <h1>An error occurred</h1>;
         if (this.state.display === 'Initialise') {
@@ -144,7 +157,7 @@ class App extends Component {
                     </Col>
                     <Col lg="9">
                         <Jumbotron>
-                            <FullScheduleView event={this.state.eventParams}/>
+                            <FullScheduleView event={this.state.eventParams} onChange={this.updatePDFSettings}/>
                         </Jumbotron>
                     </Col>
                 </Row>

@@ -38,10 +38,10 @@ export class EventParams {
 
         this.tempNames = null;
 
-        toDataUrl(flllogo, (base) => {this.logoTopLeft = base;});
-        toDataUrl(gamelogo, (base) => {this.logoTopRight = base;});
-        toDataUrl(mqlogo, (base) => {this.logoBotLeft = base;});
-        toDataUrl(firstlogo, (base) => {this.logoBotRight = base;});
+        toDataUrl(flllogo, (base) => {if (!this.logoTopLeft) this.logoTopLeft = base;});
+        toDataUrl(gamelogo, (base) => {if (!this.logoTopRight) this.logoTopRight = base;});
+        toDataUrl(mqlogo, (base) => {if (!this.logoBotLeft) this.logoBotLeft = base;});
+        toDataUrl(firstlogo, (base) => {if (!this.logoBotRight) this.logoBotRight = base;});
 
         this.titleFontSize = 22;
         this.baseFontSize = 12;
@@ -400,6 +400,7 @@ export class EventParams {
       E._logoBotRight = o._logoBotRight;
       E._footer = o._footer;
       if (!E.errors) E.errors = Infinity;
+      console.log(E);
       return E;
     }
 }
